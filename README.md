@@ -1,2 +1,3 @@
-# python-package-template
-This is a template repository that can be used to quickly create a python package project.
+# Automation Mojo X-Modules (mojo-xmodules)
+This package contains helper modules that extend the function of standard python modules.
+
