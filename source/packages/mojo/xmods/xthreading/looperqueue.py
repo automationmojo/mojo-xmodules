@@ -8,7 +8,7 @@
 """
 
 __author__ = "Myron Walker"
-__copyright__ = "Copyright 2020, Myron W Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
@@ -19,7 +19,7 @@ __license__ = "MIT"
 
 from threading import RLock, Semaphore
 
-from akit.exceptions import AKitLooperError
+from mojo.xmods.xexceptions import LooperError
 
 
 class LooperQueueShutdown:
@@ -51,7 +51,7 @@ class LooperQueue:
         self._queue_lock.acquire()
         try:
             if self._queue_shutdown is not None:
-                raise AKitLooperError("The queue has been shutdown, no more work is allowed to be queued.") from None
+                raise LooperError("The queue has been shutdown, no more work is allowed to be queued.") from None
 
             self._queue.append(packet)
             self._queue_available.release()
@@ -72,7 +72,7 @@ class LooperQueue:
         self._queue_lock.acquire()
         try:
             if self._queue_shutdown is not None:
-                raise AKitLooperError("The queue has been shutdown, no more work is allowed to be queued.") from None
+                raise LooperError("The queue has been shutdown, no more work is allowed to be queued.") from None
 
             self._queue.extend(packets)
             self._queue_available.release()

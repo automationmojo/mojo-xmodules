@@ -8,7 +8,7 @@
 """
 
 __author__ = "Myron Walker"
-__copyright__ = "Copyright 2020, Myron W Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
@@ -18,10 +18,10 @@ __license__ = "MIT"
 
 from threading import RLock
 
-from akit.exceptions import AKitLooperError
+from mojo.xmods.xexceptions import LooperError
 
-from akit.xthreading.looper import Looper
-from akit.xthreading.looperqueue import LooperQueue, LooperQueueShutdown
+from mojo.xmods.xthreading.looper import Looper
+from mojo.xmods.xthreading.looperqueue import LooperQueue, LooperQueueShutdown
 
 class LooperPool:
     """
@@ -63,7 +63,7 @@ class LooperPool:
                 finally:
                     self._threads_lock.release()
         else:
-            raise AKitLooperError("LooperPool: push_work called after the looper pool has been shutdown.") from None
+            raise LooperError("LooperPool: push_work called after the looper pool has been shutdown.") from None
 
         return available
 
@@ -82,7 +82,7 @@ class LooperPool:
                 finally:
                     self._threads_lock.release()
         else:
-            raise AKitLooperError("LooperPool: push_work_packets called after the looper pool has been shutdown.") from None
+            raise LooperError("LooperPool: push_work_packets called after the looper pool has been shutdown.") from None
 
         return available
 
@@ -119,7 +119,7 @@ class LooperPool:
         """
 
         if self._running:
-            raise AKitLooperError("LooperPool: start called while LooperPool is already running") from None
+            raise LooperError("LooperPool: start called while LooperPool is already running") from None
 
         self._threads_lock.acquire()
         self._running = True

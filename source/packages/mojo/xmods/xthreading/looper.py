@@ -8,7 +8,7 @@
 """
 
 __author__ = "Myron Walker"
-__copyright__ = "Copyright 2020, Myron W Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
@@ -20,9 +20,9 @@ from typing import Optional
 
 from threading import Event, Thread
 
-from akit.exceptions import AKitNotOverloadedError, AKitLooperError
+from mojo.xmods.xexceptions import NotOverloadedError, LooperError
 
-from akit.xthreading.looperqueue import LooperQueue, LooperQueueShutdown
+from mojo.xmods.xthreading.looperqueue import LooperQueue, LooperQueueShutdown
 
 class Looper:
     """
@@ -75,7 +75,7 @@ class Looper:
             Method to wait for the looper thread to exit.
         """
         if self._exit_gate is None:
-            raise AKitLooperError("Looper: wait_for_exit called before Looper was started.") from None
+            raise LooperError("Looper: wait_for_exit called before Looper was started.") from None
 
         self._exit_gate.wait(timeout=timeout)
         return
@@ -84,7 +84,7 @@ class Looper:
         """
             Method that is overloaded by derived classes in order to implement a work loop.
         """
-        raise AKitNotOverloadedError("Looper: _loop must be overloaded by derived classes.") from None
+        raise NotOverloadedError("Looper: _loop must be overloaded by derived classes.") from None
 
     def _loop_entry(self, start_gate: Event, queue: LooperQueue):
         """

@@ -11,7 +11,7 @@
 """
 
 __author__ = "Myron Walker"
-__copyright__ = "Copyright 2020, Myron W Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
@@ -196,6 +196,12 @@ def format_exception(ex_inst: BaseException):
 
     return exmsg_lines
 
+
+class AbstractMethodError(RuntimeError):
+    """
+        This error is raised when an abstract method has been called.
+    """
+
 class ConfigurationError(BaseException):
     """
         The base error object for errors that indicate that there is an issue related
@@ -207,9 +213,39 @@ class InvalidConfigurationError(ConfigurationError):
         This error is raised when an IntegrationCoupling object has been passed invalid configuration parameters.
     """
 
+class LooperError(RuntimeError):
+    """
+        This error is raised when an error occurs with the use of the :class:`LooperPool` or
+        :class:`Looper` objects.
+    """
+
+class LooperQueueShutdownError(LooperError):
+    """
+        This error is raised when work is being queued on a :class:`LooperQueue` thaat has
+        been shutdown and when a worker thread is attempting to wait for work on an empty
+        queue.
+    """
+
 class MissingConfigurationError(ConfigurationError):
     """
         This error is raised when an IntegrationCoupling object is missing required configuration parameters.
+    """
+
+
+class NotOverloadedError(RuntimeError):
+    """
+        This error is raised when a method that must be overloaded has not been overridden.
+    """
+
+
+class NotSupportedError(RuntimeError):
+    """
+        This error is raised when a method that must be overloaded has not been overridden.
+    """
+
+class ProtocolError(RuntimeError):
+    """
+        This error is raised when a communications protocol encounters an error.
     """
 
 class SemanticError(BaseException):

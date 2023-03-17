@@ -72,6 +72,8 @@ class ContextPaths(str, Enum):
 
     LOGGING_LEVEL_CONSOLE = "/configuration/logging/levels/console"
     LOGGING_LEVEL_LOGFILE = "/configuration/logging/levels/logfile"
+    LOGGING_LOGNAME = "/configuration/logging/logname"
+    LOGGING_BRANCHED = "/configuration/logging/branched"
 
     JOB_INITIATOR = "/environment/job/initiator"
     JOB_LABEL = "/environment/job/label"

@@ -16,8 +16,6 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import Union
-
 
 import fnmatch
 import logging
@@ -28,7 +26,7 @@ import traceback
 
 
 from mojo.xmods.xlogging.levels import LogLevel
-from mojo.xmods.xcollections.context import Context
+from mojo.xmods.xcollections.context import Context, ContextPaths
 
 
 # Start Logging to Standard Out.  We need to make sure it is initialized to something as early as possible,
@@ -59,7 +57,7 @@ def format_log_section_header(title):
 OTHER_LOGGER_FILTERS = []
 
 
-class AKitLogFormatter(logging.Formatter):
+class LogFormatter(logging.Formatter):
     """
     Formatter instances are used to convert a LogRecord to text.
     Formatters need to know how a LogRecord is constructed. They are
@@ -315,7 +313,7 @@ class LoggingDefaults:
 
 
 
-class AKitLoggerWrapper:
+class LoggerWrapper:
     """
         We utilize a log wrapper so we can re-initialize logging and switch out the logger
         without invalidating references to the logger that we have given out.
@@ -514,25 +512,18 @@ def logging_initialize():
 
         ctx = Context()
 
-        env = ctx.lookup("/environment")
-        conf = ctx.lookup("/configuration")
-        logging_conf = conf["logging"]
+        consolelevel = ctx.lookup(ContextPaths.LOGGING_LEVEL_CONSOLE, "INFO")
+        logfilelevel = ctx.lookup(ContextPaths.LOGGING_LEVEL_LOGFILE, "DEBUG")
 
-        consolelevel = ctx.lookup("/configuration/logging/console", "INFO")
-        logfilelevel = ctx.lookup("/configuration/logging/console", "DEBUG")
-
-        logname_template = ctx.lookup("/configuration/logging/logname", "{jobtype}.log")
-        jobtype = ctx.lookup("/environment/job/type", "application")
+        logname_template = ctx.lookup(ContextPaths.LOGGING_LOGNAME, "{jobtype}.log")
+        jobtype = ctx.lookup(ContextPaths.JOB_TYPE, "application")
         logname = logname_template.format(jobtype=jobtype)
 
-        output_directory = env["output_directory"]
+        output_directory = ctx.lookup(ContextPaths.OUTPUT_DIRECTORY)
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        log_branches = []
-        if "branched" in logging_conf:
-            log_branches = logging_conf["branched"]
-
+        log_branches = ctx.lookup(ContextPaths.LOGGING_BRANCHED, [])
 
         # Setup the log files
         _reinitialize_logging(consolelevel, logfilelevel, output_directory, logname, log_branches)
@@ -621,7 +612,7 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
 
     # Setup the debug logfile
     base_handler = LoggingDefaults.DefaultFileLoggingHandler(debug_logfilename)
-    base_handler.setFormatter(AKitLogFormatter(DEFAULT_LOGFILE_FORMAT))
+    base_handler.setFormatter(LogFormatter(DEFAULT_LOGFILE_FORMAT))
     base_handler.setLevel(logging.NOTSET)
     root_logger.addHandler(base_handler)
 
@@ -629,7 +620,7 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     # need to add the other log handler before adding
     # the relevant log handler
     other_handler = LoggingDefaults.DefaultFileLoggingHandler(other_logfilename)
-    other_handler.setFormatter(AKitLogFormatter(DEFAULT_LOGFILE_FORMAT))
+    other_handler.setFormatter(LogFormatter(DEFAULT_LOGFILE_FORMAT))
     other_handler.setLevel(logfilelevel)
     for other_expr in OTHER_LOGGER_FILTERS:
         other_handler.addFilter(OtherFilter(other_expr))
@@ -639,7 +630,7 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     # log entries from loggers that satisified a relevant
     # logger name prefix match
     rel_handler = LoggingDefaults.DefaultFileLoggingHandler(rel_logfilename)
-    rel_handler.setFormatter(AKitLogFormatter(DEFAULT_LOGFILE_FORMAT))
+    rel_handler.setFormatter(LogFormatter(DEFAULT_LOGFILE_FORMAT))
     rel_handler.setLevel(logfilelevel)
     rel_handler.addFilter(RelevantFilter())
     root_logger.addHandler(rel_handler)
