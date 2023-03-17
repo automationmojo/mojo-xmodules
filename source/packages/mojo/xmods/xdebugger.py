@@ -8,20 +8,20 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import inspect
+import logging
 import threading
 import time
 
-from akit.environment.variables import AKIT_VARIABLES
-from akit.xlogging.foundations import getAutomatonKitLogger
-from akit.wellknownports import PORT_DEBUGPY_ASSISTANT
+from mojo.xmods.xcollections.context import Context
 
-logger = getAutomatonKitLogger()
+logger = logging.getLogger()
 
 class DEBUGGER:
     PDB = 'pdb'
     DEBUGPY = 'debugpy'
 
 DEFAULT_DEBUG_PORT = 5678
+PORT_DEBUGPY_ASSISTANT = 5679
 
 class WELLKNOWN_BREAKPOINTS:
     TEST_DISCOVERY = "test-discovery"
@@ -37,8 +37,10 @@ def in_vscode_debugger():
 
 def debugger_wellknown_breakpoint_entry(breakpoint_name: str):
 
-    debugger = AKIT_VARIABLES.AKIT_DEBUGGER
-    breakpoints = AKIT_VARIABLES.AKIT_BREAKPOINTS
+    ctx = Context()
+
+    debugger = ctx.lookup("/configuration/breakpoints", None)
+    breakpoints = ctx.lookup("/configuration/debugger", DEBUGGER.DEBUGPY)
 
     if breakpoints is not None:
         if breakpoint_name in breakpoints:
@@ -57,12 +59,15 @@ def debugger_wellknown_breakpoint_entry(breakpoint_name: str):
                     debugpy.listen(("0.0.0.0", DEFAULT_DEBUG_PORT))
                     debugpy.wait_for_client()
                 debugpy.breakpoint()
+
     return
 
 def debugger_wellknown_breakpoint_code_append(breakpoint_name: str, code_lines: list, current_indent: str):
 
-    debugger = AKIT_VARIABLES.AKIT_DEBUGGER
-    breakpoints = AKIT_VARIABLES.AKIT_BREAKPOINTS
+    ctx = Context()
+
+    debugger = ctx.lookup("/configuration/breakpoints", None)
+    breakpoints = ctx.lookup("/configuration/debugger", DEBUGGER.DEBUGPY)
 
     if breakpoints is not None:
         if breakpoint_name in breakpoints:

@@ -20,9 +20,10 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+
+import logging
 import os
 import threading
-
 import uuid
 
 from datetime import datetime, timedelta
@@ -32,11 +33,9 @@ from mojo.waiting.waitmodel import TimeoutContext
 from mojo.xmods.xcollections.helpers import insert_into_ordered_list_ascending
 from mojo.xmods.xformatting import split_and_indent_lines
 
-from mojo.xmods.xlogging.foundations import getAutomatonKitLogger
-
 DEFAULT_MONITORED_SCOPE_NOTIFY_DELAY = timedelta(seconds=60)
 
-logger = getAutomatonKitLogger()
+logger = logging.getLogger()
 
 class MonitoredScope:
     """

@@ -671,33 +671,8 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
             errmsg = traceback.format_exc()
             root_logger.error(errmsg)
 
-    akit_logger = getAutomatonKitLogger()
-    akit_logger.section("Logging Initialized")
+    logger = logging.getLogger()
+    logger.section("Logging Initialized")
 
     return
 
-
-akit_logger_table = {}
-
-
-def getAutomatonKitLogger(logger_name: str=None) -> AKitLoggerWrapper:
-    """
-        Gets an automation kit logger by name. AutomationKit loggers are different
-        in that they are a logger wrapper which means the characteristics of the loggers
-        can be changed latter without corrupting any previous references handed out to
-        any particular loggers.
-        :param logger_name: The name of the logger to obtain. The default is the AutomationKit logger.
-    """
-    global akit_logger_table
-
-    if logger_name is None:
-        logger_name = DEFAULT_LOGGER_NAME
-
-    logger = None
-
-    if logger_name in akit_logger_table:
-        logger = akit_logger_table[logger_name]
-    else:
-        logger = AKitLoggerWrapper(logging.getLogger(logger_name))
-
-    return logger
