@@ -1,5 +1,5 @@
 """
-.. module:: xtime
+.. module:: xdatetime
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module which contains framework time related functions which extend the functionality to
                the python :module:`time` and  :module:`datetime` modules.

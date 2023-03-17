@@ -25,7 +25,7 @@ import inspect
 import os
 import traceback
 
-from mojo.xmodules.xformatting import split_and_indent_lines
+from mojo.xmods.xformatting import split_and_indent_lines
 
 MEMBER_TRACE_POLICY = "__traceback_format_policy__"
 

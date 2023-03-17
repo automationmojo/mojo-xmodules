@@ -1,6 +1,6 @@
 import unittest
 
-from mojo.xmodules.xexceptions import (
+from mojo.xmods.xexceptions import (
     enhance_exception,
     format_exception
 )
