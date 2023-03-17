@@ -13,7 +13,7 @@ import bisect
 
 from enum import Enum
 
-from akit.exceptions import AKitSemanticError
+from mojo.xmods.xexceptions import SemanticError
 
 class FeatureTagNodeMeta(type):
 
@@ -61,7 +61,7 @@ class FeatureAttachedObject:
                 errmsg = "The 'features_to_add' parameter must contain items of type 'FeatureTag' or 'str'. item={}".format(
                     repr(first_item)
                 )
-                raise AKitSemanticError(errmsg)
+                raise SemanticError(errmsg)
 
         return
     
@@ -71,7 +71,7 @@ class FeatureAttachedObject:
 
         if len(feature_list) == 0:
             errmsg = "has_all_features: 'feature_list' cannot be empty."
-            raise AKitSemanticError(errmsg)
+            raise SemanticError(errmsg)
 
         first_item = feature_list[0]
         if isinstance(first_item, str):
@@ -92,7 +92,7 @@ class FeatureAttachedObject:
             errmsg = "The 'feature_list' parameter must contain items of type 'FeatureTag' or 'str'. item={}".format(
                 repr(first_item)
             )
-            raise AKitSemanticError(errmsg)
+            raise SemanticError(errmsg)
 
         return has_all
 
@@ -102,7 +102,7 @@ class FeatureAttachedObject:
 
         if len(feature_list) == 0:
             errmsg = "has_all_features: 'feature_list' cannot be empty."
-            raise AKitSemanticError(errmsg)
+            raise SemanticError(errmsg)
 
         first_item = feature_list[0]
         if isinstance(first_item, str):
@@ -125,7 +125,7 @@ class FeatureAttachedObject:
             errmsg = "The 'feature_list' parameter must contain items of type 'FeatureTag' or 'str'. item={}".format(
                 repr(first_item)
             )
-            raise AKitSemanticError(errmsg)
+            raise SemanticError(errmsg)
 
         return has_any
 
@@ -140,7 +140,7 @@ class FeatureAttachedObject:
             errmsg = "The 'feature' parameter must be of type 'FeatureTag' or 'str'. item={}".format(
                 repr(feature)
             )
-            raise AKitSemanticError(errmsg)
+            raise SemanticError(errmsg)
 
         hasfeature = fid in self._feature_tags
 

@@ -12,7 +12,7 @@ import logging
 import threading
 import time
 
-from mojo.xmods.xcollections.context import Context
+from mojo.xmods.xcollections.context import Context, ContextPaths
 
 logger = logging.getLogger()
 
@@ -39,8 +39,8 @@ def debugger_wellknown_breakpoint_entry(breakpoint_name: str):
 
     ctx = Context()
 
-    debugger = ctx.lookup("/configuration/breakpoints", None)
-    breakpoints = ctx.lookup("/configuration/debugger", DEBUGGER.DEBUGPY)
+    debugger = ctx.lookup(ContextPaths.DEBUG_BREAKPOINTS, None)
+    breakpoints = ctx.lookup(ContextPaths.DEBUG_DEBUGGER, DEBUGGER.DEBUGPY)
 
     if breakpoints is not None:
         if breakpoint_name in breakpoints:
@@ -66,8 +66,8 @@ def debugger_wellknown_breakpoint_code_append(breakpoint_name: str, code_lines: 
 
     ctx = Context()
 
-    debugger = ctx.lookup("/configuration/breakpoints", None)
-    breakpoints = ctx.lookup("/configuration/debugger", DEBUGGER.DEBUGPY)
+    debugger = ctx.lookup(ContextPaths.DEBUG_BREAKPOINTS, None)
+    breakpoints = ctx.lookup(ContextPaths.DEBUG_DEBUGGER, DEBUGGER.DEBUGPY)
 
     if breakpoints is not None:
         if breakpoint_name in breakpoints:
