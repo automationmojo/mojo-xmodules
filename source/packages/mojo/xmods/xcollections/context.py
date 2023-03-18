@@ -44,6 +44,7 @@ def validate_path_name(path: str) -> List[str]:
 
     return parts
 
+
 class ContextPaths(str, Enum):
     BUILD_BRANCH = "/environment/build/branch"
     BUILD_FLAVOR = "/environment/build/flavor"
@@ -62,13 +63,13 @@ class ContextPaths(str, Enum):
     
     DATABASES = "/configuration/databases"
 
-    FILE_RESULTS_TEMPLATE = "/configuration/results-configuration/html-template"
+    DEBUG_BREAKPOINTS = "/configuration/breakpoints"
+    DEBUG_DEBUGGER = "/configuration/debugger"
 
     DIR_RESULTS_RESOURCE_DEST = "/configuration/results-configuration/static-resource-dest-dir"
     DIR_RESULTS_RESOURCE_SRC = "/configuration/results-configuration/static-resource-src-dir"
 
-    DEBUG_BREAKPOINTS = "/configuration/breakpoints"
-    DEBUG_DEBUGGER = "/configuration/debugger"
+    FILE_RESULTS_TEMPLATE = "/configuration/results-configuration/html-template"
 
     LOGGING_LEVEL_CONSOLE = "/configuration/logging/levels/console"
     LOGGING_LEVEL_LOGFILE = "/configuration/logging/levels/logfile"
@@ -82,10 +83,17 @@ class ContextPaths(str, Enum):
     JOB_TYPE = "/environment/job/type"
 
     OUTPUT_DIRECTORY = "/environment/output_directory"
+
+    RESULT_PATH_FOR_CONSOLE = "/configuration/paths/results/console"
+    RESULT_PATH_FOR_TESTS = "/configuration/paths/results/tests"
+
     RUNID = "/environment/runid"
     STARTTIME = "/environment/starttime"
 
     SKIPPED_DEVICES = "/configuration/skip-devices"
+
+    TEMPLATE_PATH_FOR_CONSOLE = "/configuration/paths-templates/results/console"
+    TEMPLATE_PATH_FOR_TESTS = "/configuration/paths-templates/results/tests"
 
     TESTROOT = "/configuration/testroot"
 

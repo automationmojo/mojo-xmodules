@@ -26,7 +26,7 @@ import weakref
 from datetime import datetime
 from mojo.xmods.xexceptions import NotOverloadedError
 
-from mojo.xmods.xeventing.eventedvariable import EventedVariable
+from mojo.xmods.eventing.eventedvariable import EventedVariable
 
 class EventedVariableSink:
     """

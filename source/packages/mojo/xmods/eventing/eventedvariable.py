@@ -24,13 +24,13 @@ import weakref
 
 from datetime import datetime, timedelta
 
-from mojo.xmods.xeventing.enumerations import EventedVariableState
+from mojo.xmods.eventing.enumerations import EventedVariableState
 
 EVENTVAR_WAIT_RETRY_INTERVAL = 1
 EVENTVAR_WAIT_TIMEOUT = 60
 
 if TYPE_CHECKING:
-    from mojo.xmods.xeventing.eventedvariablesink import EventedVariableSink
+    from mojo.xmods.eventing.eventedvariablesink import EventedVariableSink
 
 class EventedVariable:
     """
