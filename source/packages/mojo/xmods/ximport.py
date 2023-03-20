@@ -1,8 +1,8 @@
 """
-.. module:: compat
+.. module:: ximport
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module that contains functions that are utilized to provide compatibility across different
-               operating system platforms and python version.
+    :synopsis: Module that contains functions that are utilized to support dynamic
+               importing of modules based module name and directly from a file.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """

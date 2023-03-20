@@ -19,7 +19,7 @@ __license__ = "MIT"
 
 from typing import List, Protocol, Type
 
-from mojo.xmods.xcollections.superfactory import ExtensionPointsFactory
+from mojo.xmods.extension.configured import ExtensionPointsFactory
 
 class LandscapingExtentionPoints(Protocol):
 

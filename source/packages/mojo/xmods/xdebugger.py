@@ -1,3 +1,16 @@
+"""
+.. module:: xdebugger
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module which contains functions for supporting various debug scenarios and for
+               supporting wellknow breakpoints.
+
+.. note:: The modules that are named `xsomething` like this module are prefixed with an `x` character to
+          indicate they extend the functionality of a base python module and the `x` is pre-pended to
+          prevent module name collisions with python modules.
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+"""
+
 __author__ = "Myron Walker"
 __copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []

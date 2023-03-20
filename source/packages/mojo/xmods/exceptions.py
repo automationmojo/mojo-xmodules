@@ -1,11 +1,8 @@
 """
-.. module:: xexceptions
+.. module:: exceptions
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module which contains functions for enhancing and formatting exceptions.
-
-.. note:: The modules that are named `xsomething` like this module are prefixed with an `x` character to
-          indicate they extend the functionality of a base python module and the `x` is pre-pended to
-          prevent module name collisions with python modules.
+    :synopsis: Module which contains functions for enhancing and formatting exceptions and
+               common exception types not provided by python.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """

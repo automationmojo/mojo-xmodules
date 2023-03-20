@@ -26,6 +26,7 @@ import weakref
 from datetime import datetime
 
 from mojo.xmods.credentials.basecredential import BaseCredential
+from mojo.xmods.exceptions import SemanticError
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.xfeature import FeatureAttachedObject
 from mojo.xmods.xthreading.lockscopes import LockedScope, UnLockedScope
@@ -193,7 +194,12 @@ class LandscapeDevice(FeatureAttachedObject):
         """
             Method called by device coordinators to attach a device extension to a :class:`LandscapeDevice`.
         """
-        setattr(self, "_" + ext_type, extension)
+        if ext_type not in self._extensions:
+            self._extensions[ext_type] = extension
+        else:
+            errmsg = f"attach_extension: called for pre-existing extension type '{ext_type}'."
+            raise SemanticError(errmsg)
+
         return
 
     def checkout(self) -> None:

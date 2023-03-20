@@ -16,9 +16,9 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import List, Protocol, Type
+from typing import List, Type
 
-from typing import Any, Callable, Generator, List, Union, Type
+from typing import Callable, Generator, List, Union, Type
 
 import inspect
 import logging
