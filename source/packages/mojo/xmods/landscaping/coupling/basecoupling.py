@@ -1,7 +1,7 @@
 """
-.. module:: ilandscapedevice
+.. module:: basecoupling
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module that contains protocol for a Landscape device
+    :synopsis: Module containing the :class:`BaseCoupling` class and associated reflection methods.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
@@ -15,10 +15,14 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Any, List, Protocol
+import logging
 
-class ILandscapeDevice(Protocol):
+from mojo.xmods.xcollections.context import ContextUser
+
+class BaseCoupling(ContextUser):
     """
-        The ILandscapeDevice interface is used to provide a common interface for performing
-        basic interop with a landscape device.
+        The :class:`BaseCoupling` object serves as a base type to detect coupling based
+        resources.
     """
+
+    logger = logging.getLogger()

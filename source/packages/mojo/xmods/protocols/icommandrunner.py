@@ -12,13 +12,13 @@ from typing import Protocol, Optional, Sequence, Tuple, Union
 from mojo.xmods.aspects import AspectsCmd
 
 
-class ICommandRunner(Protocol):
+class ICommandContext(Protocol):
     """
-        The ICommandRunner interface is used to provide a common interface for both SSH and Serial command runners.
+        The ICommandContext interface is used to provide a common interface for both SSH and Serial command runners.
     """
 
-    def open_session(self, primitive: bool = False, ssh_session: Optional["ICommandRunner"] = None,
-                     aspects: Optional[AspectsCmd] = None) -> "ICommandRunner": # pylint: disable=arguments-differ
+    def open_session(self, primitive: bool = False, ssh_session: Optional["ICommandContext"] = None,
+                     aspects: Optional[AspectsCmd] = None) -> "ICommandContext": # pylint: disable=arguments-differ
         """
             Provies a mechanism to create a :class:`SshSession` object with derived settings.  This method allows various parameters for the session
             to be overridden.  This allows for the performing of a series of SSH operations under a particular set of shared settings and or credentials.

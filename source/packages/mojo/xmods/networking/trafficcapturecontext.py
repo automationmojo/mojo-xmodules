@@ -15,7 +15,9 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Callable
+from typing import Callable, Type
+
+from types import TracebackType
 
 import threading
 import weakref
@@ -31,10 +33,10 @@ class TrafficCaptureContext:
         self._captures = []
         return
 
-    def __enter__(self):
+    def __enter__(self) -> "TrafficCaptureContext":
         return self
     
-    def __exit__(self, ex_type, ex_inst, ex_tb):
+    def __exit__(self, ex_type: Type[BaseException], ex_inst: BaseException, ex_tb: TracebackType) -> bool:
         self._destroy_method(self)
         return False
 

@@ -46,21 +46,34 @@ def validate_path_name(path: str) -> List[str]:
 
 
 class ContextPaths(str, Enum):
+    BEHAVIORS_LOG_CONFIGURATION = "/environment/behaviors/log-configuration-declarations"
+
     BUILD_BRANCH = "/environment/build/branch"
     BUILD_FLAVOR = "/environment/build/flavor"
     BUILD_NAME = "/environment/build/name"
     BUILD_URL = "/environment/build/url"
 
-    CONFIG_FILE_CREDENTIALS = "/configuration/paths/credentials"
-    CONFIG_FILE_LANDSCAPE = "/configuration/paths/landscape"
-    CONFIG_FILE_LANDSCAPE_NAME = "/configuration/paths/landscape-name"
-    CONFIG_FILE_RUNTIME = "/configuration/paths/runtime"
-    CONFIG_FILE_RUNTIME_NAME = "/configuration/paths/runtime-name"
-    CONFIG_FILE_TOPOLOGY = "/configuration/paths/topology"
-    CONFIG_FILE_TOPOLOGY_NAME = "/configuration/paths/topology-name"
-    CONFIG_FILE_USER = "/configuration/paths/user"
-    CONFIG_SEARCH_PATH_RUNTIME = "/configuration/paths/runtime-search-path"
+    CONFIG_CREDENTIALS = "/configuration/credentials"
+    CONFIG_LANDSCAPE = "/configuration/landscape"
+    CONFIG_RUNTIME = "/configuration/runtime"
+    CONFIG_TOPOLOGY = "/configuration/topology"
     
+    CONFIG_CREDENTIAL_NAMES = "/environment/credential/names"
+    CONFIG_CREDENTIAL_FILES = "/environment/credential/files"
+    CONFIG_CREDENTIAL_SEARCH_PATHS = "/environment/credential/search-paths"
+
+    CONFIG_LANDSCAPE_NAMES = "/environment/landscape/names"
+    CONFIG_LANDSCAPE_FILES = "/environment/landscape/files"
+    CONFIG_LANDSCAPE_SEARCH_PATHS = "/environment/landscape/search-paths"
+
+    CONFIG_RUNTIME_NAMES = "/environment/runtime/names"
+    CONFIG_RUNTIME_FILES = "/environment/runtime/files"
+    CONFIG_RUNTIME_SEARCH_PATHS = "/environment/runtime/search-paths"
+
+    CONFIG_TOPOLOGY_NAMES = "/environment/topology/names"
+    CONFIG_TOPOLOGY_FILES = "/environment/topology/files"
+    CONFIG_TOPOLOGY_SEARCH_PATHS = "/environment/topology/search-paths"
+
     DATABASES = "/configuration/databases"
 
     DEBUG_BREAKPOINTS = "/configuration/breakpoints"

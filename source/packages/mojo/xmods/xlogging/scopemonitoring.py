@@ -20,6 +20,9 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Type
+
+from types import TracebackType
 
 import logging
 import os
@@ -69,7 +72,7 @@ class MonitoredScope:
         self._triggered = False
         return
 
-    def __enter__(self):
+    def __enter__(self) -> "MonitoredScope":
         """
         """
         global global_scope_monitor
@@ -83,7 +86,7 @@ class MonitoredScope:
 
         return self
 
-    def __exit__(self, ex_type, ex_inst, ex_tb):
+    def __exit__(self, ex_type: Type[BaseException], ex_inst: BaseException, ex_tb: TracebackType) -> bool:
         """
         """
         self._exited = True
