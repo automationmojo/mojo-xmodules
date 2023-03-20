@@ -1,5 +1,5 @@
 
-from typing import Dict, Generator, Union
+from typing import Dict, Generator, Optional, Union
 
 import logging
 import threading
@@ -10,11 +10,13 @@ from mojo.xmods.landscaping.layers.landscapeconfigurationlayer import LandscapeC
 from mojo.xmods.landscaping.layers.landscapeinstallationlayer import LandscapeInstallationLayer
 from mojo.xmods.landscaping.layers.landscapeintegrationlayer import LandscapeIntegrationLayer
 from mojo.xmods.landscaping.layers.landscapeoperationallayer import LandscapeOperationalLayer
-from mojo.xmods.landscaping.layers.topologydescriptionlayer import TopologyDescriptionLayer
-from mojo.xmods.landscaping.landscapeoperationsparams import (
-    LandscapeOperationsParams,
-    DEFAULT_LANDSCAPE_OPERATIONS_PARAMS
+from mojo.xmods.landscaping.layers.topologyconfigurationlayer import TopologyConfigurationLayer
+
+from mojo.xmods.landscaping.landscapeparameters import (
+    LandscapeActivationParams,
+    DEFAULT_LANDSCAPE_ACTIVATION_PARAMS,
 )
+
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
 
 from mojo.xmods.xthreading.lockscopes import LockedScope, UnLockedScope
@@ -51,6 +53,7 @@ class Landscape:
     landscape_lock = threading.RLock()
 
     landscape_type = None
+    interactive_mode: bool = False
     instance = None
     instance_initialized = False
     configuring_thread_id = None
@@ -63,8 +66,7 @@ class Landscape:
         """
             Constructs new instances of the Landscape object from the :class:`Landscape`
             type or from a derived type that is found in the module specified in the
-            :module:`akit.environment.variables` module or by setting the
-            'AKIT_CONFIG_EXTENSION_POINTS_MODULE' environment variable and overloading
+            'MJR_CONFIG_EXTENSION_POINTS_MODULE' environment variable and overloading
             the 'get_landscape_type' method.
         """
 
@@ -94,7 +96,7 @@ class Landscape:
                     self._layer_configuration: LandscapeConfigurationLayer = None
                     self._layer_integration: LandscapeIntegrationLayer = None
                     self._layer_operational: LandscapeOperationalLayer = None
-                    self._topology_description: TopologyDescriptionLayer = None
+                    self._topology_description: TopologyConfigurationLayer = None
         
                     self._landscape_configure_complete = False
                     self._landscape_integrate_complete = False
@@ -163,7 +165,7 @@ class Landscape:
 
         return
     
-    def activate_integration(self) -> None:
+    def activate_integration(self, *, activation_params: LandscapeActivationParams=DEFAULT_LANDSCAPE_ACTIVATION_PARAMS) -> None:
         """
             Called in order to mark the configuration process as complete in order
             for the activation stage to begin and to make the activation level methods
@@ -203,7 +205,7 @@ class Landscape:
 
         return
 
-    def activate_operations(self, *, operations_params: LandscapeOperationsParams=DEFAULT_LANDSCAPE_OPERATIONS_PARAMS) -> None:
+    def activate_operations(self, *, activation_params: LandscapeActivationParams=DEFAULT_LANDSCAPE_ACTIVATION_PARAMS) -> None:
         
         thisType = type(self)
 
@@ -218,13 +220,13 @@ class Landscape:
                 # exit without the landscape initialization being finished.
                 with self.begin_unlocked_landscape_scope() as ulkscope:
 
-                    self._activate_coordinators(operations_params)
+                    self._activate_coordinators(activation_params)
 
-                    self._establish_connectivity(operations_params)
+                    self._establish_connectivity(activation_params)
 
-                    self._validate_features(operations_params)
+                    self._validate_features(activation_params)
 
-                    self._validate_topology(operations_params)
+                    self._validate_topology(activation_params)
 
                     self._operational_gate.set()
 
@@ -263,7 +265,7 @@ class Landscape:
         self._layer_configuration = LandscapeConfigurationLayer(self)
         self._layer_integration = LandscapeIntegrationLayer(self)
         self._layer_operational = LandscapeOperationalLayer(self)
-        self._topology_description = TopologyDescriptionLayer(self)
+        self._topology_description = TopologyConfigurationLayer(self)
         return
 
     def _initialize_devices(self):
@@ -279,24 +281,61 @@ class Landscape:
 
         return
 
-    def _activate_coordinators(operations_params: LandscapeOperationsParams):
+    def _activate_coordinators(activation_params: LandscapeActivationParams):
 
         return
     
-    def _establish_connectivity(operations_params: LandscapeOperationsParams):
+    def _establish_connectivity(activation_params: LandscapeActivationParams):
         
         return
     
-    def _validate_features(operations_params: LandscapeOperationsParams):
+    def _validate_features(activation_params: LandscapeActivationParams):
 
-        if operations_params.validate_features:
+        if activation_params.validate_features:
             pass
 
         return
     
-    def _validate_topology(operations_params: LandscapeOperationsParams):
+    def _validate_topology(activation_params: LandscapeActivationParams):
 
-        if operations_params.validate_topology:
+        if activation_params.validate_topology:
             pass
 
         return
+
+def startup_landscape(activation_params: LandscapeActivationParams=DEFAULT_LANDSCAPE_ACTIVATION_PARAMS,
+        interactive: Optional[bool]=None) -> Landscape:
+    """
+        Statup the landscape outside of a testrun.
+    """
+
+    from mojo.xmods.wellknown.singletons import LandscapeSingleton
+
+    interactive_mode = False
+    if interactive is not None:
+        interactive_mode = interactive
+
+    # ==================== Landscape Initialization =====================
+    # The first stage of standing up the test landscape is to create and
+    # initialize the Landscape object.  If more than one thread calls the
+    # constructor of the Landscape, object, the other thread will block
+    # until the first called has initialized the Landscape and released
+    # the gate blocking other callers.
+
+    # When the landscape object is first created, it spins up in configuration
+    # mode, which allows consumers consume and query the landscape configuration
+    # information.
+    lscape = LandscapeSingleton()
+    lscape.interactive_mode = interactive_mode
+
+    lscape.activate_configuration()
+
+    # After all the coordinators have had an opportunity to register with the
+    # 'landscape' object, transition the landscape to the activated 'phase'
+    lscape.activate_integration(activation_params=activation_params)
+
+    # Finalize the activation process and transition the landscape
+    # to fully active where all APIs are available.
+    lscape.activate_operations(activation_params=activation_params)
+
+    return lscape

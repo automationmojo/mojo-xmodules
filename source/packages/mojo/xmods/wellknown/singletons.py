@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 from threading import RLock
 
-from mojo.xmods.xcollections.superfactory import SuperFactory
+from mojo.xmods.extension.configured import SuperFactory
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
@@ -55,7 +55,7 @@ def LandscapeSingleton() -> "Landscape":
 
         SINGLETON_LOCK.acquire()
         try:
-            from mojo.xmods.extensionpoints import LandscapingExtentionPoints
+            from mojo.xmods.landscaping.extensionpoints import LandscapingExtentionPoints
 
             if LANDSCAPE_SINGLETON is None:
                 LandscapeType = super_factory.get_override_types_by_order(

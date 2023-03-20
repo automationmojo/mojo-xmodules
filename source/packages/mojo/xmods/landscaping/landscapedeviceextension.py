@@ -34,6 +34,7 @@ class LandscapeDeviceExtension:
         device connectivity for the UPnp, SSH and Other protocols.
     """
 
+    logger = logging.getLogger()
 
     def __init__(self):
         """
@@ -45,7 +46,6 @@ class LandscapeDeviceExtension:
         self._extid = None
         self._location = None
 
-        self._logger = logging.getLogger()
         return
 
     @property

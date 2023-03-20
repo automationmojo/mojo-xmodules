@@ -18,11 +18,9 @@ __license__ = "MIT"
 
 from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
-import copy
 import json
 import logging
 import os
-import shutil
 import traceback
 import yaml
 
@@ -296,7 +294,7 @@ class LandscapeConfigurationLayer(LandscapeLayerBase):
 
         return errors, warnings
     
-    def validate_runtime(self, runtime_info) -> Tuple[List[str], List[str]]:
+    def validate_runtime(self, runtime_info: dict) -> Tuple[List[str], List[str]]:
         """
             Validates the runtime configuration.
         """
@@ -305,7 +303,7 @@ class LandscapeConfigurationLayer(LandscapeLayerBase):
 
         return errors, warnings
 
-    def validate_topology(self, topology_info) -> Tuple[List[str], List[str]]:
+    def validate_topology(self, topology_info: dict) -> Tuple[List[str], List[str]]:
         """
             Validates the topology configuration.
         """

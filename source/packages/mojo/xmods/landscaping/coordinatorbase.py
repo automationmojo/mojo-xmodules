@@ -8,7 +8,7 @@
 """
 
 __author__ = "Myron Walker"
-__copyright__ = "Copyright 2020, Myron W Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
@@ -75,9 +75,10 @@ class CoordinatorBase:
 
             self._cl_children = {}
 
+            self._expected_devices = []
             self._found_devices = []
-            self._available_devices = []
-            self._unavailable_devices = []
+            self._matched_devices = []
+            self._missing_devices = []
 
             self._coord_config = coord_config
 
@@ -91,13 +92,6 @@ class CoordinatorBase:
         """
         # pylint: disable=no-self-use
         raise NotOverloadedError("_initialize: must be overloaded by derived coordinator classes")
-
-    @property
-    def available_devices(self):
-        """
-            The devices that the coordinator found to be available during startup.
-        """
-        return self._available_devices
 
     @property
     def children(self) -> List[LandscapeDevice]:
@@ -137,12 +131,19 @@ class CoordinatorBase:
         """
 
     @property
-    def landscape(self):
+    def landscape(self) -> "Landscape":
         """
             Returns a hard reference to the Landscape singleton instance.
         """
         lscape = self._lscape_ref()
         return lscape
+
+    @property
+    def expected_devices(self):
+        """
+            The devices that were expected to be discovered by the coordinators discovery protocol.
+        """
+        return self._expected_devices
 
     @property
     def found_devices(self):
@@ -152,11 +153,19 @@ class CoordinatorBase:
         return self._found_devices
 
     @property
-    def unavailable_devices(self):
+    def matched_devices(self):
         """
-            The devices that the coordinator found to be unavailable during startup.
+            The devices that the coordinator found during protocol discovery that matched corresponding
+            expected devices.
         """
-        return self._unavailable_devices
+        return self._matched_devices
+
+    @property
+    def missing_devices(self):
+        """
+            The devices that the coordinator found to be missing during startup.
+        """
+        return self._missing_devices
 
     def establish_presence(self):
         """

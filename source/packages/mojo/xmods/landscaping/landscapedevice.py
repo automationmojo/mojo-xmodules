@@ -16,7 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Callable, Dict, TYPE_CHECKING
+from typing import Callable, Dict, Union, TYPE_CHECKING
 
 import logging
 import os
@@ -74,6 +74,10 @@ class LandscapeDevice(FeatureAttachedObject):
 
         self._credentials = {}
 
+        self._configured_ipaddr = None
+        if "ipaddr" in device_config:
+            self._configured_ip = device_config["ipaddr"]
+
         if "credentials" in device_config:
             lscape_credentials = lscape.credentials
             for cred_key in device_config["credentials"]:
@@ -82,6 +86,10 @@ class LandscapeDevice(FeatureAttachedObject):
                     self._credentials[cred_key] = cred_info
 
         return
+
+    @property
+    def configured_ipaddr(self) -> Union[str, None]:
+        return self._configured_ip
 
     @property
     def contacted_first(self) -> datetime:
@@ -300,11 +308,15 @@ class LandscapeDevice(FeatureAttachedObject):
         return
 
     def _resolve_ipaddress(self) -> str:
+
         ipaddr = None
-        if self._device_type == "network/upnp" and self.upnp is not None:
-            ipaddr = self.upnp.IPAddress
-        elif self._device_type == "network/ssh" and self.ssh is not None:
-            ipaddr = self.ssh.ipaddr
+
+        if self._configured_ip is not None:
+            ipaddr = self._configured_ipaddr
+        else:
+            errmsg = f"_resolve_ipaddress: Unable to resolve IP address for dev {self}."
+            raise RuntimeError(errmsg)
+
         return ipaddr
 
     def _repr_html_(self) -> str:
@@ -323,7 +335,16 @@ class LandscapeDevice(FeatureAttachedObject):
 
         thisType = type(self)
 
-        ipaddr = self.ipaddr
+        ipaddr = "unknown"
+
+        # Note: We may not have an assigned IP address, a repr function
+        # should never raise an exception so guard against a RuntimeException
+        # being raised if we dont have an IP
+        try:
+            ipaddr = self._resolve_ipaddress()
+        except RuntimeError:
+            pass
+
         devstr = "<{} type={} identity={} ip={} >".format(thisType.__name__, self._device_type, self.identity, ipaddr)
 
         return devstr

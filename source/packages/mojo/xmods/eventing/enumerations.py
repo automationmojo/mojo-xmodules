@@ -1,9 +1,8 @@
 
 """
-.. module:: eventedvariablestate
+.. module:: enumerations
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the :class:`EventedVariableState` enumeration represents
-               the update status states of an evented variable.
+    :synopsis: Module containing enumerations used by eventing modules.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 

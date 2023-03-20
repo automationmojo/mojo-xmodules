@@ -10,7 +10,7 @@
 """
 
 __author__ = "Myron Walker"
-__copyright__ = "Copyright 2022, Myron W Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
@@ -24,8 +24,8 @@ import threading
 import weakref
 
 from datetime import datetime
-from mojo.xmods.exceptions import NotOverloadedError
 
+from mojo.xmods.exceptions import NotOverloadedError
 from mojo.xmods.eventing.eventedvariable import EventedVariable
 
 class EventedVariableSink:
