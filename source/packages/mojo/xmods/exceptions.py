@@ -243,11 +243,6 @@ class NotSupportedError(RuntimeError):
         This error is raised when a method that must be overloaded has not been overridden.
     """
 
-class ProtocolError(RuntimeError):
-    """
-        This error is raised when a communications protocol encounters an error.
-    """
-
 class SemanticError(BaseException):
     """
         The base error object for errors that indicate that there is an issue with

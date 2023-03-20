@@ -13,7 +13,7 @@ import os
 import yaml
 
 
-from mojo.xmods.xexceptions import ConfigurationError
+from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.xcollections.context import Context, ContextPaths
 
 from mojo.xmods.credentials.basiccredential import BasicCredential

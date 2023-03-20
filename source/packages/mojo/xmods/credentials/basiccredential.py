@@ -11,7 +11,7 @@ from typing import Optional
 
 import os
 
-from mojo.xmods.xexceptions import ConfigurationError
+from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.credentials.basecredential import BaseCredential
 
 class BasicCredential(BaseCredential):

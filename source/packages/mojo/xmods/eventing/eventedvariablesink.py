@@ -24,7 +24,7 @@ import threading
 import weakref
 
 from datetime import datetime
-from mojo.xmods.xexceptions import NotOverloadedError
+from mojo.xmods.exceptions import NotOverloadedError
 
 from mojo.xmods.eventing.eventedvariable import EventedVariable
 

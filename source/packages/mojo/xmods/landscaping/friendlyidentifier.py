@@ -22,7 +22,7 @@ from typing import Optional, Union
 
 import re
 
-from mojo.xmods.xexceptions import SemanticError
+from mojo.xmods.exceptions import SemanticError
 
 class FriendlyIdentifier:
 

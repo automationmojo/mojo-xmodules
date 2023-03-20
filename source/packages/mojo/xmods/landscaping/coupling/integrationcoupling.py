@@ -22,7 +22,7 @@ from typing import Any, Dict, List, Tuple, TypeVar
 import inspect
 
 from mojo.xmods.landscaping.coupling.basecoupling import BaseCoupling
-from mojo.xmods.xexceptions import NotOverloadedError
+from mojo.xmods.exceptions import NotOverloadedError
 from mojo.xmods.landscaping.landscape import Landscape
 
 

@@ -56,6 +56,7 @@ class Landscape:
     configuring_thread_id = None
 
     _configured_gate: threading.Event = threading.Event()
+    _integration_gate: threading.Event = None
     _operational_gate: threading.Event = None
 
     def __new__(cls):
@@ -143,10 +144,10 @@ class Landscape:
 
                     self._initialize_landscape()
 
+                    self._landscape_configure_complete = True
+
                     # Set the landscape_initialized even to allow other threads to use the APIs of the Landscape object
                     self._configured_gate.set()
-
-                    self._landscape_configure_complete = True
             else:
 
                 # Don't hold the landscape like while we wait for the
@@ -168,7 +169,38 @@ class Landscape:
             for the activation stage to begin and to make the activation level methods
             callable.
         """
-        self._landscape_integrate_complete = True
+        thisType = type(self)
+
+        with self.begin_locked_landscape_scope() as lkscope:
+
+            if thisType._integration_gate is None:
+                thisType._integration_gate = threading.Event()
+                thisType._integration_gate.clear()
+
+                # We don't need to hold the landscape lock while initializing
+                # the Landscape because no threads calling the constructor can
+                # exit without the landscape initialization being finished.
+                with self.begin_unlocked_landscape_scope() as ulkscope:
+
+                    #TODO: Add integration code here
+
+                    self._landscape_integrate_complete = True
+
+                    self._integration_gate.set()
+
+            else:
+
+                # Don't hold the landscape like while we wait for the
+                # landscape to be activated
+                with self.begin_unlocked_landscape_scope() as ulkscope:
+
+                    # Because the landscape is a global singleton and because
+                    # we were not the first thread to call the activate method,
+                    # wait for the first calling thread to finish activating the
+                    # Landscape before we return allowing other use of the Landscape
+                    # singleton
+                    self._integration_gate.wait()
+
         return
 
     def activate_operations(self, *, operations_params: LandscapeOperationsParams=DEFAULT_LANDSCAPE_OPERATIONS_PARAMS) -> None:
@@ -249,22 +281,10 @@ class Landscape:
 
     def _activate_coordinators(operations_params: LandscapeOperationsParams):
 
-        if "coordinator/serial" in self._integration_points_activated:
-            self._activate_serial_coordinator()
-        
-        if "coordinator/power" in self._integration_points_activated:
-            self._activate_power_coordinator()
-        
-        if "coordinator/upnp" in self._integration_points_activated:
-            coordinator_constructor = self._integration_points_activated["coordinator/upnp"]
-            self._activate_upnp_coordinator(coordinator_constructor)
-        
-        if "coordinator/ssh" in self._integration_points_activated:
-            coordinator_constructor = self._integration_points_activated["coordinator/ssh"]
-            self._activate_ssh_coordinator(coordinator_constructor)
         return
     
     def _establish_connectivity(operations_params: LandscapeOperationsParams):
+        
         return
     
     def _validate_features(operations_params: LandscapeOperationsParams):

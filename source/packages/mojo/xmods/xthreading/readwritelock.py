@@ -20,7 +20,7 @@ __license__ = "MIT"
 import threading
 import time
 
-from mojo.xmods.xexceptions import SemanticError
+from mojo.xmods.exceptions import SemanticError
 
 class ReadWriteLock:
     """

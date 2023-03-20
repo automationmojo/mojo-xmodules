@@ -29,7 +29,7 @@ import yaml
 from mojo.xmods.credentials.credentialmanager import CredentialManager
 from mojo.xmods.xcollections.context import Context, ContextPaths
 from mojo.xmods.xcollections.mergemap import MergeMap
-from mojo.xmods.xexceptions import ConfigurationError
+from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.xyaml import safe_load_yaml_files_as_mergemap
 
 from mojo.xmods.landscaping.layers.landscapelayerbase import LandscapeLayerBase

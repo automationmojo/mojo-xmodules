@@ -22,7 +22,7 @@ import logging
 import threading
 import weakref
 
-from mojo.xmods.xexceptions import NotOverloadedError
+from mojo.xmods.exceptions import NotOverloadedError
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.landscapedeviceextension import LandscapeDeviceExtension
 
