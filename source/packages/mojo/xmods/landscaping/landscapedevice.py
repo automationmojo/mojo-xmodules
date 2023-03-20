@@ -66,8 +66,7 @@ class LandscapeDevice(FeatureAttachedObject):
         self._is_watched = None
         self._is_isolated = None
 
-        self._power = None
-        self._serial = None
+        self._extensions: Dict[str, LandscapeDeviceExtension] = None
 
         self._table_for_match_callbacks = {}
         self._table_for_status_callbacks = {}
@@ -122,6 +121,11 @@ class LandscapeDevice(FeatureAttachedObject):
             A string representing the type of device.
         """
         return self._device_type
+
+    @property
+    def extensions(self) -> Dict[str, LandscapeDeviceExtension]:
+        extdict = self._extensions.copy()
+        return extdict
 
     @property
     def friendly_id(self) -> FriendlyIdentifier:
