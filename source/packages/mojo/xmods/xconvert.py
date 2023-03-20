@@ -1,5 +1,5 @@
 """
-.. module:: compat
+.. module:: xconvert
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains functions for type conversions.
 

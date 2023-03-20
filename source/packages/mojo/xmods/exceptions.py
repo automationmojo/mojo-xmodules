@@ -155,6 +155,14 @@ def enhance_exception(xcpt: BaseException, content, label="CONTEXT"):
     return
 
 
+def format_exc_lines():
+    """
+        Gets a 'format_exc' result and splits it into mutliple lines.
+    """
+    rtn_lines = traceback.format_exc().splitlines()
+    return rtn_lines
+
+
 def format_exception(ex_inst: BaseException):
 
     etypename = type(ex_inst).__name__
