@@ -18,6 +18,7 @@ __license__ = "MIT"
 
 from typing import Protocol, Optional, Sequence, Tuple, Union
 
+
 from mojo.xmods.aspects import AspectsCmd
 
 

@@ -6,12 +6,13 @@ import threading
 
 from mojo.xmods.xcollections.context import Context, ContextPaths
 
+from mojo.xmods.exceptions import SemanticError
+
 from mojo.xmods.landscaping.layers.landscapeconfigurationlayer import LandscapeConfigurationLayer
 from mojo.xmods.landscaping.layers.landscapeinstallationlayer import LandscapeInstallationLayer
 from mojo.xmods.landscaping.layers.landscapeintegrationlayer import LandscapeIntegrationLayer
 from mojo.xmods.landscaping.layers.landscapeoperationallayer import LandscapeOperationalLayer
 from mojo.xmods.landscaping.layers.topologyconfigurationlayer import TopologyConfigurationLayer
-
 from mojo.xmods.landscaping.landscapeparameters import (
     LandscapeActivationParams,
     DEFAULT_LANDSCAPE_ACTIVATION_PARAMS,
@@ -20,6 +21,7 @@ from mojo.xmods.landscaping.landscapeparameters import (
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
 
 from mojo.xmods.xthreading.lockscopes import LockedScope, UnLockedScope
+from mojo.xmods.xinspect import get_caller_function_name
 
 class Landscape:
     """
@@ -83,7 +85,7 @@ class Landscape:
             Creates an instance or reference to the :class:`Landscape` singleton object.  On the first call to this
             constructor the :class:`Landscape` object is initialized and the landscape configuration is loaded.
         """
-        
+
         # We are a singleton so we only want the intialization code to run once
         with self.begin_locked_landscape_scope() as lkscope:
 
@@ -91,6 +93,12 @@ class Landscape:
                 Landscape.instance_initialized = True
             
                 with self.begin_unlocked_landscape_scope() as ulkscope:
+
+                    call_function_name = get_caller_function_name()
+                    if call_function_name != "LandscapeSingleton":
+                        errmsg = "The `Landscape` object should only be instantiated from `LandscapeSingleton`" \
+                                "function located in the `mojoxmods.wellknown.singltons` module."
+                        raise SemanticError(errmsg)
 
                     self._layer_install: LandscapeInstallationLayer = None
                     self._layer_configuration: LandscapeConfigurationLayer = None

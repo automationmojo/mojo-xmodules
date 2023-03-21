@@ -25,6 +25,10 @@ LANDSCAPE_SINGLETON = None
 SINGLETON_LOCK = RLock()
 
 def SuperFactorySinglton() -> SuperFactory:
+    """
+        Instantiates and gets a global instance of the :class:`SuperFactory` class.  The global
+        :class:`SuperFactory` allows for configured extensibility of the test framework.
+    """
     global SINGLETON_LOCK
     global SUPER_FACTORY_SINGLETON
 
@@ -43,6 +47,10 @@ def SuperFactorySinglton() -> SuperFactory:
 
 
 def LandscapeSingleton() -> "Landscape":
+    """
+        Instantiates and gets a global instance of the :class:`Landscape` class.  The
+        :class:`Landscape` provides for management of resources.
+    """
 
     global SINGLETON_LOCK
     global LANDSCAPE_SINGLETON
