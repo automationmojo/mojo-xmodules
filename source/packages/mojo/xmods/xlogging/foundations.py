@@ -15,7 +15,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-
+from types import Optional
 
 import fnmatch
 import logging
@@ -442,6 +442,12 @@ class LoggerWrapper:
         self._logger.warning(msg, *args, **kwargs)
         return
 
+original_get_logger = None
+
+def mojo_get_logger(name: Optional[str]=None):
+    logger = original_get_logger(name)
+    wrapped_logger = LoggerWrapper(logger)
+    return wrapped_logger
 
 class LessThanRecordFilter(logging.Filter):
     """
@@ -509,6 +515,10 @@ def logging_initialize():
 
     if not logging_initialized:
         logging_initialized = True
+
+        global original_get_logger
+        original_get_logger = logging.getLogger
+        logging.getLogger = mojo_get_logger
 
         ctx = Context()
 
