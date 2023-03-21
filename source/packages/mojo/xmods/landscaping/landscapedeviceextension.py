@@ -1,7 +1,8 @@
 """
-.. module:: landscapedevice
+.. module:: landscapedeviceextension
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the :class:`LandscapeDeviceExtension` class.
+    :synopsis: Module containing the :class:`LandscapeDeviceExtension` class which is used
+               to attached protocol agents and interop capability to a :class:`LandscapeDevice`
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
