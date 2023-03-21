@@ -55,7 +55,6 @@ class NotOverloadedError(RuntimeError):
         This error is raised when a method that must be overloaded has not been overridden.
     """
 
-
 class NotSupportedError(RuntimeError):
     """
         This error is raised when a method that must be overloaded has not been overridden.

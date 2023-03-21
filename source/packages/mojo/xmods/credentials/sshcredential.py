@@ -1,3 +1,12 @@
+"""
+.. module:: basiccredential
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module that contains the :class:`SshCredential` which provides support
+               for SSH credentials including support for public key based SSH authentication.
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+"""
+
 __author__ = "Myron Walker"
 __copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []

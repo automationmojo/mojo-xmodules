@@ -1,3 +1,12 @@
+"""
+.. module:: basiccredential
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module that contains the :class:`CredentialManager` which is used to
+               load credentials.
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+"""
+
 __author__ = "Myron Walker"
 __copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
@@ -15,6 +24,7 @@ import yaml
 
 from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.xcollections.context import Context, ContextPaths
+from mojo.xmods.xyaml import safe_load_yaml_files_as_mergemap
 
 from mojo.xmods.credentials.basiccredential import BasicCredential
 from mojo.xmods.credentials.sshcredential import SshCredential
@@ -50,65 +60,58 @@ class CredentialManager:
         credential_files = ctx.lookup(ContextPaths.CONFIG_CREDENTIAL_FILES,
             [os.path.expanduser("~/credentials.yaml")])
 
-        for cred_file in credential_files:
-            if os.path.exists(cred_file):
-                credential_info = None
+        credential_info = safe_load_yaml_files_as_mergemap(credential_files)
 
-                with open(cred_file, 'r') as lf:
-                    lfcontent = lf.read()
-                    credential_info = yaml.safe_load(lfcontent)
+        try:
+            credentials_list = credential_info["credentials"]
+            errors, warnings = self._validate_credentials(credentials_list)
 
-                try:
-                    credentials_list = credential_info["credentials"]
-                    errors, warnings = self._validate_credentials(credentials_list)
-
-                    if len(errors) == 0:
-                        for credential in credentials_list:
-                            if "identifier" not in credential:
-                                errmsg = "Credential items in 'environment/credentials' must have an 'identifier' member."
-                                raise ConfigurationError(errmsg)
-                            ident = credential["identifier"]
-
-                            if "category" not in credential:
-                                errmsg = "Credential items in 'environment/credentials' must have an 'category' member."
-                                raise ConfigurationError(errmsg)
-                            category = credential["category"]
-
-                            if category == "basic":
-                                BasicCredential.validate(credential)
-                                credobj = BasicCredential(**credential)
-                                self._credentials[ident] = credobj
-                            elif category == "ssh":
-                                SshCredential.validate(credential)
-                                credobj = SshCredential(**credential)
-                                self._credentials[ident] = credobj
-                            elif category == "wifi-choice":
-                                WifiChoiceCredential.validate(credential)
-                                credobj = WifiChoiceCredential(**credential)
-                                self._credentials[ident] = credobj
-                            else:
-                                warnmsg = f"Unknown category '{category}' found in credential '{ident}'"
-                                logger.warn(warnmsg)
-                    else:
-                        errmsg_lines = [
-                            f"Errors found in credential file={cred_file}",
-                            "ERRORS:"
-                        ]
-                        for err in errors:
-                            errmsg_lines.append(f"    {err}")
-
-                        errmsg_lines.append("WARNINGS:")
-                        for warn in warnings:
-                            errmsg_lines.append(f"    {warn}")
-
-                        errmsg = os.linesep.join(errmsg_lines)
+            if len(errors) == 0:
+                for credential in credentials_list:
+                    if "identifier" not in credential:
+                        errmsg = "Credential items in 'environment/credentials' must have an 'identifier' member."
                         raise ConfigurationError(errmsg)
-                except KeyError:
-                    errmsg = f"No 'credentials' field found in file={cred_file}"
-                    raise ConfigurationError(errmsg)
+                    ident = credential["identifier"]
+
+                    if "category" not in credential:
+                        errmsg = "Credential items in 'environment/credentials' must have an 'category' member."
+                        raise ConfigurationError(errmsg)
+                    category = credential["category"]
+
+                    if category == "basic":
+                        BasicCredential.validate(credential)
+                        credobj = BasicCredential(**credential)
+                        self._credentials[ident] = credobj
+                    elif category == "ssh":
+                        SshCredential.validate(credential)
+                        credobj = SshCredential(**credential)
+                        self._credentials[ident] = credobj
+                    elif category == "wifi-choice":
+                        WifiChoiceCredential.validate(credential)
+                        credobj = WifiChoiceCredential(**credential)
+                        self._credentials[ident] = credobj
+                    else:
+                        warnmsg = f"Unknown category '{category}' found in credential '{ident}'"
+                        logger.warn(warnmsg)
             else:
-                warnmsg = f"Credential file not found. expected={cred_file}"
-                logger.warn(warnmsg)
+                errmsg_lines = [
+                    f"Errors found in credentials.",
+                    "ERRORS:"
+                ]
+                for err in errors:
+                    errmsg_lines.append(f"    {err}")
+
+                errmsg_lines.append("WARNINGS:")
+                for warn in warnings:
+                    errmsg_lines.append(f"    {warn}")
+
+                errmsg = os.linesep.join(errmsg_lines)
+                raise ConfigurationError(errmsg)
+
+        except KeyError:
+            errmsg = f"No 'credentials' field found."
+            raise ConfigurationError(errmsg)
+    
 
         return
 

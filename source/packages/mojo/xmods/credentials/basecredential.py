@@ -1,3 +1,12 @@
+"""
+.. module:: basecredential
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module that contains the :class:`BaseCredential` object which is the
+               common base class that all other credential objects inherit from.
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+"""
+
 __author__ = "Myron Walker"
 __copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
