@@ -323,6 +323,17 @@ class LoggerWrapper:
         self._logger = logger
         return
 
+    @property
+    def handlers(self):
+        return self._logger.handlers
+
+    def addHandler(self, hdlr):
+        """
+            Add the specified handler to this logger.
+        """
+        self._logger.addHandler(hdlr)
+        return
+
     def critical(self, msg, *args, **kwargs):
         """
             Log 'msg % args' with severity 'CRITICAL'.
@@ -407,6 +418,13 @@ class LoggerWrapper:
         self._logger.info(msg, *args, **kwargs)
         return
 
+    def removeHandler(self, hdlr):
+        """
+            Remove the specified handler from this logger.
+        """
+        self._logger.removeHandler(hdlr)
+        return
+
     def render(self, line):
         """
             Logs a log section marker
@@ -420,6 +438,13 @@ class LoggerWrapper:
         """
         marker = format_log_section_header(title)
         self._logger.log(LogLevel.SECTION, marker)
+        return
+
+    def setLevel(self, level):
+        """
+            Set the specified level on the underlying logger.
+        """
+        self._logger.setLevel(level)
         return
 
     def warning(self, msg, *args, **kwargs):
