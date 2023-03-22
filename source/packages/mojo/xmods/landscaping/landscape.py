@@ -100,11 +100,11 @@ class Landscape:
                                 "function located in the `mojoxmods.wellknown.singltons` module."
                         raise SemanticError(errmsg)
 
-                    self._layer_install: LandscapeInstallationLayer = None
-                    self._layer_configuration: LandscapeConfigurationLayer = None
-                    self._layer_integration: LandscapeIntegrationLayer = None
-                    self._layer_operational: LandscapeOperationalLayer = None
-                    self._topology_description: TopologyConfigurationLayer = None
+                    self._layer_install: LandscapeInstallationLayer = LandscapeInstallationLayer(self)
+                    self._layer_configuration: LandscapeConfigurationLayer = LandscapeConfigurationLayer(self)
+                    self._layer_integration: LandscapeIntegrationLayer = LandscapeIntegrationLayer(self)
+                    self._layer_operational: LandscapeOperationalLayer = LandscapeOperationalLayer(self)
+                    self._topology_description: TopologyConfigurationLayer = TopologyConfigurationLayer(self)
         
                     self._landscape_configure_complete = False
                     self._landscape_integrate_complete = False

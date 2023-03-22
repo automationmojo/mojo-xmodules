@@ -327,6 +327,18 @@ class LoggerWrapper:
     def handlers(self):
         return self._logger.handlers
 
+    @property
+    def level(self):
+        return self._logger.level
+
+    @property
+    def parent(self):
+        return self._logger.parent
+
+    @property
+    def propagate(self):
+        return self._logger.propagate
+
     def addHandler(self, hdlr):
         """
             Add the specified handler to this logger.
@@ -407,6 +419,9 @@ class LoggerWrapper:
         """
         self._logger.critical(msg, *args, **kwargs)
         return
+
+    def getEffectiveLevel(self):
+        return self._logger.getEffectiveLevel()
 
     def info(self, msg, *args, **kwargs):
         """

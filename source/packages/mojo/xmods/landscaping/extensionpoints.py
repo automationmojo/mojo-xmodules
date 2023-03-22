@@ -23,11 +23,13 @@ from mojo.xmods.extension.configured import ExtensionPointsFactory
 
 class LandscapingExtentionPoints(Protocol):
 
+    @classmethod
     def get_landscape_type(self) -> Type:
         """
             Used to lookup and return the most relevant `Landscape` type.
         """
 
+    @classmethod
     def get_integration_coupling_types(self) -> List[Type]:
         """
             Used to lookup and return the most relevant list of integration coupling types.
@@ -36,11 +38,12 @@ class LandscapingExtentionPoints(Protocol):
     
 class LandscapingExtentionPointsFactory(ExtensionPointsFactory):
 
-
+    @classmethod
     def get_landscape_type(self) -> Type:
         from mojo.xmods.landscaping.landscape import Landscape
         return Landscape
     
+    @classmethod
     def get_integration_coupling_types(self) -> List[Type]:
         """
             Used to lookup and return the most relevant list of integration coupling types.

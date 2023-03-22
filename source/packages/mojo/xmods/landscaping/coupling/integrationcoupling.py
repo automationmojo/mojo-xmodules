@@ -17,13 +17,15 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Any, Dict, List, Tuple, TypeVar
+from typing import Any, Dict, List, Tuple, TypeVar, TYPE_CHECKING
 
 import inspect
 
 from mojo.xmods.landscaping.coupling.basecoupling import BaseCoupling
 from mojo.xmods.exceptions import NotOverloadedError
-from mojo.xmods.landscaping.landscape import Landscape
+
+if TYPE_CHECKING:
+    from mojo.xmods.landscaping.landscape import Landscape
 
 
 class IntegrationCoupling(BaseCoupling):
@@ -33,7 +35,7 @@ class IntegrationCoupling(BaseCoupling):
         queries the class hierarchies of the tests that are included in an automation run.
     """
 
-    landscape: Landscape = None
+    landscape: "Landscape" = None
 
     integration_section: str = None
     integration_leaf: str = None
@@ -78,7 +80,7 @@ class IntegrationCoupling(BaseCoupling):
         raise NotOverloadedError(errmsg)
     
     @classmethod
-    def attach_to_framework(cls, landscape: Landscape):
+    def attach_to_framework(cls, landscape: "Landscape"):
         """
             This API is called so that the IntegrationCoupling can attach to the test framework and participate with
             registration processes.  This allows the framework to ignore the bring-up of couplings that are not being
@@ -144,7 +146,7 @@ class IntegrationCoupling(BaseCoupling):
         raise NotOverloadedError(errmsg)
 
     @classmethod
-    def validate_item_configuration(cls, item_info: Dict[str: Any]):
+    def validate_item_configuration(cls, item_info: Dict[str, Any]):
         errmsg = "The 'validate_item_configuration' method must be overloaded by derived integration coupling types."
         raise NotOverloadedError(errmsg)
 

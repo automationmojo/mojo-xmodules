@@ -20,6 +20,8 @@ from typing import List, Type
 
 from typing import Callable, Generator, List, Union, Type
 
+from mojo.xmods.ximport import import_by_name
+
 import inspect
 import logging
 
@@ -36,34 +38,36 @@ def is_subclass_of_extension_points_factory(cand_type):
         of :class:`Landscape`.
     """
     is_scoep = False
-    if inspect.isclass(cand_type) and issubclass(cand_type, ExtensionPointsFactory):
-        is_scoep = True
+    if inspect.isclass(cand_type):
+        if cand_type != ExtensionPointsFactory and issubclass(cand_type, ExtensionPointsFactory):
+            is_scoep = True
     return is_scoep
 
 
-def load_and_set_extension_points_factory_type(extpnts_module):
+def load_and_set_extension_points_factory_type(module_name: str):
     """
         Scans the module provided for :class:`Landscape` derived classes and will
         take the first one and assign it as the current runtime landscape type.
     """
     factory_type = None
 
-    class_items = inspect.getmembers(extpnts_module, is_subclass_of_extension_points_factory)
+    extpt_module = import_by_name(module_name)
+    class_items = inspect.getmembers(extpt_module, is_subclass_of_extension_points_factory)
 
     extension_classes = []
     for _, cls_type in class_items:
         type_module_name = cls_type.__module__
-        if type_module_name == extpnts_module.__name__:
+        if type_module_name == extpt_module.__name__:
             extension_classes.append(cls_type)
 
     if len(extension_classes) > 1:
-        wmsg = f"Only one ExtensionPoints class is allowed per module in order to perserve ordering. module={extpnts_module}"
+        wmsg = f"Only one ExtensionPoints class is allowed per module in order to perserve ordering. module={extpt_module}"
         logger.warning(wmsg)
 
     if len(extension_classes) > 0:
         factory_type = extension_classes[0]
     else:
-        wmsg = f"Found extension module={extpnts_module} without an `ExtensionPoints` derived class."
+        wmsg = f"Found extension module={extpt_module} without an `ExtensionPoints` derived class."
         logger.warning(wmsg)
 
     return factory_type
@@ -76,7 +80,10 @@ class SuperFactory:
         in order to enable various types of overload or overinstance states.
     """
 
-    search_modules = ['mojo.xmods.extensionpoints']
+    search_modules = [
+        'mojo.xmods.landscaping.extensionpoints'
+    ]
+
     extension_factories = []
 
     def __init__(self):
@@ -131,7 +138,7 @@ class SuperFactory:
         if not isinstance(get_type_method, str):
             get_type_method = get_type_method.__name__
         
-        for factory_type in self._extension_factories:
+        for factory_type in self.extension_factories:
             if hasattr(factory_type, get_type_method):
                 get_type_with = getattr(factory_type, get_type_method)
         
@@ -149,7 +156,7 @@ class SuperFactory:
         if not isinstance(get_type_method, str):
             get_type_method = get_type_method.__name__
         
-        for factory_type in self._extension_factories:
+        for factory_type in self.extension_factories:
             if hasattr(factory_type, get_type_method):
                 get_type_with = getattr(factory_type, get_type_method)
         

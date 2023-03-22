@@ -16,7 +16,7 @@ class LandscapeInstallationLayer(LandscapeLayerBase):
 
     logger = logging.getLogger()
 
-    def __init__(self, lscape: Landscape):
+    def __init__(self, lscape: "Landscape"):
         super().__init__(lscape)
 
         self._installed_integration_couplings: Dict[str, IntegrationCouplingType]

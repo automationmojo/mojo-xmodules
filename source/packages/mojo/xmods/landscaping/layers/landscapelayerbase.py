@@ -11,7 +11,7 @@ class LandscapeLayerBase:
 
     logger = logging.getLogger()
 
-    def __init__(self, lscape: Landscape):
+    def __init__(self, lscape: "Landscape"):
         self._lscape_ref = weakref.ref(lscape)
         return
     
