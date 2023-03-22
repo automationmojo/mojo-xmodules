@@ -1,7 +1,7 @@
 """
-.. module:: landscapeintegrationlayer
+.. module:: topologyintegrationlayer
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the :class:`LandscapeItegrationLayer` class which is used
+    :synopsis: Module containing the :class:`TopologyItegrationLayer` class which is used
                to load initialize the test landscape and integrate with all the available
                landscape resources.
 
@@ -18,19 +18,18 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+
 from typing import TYPE_CHECKING
 
 from mojo.xmods.landscaping.layers.landscapinglayerbase import LandscapingLayerBase
+
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
 
 
-class LandscapeIntegrationLayer(LandscapingLayerBase):
+class TopologyIntegrationLayer(LandscapingLayerBase):
 
     def __init__(self, lscape: "Landscape"):
         super().__init__(lscape)
-        return
-    
-    def topology_overlay(self) -> None:
         return

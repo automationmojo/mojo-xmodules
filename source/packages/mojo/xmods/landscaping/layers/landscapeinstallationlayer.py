@@ -1,20 +1,36 @@
+"""
+.. module:: landscapeinstallationlayer
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module containing the :class:`LandscapeInstallationLayer` class which is used
+               to load the various configuration files and to provide methods for working with
+               configuration information.
 
-from typing import Dict, List, Type, TYPE_CHECKING
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
-import logging
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@gmail.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = "MIT"
+
+from typing import Dict, TYPE_CHECKING
 
 from mojo.xmods.wellknown.singletons import SuperFactorySinglton
 
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCouplingType
 from mojo.xmods.landscaping.extensionpoints import LandscapingExtentionPoints
-from mojo.xmods.landscaping.layers.landscapelayerbase import LandscapeLayerBase
+from mojo.xmods.landscaping.layers.landscapinglayerbase import LandscapingLayerBase
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
 
-class LandscapeInstallationLayer(LandscapeLayerBase):
 
-    logger = logging.getLogger()
+class LandscapeInstallationLayer(LandscapingLayerBase):
 
     def __init__(self, lscape: "Landscape"):
         super().__init__(lscape)

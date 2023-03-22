@@ -115,6 +115,34 @@ class Landscape:
         return
     
     @property
+    def layer_configuration(self):
+        """
+            Gets the configuration layer for the current Landscape.
+        """
+        return self._layer_configuration
+
+    @property
+    def layer_install(self):
+        """
+            Gets the installation layer for the current Landscape.
+        """
+        return self._layer_install
+    
+    @property
+    def layer_integration(self):
+        """
+            Gets the integration layer for the current Landscape.
+        """
+        return self._layer_integration
+    
+    @property
+    def layer_operational(self):
+        """
+            Gets the operational layer for the current Landscape.
+        """
+        return self._layer_operational
+
+    @property
     def installed_integration_couplings(self) -> Dict[str, IntegrationCoupling]:
         """
             Returns a table of the installed integration couplings found.
@@ -139,18 +167,15 @@ class Landscape:
                 # the Landscape because no threads calling the constructor can
                 # exit without the landscape initialization being finished.
                 with self.begin_unlocked_landscape_scope() as ulkscope:
-                
-                    log_to_directory = None
+
+                    self._layer_configuration.load_landscape()
+
+                    self._layer_configuration.load_topology()
 
                     log_configuration_declarations = thisType.context.lookup(ContextPaths.BEHAVIORS_LOG_CONFIGURATION, True)
                     if log_configuration_declarations:
                         log_to_directory = thisType.context.lookup(ContextPaths.OUTPUT_DIRECTORY)
-
-                    self._layer_configuration.load_runtime(log_to_directory=log_to_directory)
-
-                    self._layer_configuration.load_landscape(log_to_directory=log_to_directory)
-
-                    self._layer_configuration.load_topology(log_to_directory=log_to_directory)
+                        self._layer_configuration.record_configuration(log_to_directory)
 
                     self._initialize_landscape()
 
