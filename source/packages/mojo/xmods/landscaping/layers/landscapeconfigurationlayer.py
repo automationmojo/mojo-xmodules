@@ -33,12 +33,11 @@ from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.xyaml import safe_load_yaml_files_as_mergemap
 
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
+from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.layers.landscapinglayerbase import LandscapingLayerBase
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
-    from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
-
 
 class LandscapeConfigurationLayer(LandscapingLayerBase):
     """
@@ -223,39 +222,41 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
             Method code to record the landscape configuration to an output folder
         """
         
-        landscape_info_copy = self._landscape_info.flatten()
-        landscape_declared_file = None
+        if self._landscape_info is not None:
+            landscape_info_copy = self._landscape_info.flatten()
+            landscape_declared_file = None
 
-        try:
-            landscape_declared_file = os.path.join(log_to_directory, "landscape-declared.yaml")
-            with open(landscape_declared_file, 'w') as lsf:
-                yaml.safe_dump(landscape_info_copy, lsf, indent=4, default_flow_style=False)
+            try:
+                landscape_declared_file = os.path.join(log_to_directory, "landscape-declared.yaml")
+                with open(landscape_declared_file, 'w') as lsf:
+                    yaml.safe_dump(landscape_info_copy, lsf, indent=4, default_flow_style=False)
 
-            landscape_declared_file = os.path.join(log_to_directory, "landscape-declared.json")
-            with open(landscape_declared_file, 'w') as lsf:
-                json.dump(landscape_info_copy, lsf, indent=4)
+                landscape_declared_file = os.path.join(log_to_directory, "landscape-declared.json")
+                with open(landscape_declared_file, 'w') as lsf:
+                    json.dump(landscape_info_copy, lsf, indent=4)
 
-        except Exception as xcpt:
-            err_msg = "Error while logging the landscape configuration file (%s)%s%s" % (
-                landscape_declared_file, os.linesep, traceback.format_exc())
-            raise RuntimeError(err_msg) from xcpt
+            except Exception as xcpt:
+                err_msg = "Error while logging the landscape configuration file (%s)%s%s" % (
+                    landscape_declared_file, os.linesep, traceback.format_exc())
+                raise RuntimeError(err_msg) from xcpt
         
-        topology_info_copy = self._topology_info.flatten()
-        topology_declared_file = None
+        if self._topology_info is not None:
+            topology_info_copy = self._topology_info.flatten()
+            topology_declared_file = None
 
-        try:
-            topology_declared_file = os.path.join(log_to_directory, "topology-declared.yaml")
-            with open(topology_declared_file, 'w') as lsf:
-                yaml.safe_dump(topology_info_copy, lsf, indent=4, default_flow_style=False)
+            try:
+                topology_declared_file = os.path.join(log_to_directory, "topology-declared.yaml")
+                with open(topology_declared_file, 'w') as lsf:
+                    yaml.safe_dump(topology_info_copy, lsf, indent=4, default_flow_style=False)
 
-            topology_declared_file = os.path.join(log_to_directory, "topology-declared.json")
-            with open(topology_declared_file, 'w') as lsf:
-                json.dump(topology_info_copy, lsf, indent=4)
+                topology_declared_file = os.path.join(log_to_directory, "topology-declared.json")
+                with open(topology_declared_file, 'w') as lsf:
+                    json.dump(topology_info_copy, lsf, indent=4)
 
-        except Exception as xcpt:
-            err_msg = "Error while logging the topology configuration file (%s)%s%s" % (
-                topology_declared_file, os.linesep, traceback.format_exc())
-            raise RuntimeError(err_msg) from xcpt
+            except Exception as xcpt:
+                err_msg = "Error while logging the topology configuration file (%s)%s%s" % (
+                    topology_declared_file, os.linesep, traceback.format_exc())
+                raise RuntimeError(err_msg) from xcpt
 
         # NOTE: The `LandscapeConfigurationLayer` is not responsible for recording the runtime configuration
         # information.  The loading and recording of runtime configuration is accomplished by the `mojo-runtime`

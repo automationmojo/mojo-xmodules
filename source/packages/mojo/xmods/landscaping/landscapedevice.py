@@ -28,12 +28,12 @@ from datetime import datetime
 from mojo.xmods.credentials.basecredential import BaseCredential
 from mojo.xmods.exceptions import SemanticError
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
+from mojo.xmods.landscaping.landscapedeviceextension import LandscapeDeviceExtension
 from mojo.xmods.xfeature import FeatureAttachedObject
 from mojo.xmods.xthreading.lockscopes import LockedScope, UnLockedScope
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
-    from mojo.xmods.landscaping.landscapedeviceextension import LandscapeDeviceExtension
 
 class LandscapeDevice(FeatureAttachedObject):
     """

@@ -22,9 +22,8 @@ from typing import Dict, Union, TYPE_CHECKING
 import logging
 import weakref
 
-from mojo.xmods.landscaping.coordinatorbase import CoordinatorBase
-
 if TYPE_CHECKING:
+    from mojo.xmods.landscaping.coordinatorbase import CoordinatorBase
     from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 
 class LandscapeDeviceExtension:
@@ -60,7 +59,7 @@ class LandscapeDeviceExtension:
         return dev
 
     @property
-    def coordinator(self) -> CoordinatorBase:
+    def coordinator(self) -> "CoordinatorBase":
         """
             Returns a reference to the coordinator that created the :class:`LandscapeDeviceExtension`.
         """

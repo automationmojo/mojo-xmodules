@@ -35,7 +35,7 @@ class LandscapeInstallationLayer(LandscapingLayerBase):
     def __init__(self, lscape: "Landscape"):
         super().__init__(lscape)
 
-        self._installed_integration_couplings: Dict[str, IntegrationCouplingType]
+        self._installed_integration_couplings: Dict[str, IntegrationCouplingType] = {}
 
         self._load_integration_coupling_types()
         return
@@ -45,7 +45,7 @@ class LandscapeInstallationLayer(LandscapingLayerBase):
         """
             Returns a table of the installed integration couplings found.
         """
-        return self.installed_integration_couplings
+        return self._installed_integration_couplings
 
     def _load_integration_coupling_types(self):
 
