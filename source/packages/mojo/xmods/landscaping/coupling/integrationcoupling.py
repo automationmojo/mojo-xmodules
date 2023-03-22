@@ -24,9 +24,11 @@ import inspect
 from mojo.xmods.landscaping.coupling.basecoupling import BaseCoupling
 from mojo.xmods.exceptions import NotOverloadedError
 
+from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
+from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
+
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
-
 
 class IntegrationCoupling(BaseCoupling):
     """
@@ -40,6 +42,8 @@ class IntegrationCoupling(BaseCoupling):
     integration_section: str = None
     integration_leaf: str = None
     integration_class: str = None
+
+    integrated_devices: List[LandscapeDevice] = []
 
     def __init__(self, *args, **kwargs): # pylint: disable=unused-argument
         """
@@ -98,6 +102,24 @@ class IntegrationCoupling(BaseCoupling):
             :raises :class:`akit.exceptions.AKitResourceError`:
         """
         errmsg = "The 'collect_resources' method must be overloaded by derived integration coupling types."
+        raise NotOverloadedError(errmsg)
+
+    @classmethod
+    def create_landscape_device(cls, device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, LandscapeDevice]:
+        """
+            Device called by the :class:`LandscapeConfigurationLayer` for devices associated with a specified
+            device integration as specified by the `deviceType` field of a device declaration.
+
+            ..note: When implementing this method, the devices created by an integration coupling should be added to
+                    the `integrated_devices` list attached to this class.  The integration coupling can inherit
+                    from :class:`LandscapeDevice` in order to provide a more device characteristic base type.
+            
+            ..note: The device created at this point in the startup process are generally generic base versions of
+                    a given device type.  These generic versions can later be swapped out for more specific versions
+                    once connectivity has been established with the device.
+        """
+
+        errmsg = "The 'create_landscape_device' method must be overloaded by derived integration coupling types."
         raise NotOverloadedError(errmsg)
 
     @classmethod

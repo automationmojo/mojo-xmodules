@@ -32,10 +32,12 @@ from mojo.xmods.xcollections.mergemap import MergeMap
 from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.xyaml import safe_load_yaml_files_as_mergemap
 
+from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.layers.landscapinglayerbase import LandscapingLayerBase
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
+    from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 
 
 class LandscapeConfigurationLayer(LandscapingLayerBase):
@@ -81,12 +83,58 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
     def topology_info(self) -> Union[MergeMap, None]:
         return self._topology_info
 
-
     def initialize_credentials(self) -> None:
         """
             Initialize the credentials manager for the landscape object.
         """
         self._credential_manager = CredentialManager()
+        return
+
+
+    def initialize_landscape(self) -> Dict[FriendlyIdentifier, LandscapeDevice]:
+
+        # Initialize the devices so we know what they are, this will create a LandscapeDevice object for each device
+        # and register it in the all_devices table where it can be found by the device coordinators for further activation
+        devices = self._initialize_landscape_devices()
+
+        self._initialize_landscape_power()
+
+        self._initialize_landscape_serial()
+
+        return devices
+
+
+    def _initialize_landscape_devices(self) -> Dict[FriendlyIdentifier, LandscapeDevice]:
+
+        unrecognized_device_configs = []
+
+        devices: Dict[FriendlyIdentifier: LandscapeDevice] = {}
+
+        integ_coupling_table = self.landscape.installed_integration_couplings
+
+        device_configs = self.locked_get_device_configs()
+
+        for dev_config_info in device_configs:
+            dev_type = dev_config_info["deviceType"]
+            dev_integ_key = f"devices:deviceType:{dev_type}"
+            if dev_integ_key in integ_coupling_table:
+                integ_coupling = integ_coupling_table[dev_integ_key]
+                friendly_id, lsdevice = integ_coupling.create_landscape_device(dev_config_info)
+                devices[friendly_id] = lsdevice
+
+            else:
+                unrecognized_device_configs.append(dev_config_info)
+
+        return devices
+
+
+    def _initialize_landscape_power(self):
+
+        return
+
+
+    def _initialize_landscape_serial(self):
+
         return
 
 
@@ -148,6 +196,26 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
                     self.logger.warn("Topology Configuration Warning: ({}) {}".format(wrn_path, wrn_msg))
 
         return self._topology_info
+
+
+    def locked_get_device_configs(self) -> List[dict]:
+        """
+            Returns the list of device configurations from the landscape.  This will
+            skip any device that have a "skip": true declared in the configuration.
+
+            ..note: It is assumed that this call is being made in a thread safe context
+                    or with the landscape lock held.
+        """
+
+        device_config_list = []
+
+        pod_info = self._landscape_info["pod"]
+        for dev_config_info in pod_info["devices"]:
+            if "skip" in dev_config_info and dev_config_info["skip"]:
+                continue
+            device_config_list.append(dev_config_info)
+
+        return device_config_list
 
 
     def record_configuration(self, log_to_directory: str):

@@ -1,5 +1,5 @@
 
-from typing import Dict, Generator, Optional, Union
+from typing import Dict, Generator, List, Optional, Union
 
 import logging
 import threading
@@ -12,11 +12,13 @@ from mojo.xmods.landscaping.layers.landscapeconfigurationlayer import LandscapeC
 from mojo.xmods.landscaping.layers.landscapeinstallationlayer import LandscapeInstallationLayer
 from mojo.xmods.landscaping.layers.landscapeintegrationlayer import LandscapeIntegrationLayer
 from mojo.xmods.landscaping.layers.landscapeoperationallayer import LandscapeOperationalLayer
-from mojo.xmods.landscaping.layers.topologyconfigurationlayer import TopologyConfigurationLayer
+from mojo.xmods.landscaping.layers.topologyintegrationlayer import TopologyIntegrationLayer
 from mojo.xmods.landscaping.landscapeparameters import (
     LandscapeActivationParams,
     DEFAULT_LANDSCAPE_ACTIVATION_PARAMS,
 )
+from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
+from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
 
@@ -104,11 +106,13 @@ class Landscape:
                     self._layer_configuration: LandscapeConfigurationLayer = LandscapeConfigurationLayer(self)
                     self._layer_integration: LandscapeIntegrationLayer = LandscapeIntegrationLayer(self)
                     self._layer_operational: LandscapeOperationalLayer = LandscapeOperationalLayer(self)
-                    self._topology_description: TopologyConfigurationLayer = TopologyConfigurationLayer(self)
+                    self._topology_description: TopologyIntegrationLayer = TopologyIntegrationLayer(self)
         
                     self._landscape_configure_complete = False
                     self._landscape_integrate_complete = False
                     self._landscape_startup_complete = False
+
+                    self._devices_all: List[LandscapeDevice] = []
 
                     super().__init__()
 
@@ -177,7 +181,9 @@ class Landscape:
                         log_to_directory = thisType.context.lookup(ContextPaths.OUTPUT_DIRECTORY)
                         self._layer_configuration.record_configuration(log_to_directory)
 
-                    self._initialize_landscape()
+                    self._layer_configuration.initialize_credentials()
+
+                    self._all_devices = self._layer_configuration.initialize_landscape()
 
                     self._landscape_configure_complete = True
 
@@ -298,20 +304,7 @@ class Landscape:
         self._layer_configuration = LandscapeConfigurationLayer(self)
         self._layer_integration = LandscapeIntegrationLayer(self)
         self._layer_operational = LandscapeOperationalLayer(self)
-        self._topology_description = TopologyConfigurationLayer(self)
-        return
-
-    def _initialize_devices(self):
-        return
-
-    def _initialize_landscape(self) -> None:
-
-        self._layer_configuration.initialize_credentials()
-
-        # Initialize the devices so we know what they are, this will create a LandscapeDevice object for each device
-        # and register it in the all_devices table where it can be found by the device coordinators for further activation
-        self._initialize_devices()
-
+        self._topology_description = TopologyIntegrationLayer(self)
         return
 
     def _activate_coordinators(self, activation_params: LandscapeActivationParams):

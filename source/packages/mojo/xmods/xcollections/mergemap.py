@@ -50,6 +50,9 @@ class MergeMap(MutableMapping):
         return rtnval
 
     def keys(self) -> Iterable[str]:
+        """
+            Gets the top level possible keys that can be used to query this merge map.
+        """
 
         mks = set()
 
