@@ -99,7 +99,7 @@ class LandscapeConfigurationLayer(LandscapeLayerBase):
 
         if len(self._landscape_files):
 
-            self._landscape_info = safe_load_yaml_files_as_mergemap(self._landscape_files)
+            self._landscape_info = safe_load_yaml_files_as_mergemap(self._landscape_files, context="Landscape")
 
             if log_to_directory is not None:
                 landscape_info_copy = self._landscape_info.flatten()
@@ -146,7 +146,7 @@ class LandscapeConfigurationLayer(LandscapeLayerBase):
 
         if len(self._runtime_files):
 
-            self._runtime_info = safe_load_yaml_files_as_mergemap(self._runtime_files)
+            self._runtime_info = safe_load_yaml_files_as_mergemap(self._runtime_files, context="Runtime")
 
             if log_to_directory is not None:
                 runtime_info_copy = self._runtime_info.flatten()
@@ -195,7 +195,7 @@ class LandscapeConfigurationLayer(LandscapeLayerBase):
 
         if len(self._topology_files):
 
-            self._topology_info = safe_load_yaml_files_as_mergemap(self._topology_files)
+            self._topology_info = safe_load_yaml_files_as_mergemap(self._topology_files, context="Topology")
 
             if log_to_directory is not None:
                 topology_info_copy = self._topology_info.flatten()

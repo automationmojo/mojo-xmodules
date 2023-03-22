@@ -27,11 +27,13 @@ import os
 
 import yaml
 
+from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.xcollections.mergemap import MergeMap
+
 
 logger = logging.getLogger()
 
-def safe_load_yaml_files_as_mergemap(filenames: List[str]) -> MergeMap:
+def safe_load_yaml_files_as_mergemap(filenames: List[str], context: str=None) -> MergeMap:
     """
         Creates a :class:`MergeMap` from a list of yaml configuration files.
     """
@@ -45,6 +47,9 @@ def safe_load_yaml_files_as_mergemap(filenames: List[str]) -> MergeMap:
 
                 merge_map.maps.insert(0, finfo)
         else:
-            logger.warn(f"Credentials file not found. '{fname}'")
+            errmsg = f"File not found. '{fname}'"
+            if context is not None:
+                logger.warn(f"{context} file not found. '{fname}'")
+            raise ConfigurationError(errmsg)
 
     return merge_map

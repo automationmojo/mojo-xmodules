@@ -57,10 +57,9 @@ class CredentialManager:
 
         ctx = Context()
         
-        credential_files = ctx.lookup(ContextPaths.CONFIG_CREDENTIAL_FILES,
-            [os.path.expanduser("~/credentials.yaml")])
+        credential_files = ctx.lookup(ContextPaths.CONFIG_CREDENTIAL_FILES, [])
 
-        credential_info = safe_load_yaml_files_as_mergemap(credential_files)
+        credential_info = safe_load_yaml_files_as_mergemap(credential_files, context="Credentials")
 
         try:
             credentials_list = credential_info["credentials"]
@@ -109,8 +108,8 @@ class CredentialManager:
                 raise ConfigurationError(errmsg)
 
         except KeyError:
-            warnmsg = f"No 'credentials' field found."
-            logger.warn(warnmsg)
+            errmsg = f"No 'credentials' field found."
+            raise ConfigurationError(errmsg)
 
         return
 
