@@ -289,22 +289,22 @@ class Landscape:
 
         return
 
-    def _activate_coordinators(activation_params: LandscapeActivationParams):
+    def _activate_coordinators(self, activation_params: LandscapeActivationParams):
 
         return
     
-    def _establish_connectivity(activation_params: LandscapeActivationParams):
+    def _establish_connectivity(self, activation_params: LandscapeActivationParams):
         
         return
     
-    def _validate_features(activation_params: LandscapeActivationParams):
+    def _validate_features(self, activation_params: LandscapeActivationParams):
 
         if activation_params.validate_features:
             pass
 
         return
     
-    def _validate_topology(activation_params: LandscapeActivationParams):
+    def _validate_topology(self, activation_params: LandscapeActivationParams):
 
         if activation_params.validate_topology:
             pass

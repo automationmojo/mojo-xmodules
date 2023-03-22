@@ -22,10 +22,14 @@ __license__ = "MIT"
 
 from typing import List
 
+import logging
+import os
+
 import yaml
 
 from mojo.xmods.xcollections.mergemap import MergeMap
 
+logger = logging.getLogger()
 
 def safe_load_yaml_files_as_mergemap(filenames: List[str]) -> MergeMap:
     """
@@ -34,10 +38,13 @@ def safe_load_yaml_files_as_mergemap(filenames: List[str]) -> MergeMap:
     merge_map = MergeMap()
 
     for fname in filenames:
-        with open(fname, 'r') as lf:
-            lfcontent = lf.read()
-            finfo = yaml.safe_load(lfcontent)
+        if os.path.exists(fname):
+            with open(fname, 'r') as lf:
+                lfcontent = lf.read()
+                finfo = yaml.safe_load(lfcontent)
 
-            merge_map.maps.insert(0, finfo)
+                merge_map.maps.insert(0, finfo)
+        else:
+            logger.warn(f"Credentials file not found. '{fname}'")
 
     return merge_map

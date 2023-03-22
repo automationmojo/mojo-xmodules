@@ -109,9 +109,8 @@ class CredentialManager:
                 raise ConfigurationError(errmsg)
 
         except KeyError:
-            errmsg = f"No 'credentials' field found."
-            raise ConfigurationError(errmsg)
-    
+            warnmsg = f"No 'credentials' field found."
+            logger.warn(warnmsg)
 
         return
 
