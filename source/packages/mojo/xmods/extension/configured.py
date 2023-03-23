@@ -22,10 +22,35 @@ from typing import Callable, Generator, List, Union, Type
 
 from mojo.xmods.ximport import import_by_name
 
+import fnmatch
 import inspect
 import logging
+import os
 
 logger = logging.getLogger()
+
+
+def scan_for_mojo_factory_modules():
+
+    factory_modules = []
+
+    import mojo.factories as mojo_factories
+
+    mojo_factory_dirs = [fp for fp in mojo_factories.__path__]
+
+    for mfdir in mojo_factory_dirs:
+        for  dirpath, _, filenames in os.walk(mfdir):
+            mod_path_prefix = dirpath[:dirpath.find("mojo/factories")]
+            for fname in filenames:
+                if fnmatch.fnmatch(fname, "*.py"):
+                    fbase, _ = os.path.splitext(os.path.basename(fname))
+                    pname = dirpath[len(mod_path_prefix):].replace("/", ".")
+                    mod_name = f"{pname}.{fbase}"
+                    factory_modules.append(mod_name)
+
+    return factory_modules
+
+DEFAULT_MOJO_FACTORIES = scan_for_mojo_factory_modules()
 
 class ExtensionPointsFactory:
     """
@@ -80,9 +105,7 @@ class SuperFactory:
         in order to enable various types of overload or overinstance states.
     """
 
-    search_modules = [
-        'mojo.xmods.landscaping.extensionpoints'
-    ]
+    search_modules = DEFAULT_MOJO_FACTORIES
 
     extension_factories = []
 
