@@ -24,6 +24,8 @@ import re
 from collections import ChainMap
 from enum import Enum
 
+from mojo.xmods.xcollections.mergemap import MergeMap
+
 
 REGEX_PATH_VALIDATOR = re.compile("/{1}([-a-zA-Z0-9_]+)")
 
@@ -236,12 +238,12 @@ class ContextCursor:
             if leaf_name in dref:
                 found_node = dref[leaf_name]
                 if len(path_parts) > 1:
-                    if isinstance(found_node, (dict, ChainMap)):
+                    if isinstance(found_node, (dict, ChainMap, MergeMap)):
                         found_node = self._lookup(found_node, path, path_parts[1:], default=default)
                     else:
                         raise LookupError("Context lookup failure for path=%s" % path)
                 else:
-                    if isinstance(found_node, (dict, ChainMap)):
+                    if isinstance(found_node, (dict, ChainMap, MergeMap)):
                         found_node = ContextCursor(found_node)
             elif default is not None:
                 if len(path_parts) > 1:
@@ -267,7 +269,7 @@ class ContextCursor:
             if leaf_name in dref:
                 found_node = dref[leaf_name]
                 if len(path_parts) > 1:
-                    if isinstance(found_node, (dict, ChainMap)):
+                    if isinstance(found_node, (dict, ChainMap, MergeMap)):
                         found_node = self._remove(found_node, path, path_parts[1:])
                     else:
                         raise LookupError("Context remove failure for path=%s" % path)
@@ -405,12 +407,12 @@ class Context:
             if leaf_name in dref:
                 found_node = dref[leaf_name]
                 if len(path_parts) > 1:
-                    if isinstance(found_node, (dict, ChainMap)):
+                    if isinstance(found_node, (dict, ChainMap, MergeMap)):
                         found_node = self._lookup(found_node, path, path_parts[1:], default=default)
                     else:
                         raise LookupError("Context lookup failure for path=%s" % path)
                 else:
-                    if isinstance(found_node, (dict, ChainMap)):
+                    if isinstance(found_node, (dict, ChainMap, MergeMap)):
                         found_node = ContextCursor(found_node)
             elif default is not None:
                 if len(path_parts) > 1:
@@ -436,7 +438,7 @@ class Context:
             if leaf_name in dref:
                 found_node = dref[leaf_name]
                 if len(path_parts) > 1:
-                    if isinstance(found_node, (dict, ChainMap)):
+                    if isinstance(found_node, (dict, ChainMap, MergeMap)):
                         found_node = self._remove(found_node, path, path_parts[1:])
                     else:
                         raise LookupError("Context remove failure for path=%s" % path)
