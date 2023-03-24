@@ -1,12 +1,14 @@
 
+
 from typing import List, Type
 
 from mojo.xmods.extension.configured import ExtensionPointsFactory
 
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
 from mojo.xmods.landscaping.extensionpoints import LandscapingExtentionPoints
+from mojo.protocols.ssh.sshcoordinatorcoupling import SshCoordinatorCoupling
 
-class LandscapingExtentionPointsFactory(ExtensionPointsFactory, LandscapingExtentionPoints):
+class SshExtentionPointsFactory(ExtensionPointsFactory, LandscapingExtentionPoints):
 
     @classmethod
     def get_landscape_type(self) -> Type:
@@ -18,4 +20,4 @@ class LandscapingExtentionPointsFactory(ExtensionPointsFactory, LandscapingExten
         """
             Used to lookup and return the most relevant list of integration coupling types.
         """
-        return []
+        return [SshCoordinatorCoupling]

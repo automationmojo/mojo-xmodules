@@ -20,6 +20,18 @@ class AbstractMethodError(RuntimeError):
         This error is raised when an abstract method has been called.
     """
 
+
+class CommandError(RuntimeError):
+    """
+        This error is the base error for command results errors.
+    """
+    def __init__(self, message, status, stdout, stderr, *args, **kwargs):
+        super().__init__(message, *args, **kwargs)
+        self.status = status
+        self.stdout = stdout
+        self.stderr = stderr
+        return
+
 class ConfigurationError(BaseException):
     """
         The base error object for errors that indicate that there is an issue related

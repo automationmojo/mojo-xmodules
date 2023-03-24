@@ -8,19 +8,28 @@ from mojo.xmods.xcollections.context import Context, ContextPaths
 
 def landscape_example_main():
 
-    output_dir = os.path.expanduser("~/mjr/configs/results/examples/landscaping")
+    output_dir = os.path.expanduser("~/mjr/results/examples/landscaping")
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    config_dir = os.path.expanduser("~/mjr/configs/landscapes")
+    config_dir = os.path.expanduser("~/mjr/config")
     if not os.path.exists(config_dir):
         os.makedirs(config_dir)
 
+    landscapes_dir = os.path.join(config_dir, "landscapes")
+    if not os.path.exists(landscapes_dir):
+        os.makedirs(landscapes_dir)
+
+    credential_files = [
+        os.path.join(config_dir, "credentials.yaml")
+    ]
+
     landscape_files = [
-        os.path.join(config_dir, "default-landscape.yaml")
+        os.path.join(landscapes_dir, "default-landscape.yaml")
     ]
 
     ctx = Context()
+    ctx.insert(ContextPaths.CONFIG_CREDENTIAL_FILES, credential_files)
     ctx.insert(ContextPaths.CONFIG_LANDSCAPE_FILES, landscape_files)
     ctx.insert(ContextPaths.OUTPUT_DIRECTORY, output_dir)
 
