@@ -3,6 +3,7 @@ import os
 
 from mojo.xmods.landscaping.landscapeparameters import LandscapeActivationParams
 from mojo.xmods.landscaping.landscape import startup_landscape
+from mojo.xmods.wellknown.singletons import LandscapeSingleton
 
 from mojo.xmods.xcollections.context import Context, ContextPaths
 
@@ -35,7 +36,12 @@ def landscape_example_main():
 
     activation_params = LandscapeActivationParams()
 
-    startup_landscape(activation_params=activation_params)
+    lscape = startup_landscape(activation_params=activation_params)
+
+    all_devices = lscape.get_devices()
+
+    for dev in all_devices:
+        print(f"{dev}")
 
     return
 

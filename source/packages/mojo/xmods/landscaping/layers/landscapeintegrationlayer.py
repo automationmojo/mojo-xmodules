@@ -18,9 +18,13 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Any, Dict, List, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from mojo.xmods.exceptions import SemanticError
+
+from mojo.xmods.interfaces.iexcludefilter import IExcludeFilter
+from mojo.xmods.interfaces.iincludefilter import IIncludeFilter
+
 from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 from mojo.xmods.landscaping.coupling.coordinatorcoupling import CoordinatorCoupling
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCouplingType
@@ -126,6 +130,42 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
             Returns a table of the installed integration couplings found.
         """
         return self._requested_integration_couplings
+
+    def get_devices(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None):
+        """
+            Gets a copy of the integrated devices list.
+        """
+        lscape = self.landscape
+
+        candidate_devices = None
+
+        with lscape.begin_locked_landscape_scope() as locked:
+            candidate_devices = [dev for dev in self._integrated_devices]
+        
+        selected_devices = []
+
+        if include_filters is None:
+            selected_devices = candidate_devices
+        else:
+            while len(candidate_devices):
+                dev = candidate_devices.pop()
+                for ifilter in include_filters:
+                    if ifilter.should_include(dev):
+                        selected_devices.append(dev)
+                        break
+
+        if exclude_filters is not None:
+            candidate_devices = selected_devices
+
+            selected_devices = []
+
+            while len(candidate_devices):
+                dev = candidate_devices.pop()
+                for xfilter in exclude_filters:
+                    if not xfilter.should_exclude(dev):
+                        selected_devices.append(dev)
+
+        return selected_devices
 
     def initialize_landscape(self) -> Dict[FriendlyIdentifier, LandscapeDevice]:
 

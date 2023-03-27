@@ -209,7 +209,7 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
             for dev_config_info in pod_info["devices"]:
                 if "skip" in dev_config_info and dev_config_info["skip"]:
                     continue
-            device_config_list.append(dev_config_info)
+                device_config_list.append(dev_config_info)
 
         return device_config_list
 

@@ -8,6 +8,9 @@ from mojo.xmods.xcollections.context import Context, ContextPaths
 
 from mojo.xmods.exceptions import SemanticError
 
+from mojo.xmods.interfaces.iexcludefilter import IExcludeFilter
+from mojo.xmods.interfaces.iincludefilter import IIncludeFilter
+
 from mojo.xmods.landscaping.layers.landscapeconfigurationlayer import LandscapeConfigurationLayer
 from mojo.xmods.landscaping.layers.landscapeinstallationlayer import LandscapeInstallationLayer
 from mojo.xmods.landscaping.layers.landscapeintegrationlayer import LandscapeIntegrationLayer
@@ -304,6 +307,13 @@ class Landscape:
         unlkd_scope = UnLockedScope(self.landscape_lock)
         return unlkd_scope
     
+    def get_devices(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None):
+        """
+            Gets a copy of the integrated devices list.
+        """
+        selected_devices = self.layer_integration.get_devices(include_filters=include_filters, exclude_filters=exclude_filters)
+        return selected_devices
+
     def _create_layers(self):
         
         self._layer_install = LandscapeInstallationLayer(self)
