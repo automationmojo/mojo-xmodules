@@ -109,7 +109,6 @@ class Aspects:
             self.logger = logger
 
         return
-
 class AspectsCmd(Aspects):
     """
     """

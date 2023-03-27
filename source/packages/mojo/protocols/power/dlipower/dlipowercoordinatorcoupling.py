@@ -1,7 +1,8 @@
 """
-.. module:: sshcoordinatorcoupling
+.. module:: powercoordinatorcoupling
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Contains a SshCoordinatorCoupling object to use for working with the computer nodes via SSH
+    :synopsis: Contains a PowerCoordinatorCoupling object to use for working with standard
+               power agent types.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
@@ -29,31 +30,30 @@ from mojo.xmods.landscaping.precedence import StartupLevel
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
 
-SUPPORTED_INTEGRATION_CLASS = "network/ssh"
+SUPPORTED_INTEGRATION_CLASS = "network/dlipower"
 
-def is_ssh_device_config(device_info):
-    is_ssh_dev = False
+def is_dlipower_type(config_info) -> bool:
+    is_sst = False
 
-    dev_type = device_info["deviceType"]
-    if dev_type == SUPPORTED_INTEGRATION_CLASS:
-        is_ssh_dev = True
+    if "powerType" in config_info:
+        stval = config_info["powerType"]
+        if stval == SUPPORTED_INTEGRATION_CLASS:
+            is_sst = True
 
-    return is_ssh_dev
+    return is_sst
 
-class SshCoordinatorCoupling(CoordinatorCoupling):
+class PowerCoordinatorCoupling(CoordinatorCoupling):
     """
-        The SshCoordinatorCoupling handle the requirement registration for the SSH coordinator.
+        The PowerCoordinatorCoupling handle the requirement registration for the SSH coordinator.
     """
 
-    pathbase = "/ssh"
-
-    integration_section: str = "devices"
-    integration_leaf: str = "deviceType"
+    integration_section: str = "power"
+    integration_leaf: str = "powerType"
     integration_class: str = SUPPORTED_INTEGRATION_CLASS
 
     def __init__(self, *args, **kwargs):
         """
-            The default contructor for an :class:`SshPoolCoordinatorIntegration`.
+            The default contructor for an :class:`PowerCoordinatorIntegration`.
         """
         super().__init__(*args, **kwargs)
         return
@@ -64,17 +64,17 @@ class SshCoordinatorCoupling(CoordinatorCoupling):
             This API is called so that the IntegrationCoupling can process configuration information.  The :class:`IntegrationCoupling`
             will verify that it has a valid environment and configuration to run in.
 
-            :raises :class:`mojo.xmods.exceptions.AKitMissingConfigError`, :class:`mojo.xmods.exceptions.ConfigurationError`:
+            :raises :class:`mojo.xmods.exceptions.ConfigurationError`:
         """
 
         cls.landscape = landscape
         layer_config = landscape.layer_configuration
 
-        device_list = layer_config.get_device_configs()
-        if len(device_list) > 0:
-            ssh_device_list = [dev for dev in filter(is_ssh_device_config, device_list)]
+        power_list = layer_config.get_serial_configs()
+        if len(power_list) > 0:
+            supported_power_list = [pconf for pconf in filter(is_dlipower_type, power_list)]
 
-            if len(ssh_device_list) > 0:
+            if len(supported_power_list) > 0:
                 layer_integ = landscape.layer_integration
                 layer_integ.register_integration_dependency(cls)
 
@@ -86,7 +86,7 @@ class SshCoordinatorCoupling(CoordinatorCoupling):
             This API is called so the `IntegrationCoupling` can connect with a resource management
             system and gain access to the resources required for the automation run.
 
-            :raises :class:`mojo.xmods.exceptions.AKitResourceError`:
+            :raises :class:`mojo.xmods.exceptions.ResourceError`:
         """
         return
 
@@ -104,10 +104,7 @@ class SshCoordinatorCoupling(CoordinatorCoupling):
             This API is called so that the IntegrationCoupling can declare an ordinal precedence that should be
             utilized for bringing up its integration state.
         """
-        # Because SSH is a protocol that can be used by other coordinators as well, we are considered a
-        # secondary protocol.  That is because the SSH coordinator may be called on to add an extension
-        # to devices that it did not create and so does not own such as a UPNP device.
-        return StartupLevel.SecondaryProtocol
+        return StartupLevel.Power
 
     @classmethod
     def diagnostic(cls, label: str, level: int, diag_folder: str):
@@ -138,29 +135,9 @@ class SshCoordinatorCoupling(CoordinatorCoupling):
                       reports for devices devices based on the coordinator.
         """
 
-        lscape = cls.landscape
-        layer_integ = lscape.layer_integration
+        config_errors = [], scan_results = {}
 
-        device_list = layer_integ.get_devices()
-        if len(device_list) > 0:
-            ssh_device_list = [dev for dev in filter(is_ssh_device_config, device_list)]
-
-            if len(ssh_device_list) == 0:
-                raise SemanticError("We should have not been called if no SSH devices are available.")
-
-            upnp_coord = cls.landscape._internal_get_upnp_coord()
-
-            ssh_config_errors, matching_device_results, missing_device_results = cls.coordinator.attach_to_devices(
-                ssh_device_list, upnp_coord=upnp_coord)
-
-            ssh_scan_results = {
-                "ssh": {
-                    "matching_devices": matching_device_results,
-                    "missing_devices": missing_device_results
-                }
-            }
-
-        return (ssh_config_errors, ssh_scan_results)
+        return config_errors, scan_results
 
     @classmethod
     def establish_presence(cls) -> Tuple[List[str], dict]:
@@ -177,25 +154,17 @@ class SshCoordinatorCoupling(CoordinatorCoupling):
     def validate_item_configuration(cls, item_info: Dict[str, Any]) -> Tuple[List[str], List[str]]:
         """
             Validate the item configuration.
-
-            -   deviceType: network/ssh
-                name: raspey03
-                host: 172.16.1.33
-                credentials:
-                -    pi-cluster
-                features:
-                    isolation: false
-                skip: false
         """
         errors = []
         warnings = []
         
         if "host" not in item_info:
-            errmsg = "Device configuration 'network/ssh' must have a 'host' field."
+            errmsg = "Serial configuration 'network/dlipower' must have a 'host' field."
             errors.append(errmsg)
 
-        if "credentials" not in item_info:
-            warnmsg = "Device configuration 'network/ssh' should have a 'credentials' field."
+        if "port" not in item_info:
+            warnmsg = "Device configuration 'network/dlipower' should have a 'port' field."
             warnings.append(warnmsg)
 
         return errors, warnings
+

@@ -23,7 +23,7 @@ import logging
 import weakref
 
 if TYPE_CHECKING:
-    from mojo.xmods.landscaping.coordinatorbase import CoordinatorBase
+    from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
     from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 
 class LandscapeDeviceExtension:

@@ -17,15 +17,18 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import TYPE_CHECKING
+from typing import Any, Dict, Tuple, TYPE_CHECKING
 
 import inspect
 
-from mojo.xmods.landscaping.landscape import Landscape
 from mojo.xmods.exceptions import NotOverloadedError
 
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
+from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
+from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 
+if TYPE_CHECKING:
+    from mojo.xmods.landscaping.landscape import Landscape
 
 class CoordinatorCoupling(IntegrationCoupling):
     """
@@ -36,9 +39,10 @@ class CoordinatorCoupling(IntegrationCoupling):
     coordinator = None
 
     @classmethod
-    def create_coordinator(cls, landscape: Landscape) -> object:
+    def create_coordinator(cls, landscape: "Landscape") -> object:
         """
             This API is called so that the landscape can create a coordinator for a given coordinator
             integration role.
         """
         raise NotOverloadedError("This method must be overridden by derived coordinator classes.")
+

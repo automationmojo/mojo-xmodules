@@ -23,8 +23,10 @@ import threading
 import weakref
 
 from mojo.xmods.exceptions import NotOverloadedError
+from mojo.xmods.landscaping.landscapeparameters import LandscapeActivationParams
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.landscapedeviceextension import LandscapeDeviceExtension
+from mojo.xmods.xthreading.lockscopes import LockedScope, UnLockedScope
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
@@ -37,22 +39,6 @@ class CoordinatorBase:
         communicates with the external devices over the medium.
     """
 
-    instance = None
-    initialized = False
-
-    logger = logging.getLogger()
-
-    def __new__(cls, *_args, **_kwargs):
-        """
-            Constructs new instances of the :class:`UpnpCoordinator` object. The
-            :class:`UpnpCoordinator` object is a singleton so following instantiations
-            of the object will reference the existing singleton
-        """
-
-        if cls.instance is None:
-            cls.instance = super(CoordinatorBase, cls).__new__(cls)
-        return cls.instance
-
     def __init__(self, lscape: "Landscape", *args, coord_config=None, **kwargs):
         """
             Constructs an instance of a derived :class:`CoordinatorBase` object.
@@ -61,37 +47,53 @@ class CoordinatorBase:
             :param *args: A pass through for other positional args.
             :param **kwargs: A pass through for the other keyword args.
         """
-        this_type = type(self)
-        if not this_type.initialized:
-            this_type.initialized = True
 
-            # If the landscape is in interactive mode, then all the coordinators should
-            # default to using interactive mode
-            self._interactive_mode = lscape.interactive_mode
+        self._lscape_ref = weakref.ref(lscape)
+        self._coord_config = coord_config
 
-            self._lscape_ref = weakref.ref(lscape)
+        # If the landscape is in interactive mode, then all the coordinators should
+        # default to using interactive mode
+        self._interactive_mode = lscape.interactive_mode
 
-            self._coord_lock = threading.RLock()
+        self._coord_lock = threading.RLock()
 
-            self._cl_children = {}
+        self._cl_children = {}
 
-            self._expected_devices = []
-            self._found_devices = []
-            self._matched_devices = []
-            self._missing_devices = []
+        self._cl_expected_devices = []
+        self._cl_found_devices = []
+        self._cl_matched_devices = []
+        self._cl_missing_devices = []
 
-            self._coord_config = coord_config
-
-            self._initialize(*args, **kwargs)
         return
 
-    def _initialize(self, *_args, **_kwargs):
+    def activate(self, activation_params: LandscapeActivationParams):
         """
-            Called by the CoordinatorBase constructor to perform the one time initialization of the coordinator Singleton
-            of a given type.
+            Called by the :class:`LandscapeOperationalLayer` in order for the coordinator to be able to
+            potentially enhanced devices.
         """
-        # pylint: disable=no-self-use
-        raise NotOverloadedError("_initialize: must be overloaded by derived coordinator classes")
+        raise NotOverloadedError("activate: must be overloaded by derived coordinator classes")
+
+
+    def begin_locked_coordinator_scope(self) -> LockedScope:
+        """
+            Method that creates a locked scope for this device.
+        """
+        lkd_scope = LockedScope(self._coord_lock)
+        return lkd_scope
+
+    def begin_unlocked_coordinator_scope(self) -> UnLockedScope:
+        """
+            Method that creates an unlocked scope for this device.
+        """
+        unlkd_scope = UnLockedScope(self._coord_lock)
+        return unlkd_scope
+
+    def establish_connectivity(self, activation_params: LandscapeActivationParams):
+        """
+            Called by the :class:`LandscapeOperationalLayer` in order for the coordinator to be able to
+            verify connectivity with devices.
+        """
+        raise NotOverloadedError("activate: must be overloaded by derived coordinator classes")
 
     @property
     def children(self) -> List[LandscapeDevice]:

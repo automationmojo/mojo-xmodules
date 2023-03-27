@@ -119,6 +119,10 @@ class Landscape:
         return
     
     @property
+    def credential_manager(self):
+        return self._layer_configuration.credential_manager
+
+    @property
     def layer_configuration(self):
         """
             Gets the configuration layer for the current Landscape.
@@ -183,7 +187,7 @@ class Landscape:
 
                     self._layer_configuration.initialize_credentials()
 
-                    self._all_devices = self._layer_configuration.initialize_landscape()
+                    self._all_devices = self._layer_configuration.attach_to_environment()
 
                     self._landscape_configure_complete = True
 
@@ -223,7 +227,7 @@ class Landscape:
                 # exit without the landscape initialization being finished.
                 with self.begin_unlocked_landscape_scope() as ulkscope:
 
-                    #TODO: Add integration code here
+                    self._layer_integration.initialize_landscape()
 
                     self._landscape_integrate_complete = True
 
@@ -259,13 +263,15 @@ class Landscape:
                 # exit without the landscape initialization being finished.
                 with self.begin_unlocked_landscape_scope() as ulkscope:
 
-                    self._activate_coordinators(activation_params)
+                    # Activate the coordinators to have them enhance the devices and also
+                    # link up devices with dependent extensions
+                    self._layer_operational.activate_coordinators(activation_params)
 
-                    self._establish_connectivity(activation_params)
+                    self._layer_operational.establish_connectivity(activation_params)
 
-                    self._validate_features(activation_params)
+                    self._layer_operational.validate_features(activation_params)
 
-                    self._validate_topology(activation_params)
+                    self._layer_operational.validate_topology(activation_params)
 
                     self._operational_gate.set()
 
@@ -307,27 +313,7 @@ class Landscape:
         self._topology_description = TopologyIntegrationLayer(self)
         return
 
-    def _activate_coordinators(self, activation_params: LandscapeActivationParams):
-
-        return
     
-    def _establish_connectivity(self, activation_params: LandscapeActivationParams):
-        
-        return
-    
-    def _validate_features(self, activation_params: LandscapeActivationParams):
-
-        if activation_params.validate_features:
-            pass
-
-        return
-    
-    def _validate_topology(self, activation_params: LandscapeActivationParams):
-
-        if activation_params.validate_topology:
-            pass
-
-        return
 
 def startup_landscape(activation_params: LandscapeActivationParams=DEFAULT_LANDSCAPE_ACTIVATION_PARAMS,
         interactive: Optional[bool]=None) -> Landscape:

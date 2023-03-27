@@ -24,7 +24,6 @@ import inspect
 from mojo.xmods.landscaping.coupling.basecoupling import BaseCoupling
 from mojo.xmods.exceptions import NotOverloadedError
 
-from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 
 if TYPE_CHECKING:
@@ -42,6 +41,8 @@ class IntegrationCoupling(BaseCoupling):
     integration_section: str = None
     integration_leaf: str = None
     integration_class: str = None
+
+    integration_activated: bool = False
 
     integrated_devices: List[LandscapeDevice] = []
 
@@ -65,33 +66,15 @@ class IntegrationCoupling(BaseCoupling):
         return self._presence_establish
 
     @classmethod
-    def declare_precedence(cls) -> int:
-        """
-            This API is called so that the IntegrationCoupling can declare an ordinal precedence that should be
-            utilized for bringing up its integration state.
-        """
-        return
-
-    @classmethod
-    def attach_to_environment(cls, constraints: Dict={}):
+    def attach_to_environment(cls, landscape: "Landscape"):
         """
             This API is called so that the IntegrationCoupling can process configuration information.  The :class:`IntegrationCoupling`
             will verify that it has a valid environment and configuration to run in.
 
-            :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
+            :raises :class:`mojo.xmods.exceptions.AKitMissingConfigError`, :class:`mojo.xmods.exceptions.ConfigurationError`:
         """
         errmsg = "The 'attach_to_environment' method must be overloaded by derived integration coupling types."
         raise NotOverloadedError(errmsg)
-    
-    @classmethod
-    def attach_to_framework(cls, landscape: "Landscape"):
-        """
-            This API is called so that the IntegrationCoupling can attach to the test framework and participate with
-            registration processes.  This allows the framework to ignore the bring-up of couplings that are not being
-            included by a test.
-        """
-        cls.landscape = landscape
-        return
 
     @classmethod
     def collect_resources(cls):
@@ -99,28 +82,18 @@ class IntegrationCoupling(BaseCoupling):
             This API is called so the `IntegrationCoupling` can connect with a resource management
             system and gain access to the resources required for the automation run.
 
-            :raises :class:`akit.exceptions.AKitResourceError`:
+            :raises :class:`mojo.xmods.exceptions.AKitResourceError`:
         """
         errmsg = "The 'collect_resources' method must be overloaded by derived integration coupling types."
         raise NotOverloadedError(errmsg)
 
     @classmethod
-    def create_landscape_device(cls, device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, LandscapeDevice]:
+    def declare_precedence(cls) -> int:
         """
-            Device called by the :class:`LandscapeConfigurationLayer` for devices associated with a specified
-            device integration as specified by the `deviceType` field of a device declaration.
-
-            ..note: When implementing this method, the devices created by an integration coupling should be added to
-                    the `integrated_devices` list attached to this class.  The integration coupling can inherit
-                    from :class:`LandscapeDevice` in order to provide a more device characteristic base type.
-            
-            ..note: The device created at this point in the startup process are generally generic base versions of
-                    a given device type.  These generic versions can later be swapped out for more specific versions
-                    once connectivity has been established with the device.
+            This API is called so that the IntegrationCoupling can declare an ordinal precedence that should be
+            utilized for bringing up its integration state.
         """
-
-        errmsg = "The 'create_landscape_device' method must be overloaded by derived integration coupling types."
-        raise NotOverloadedError(errmsg)
+        return
 
     @classmethod
     def diagnostic(cls, label: str, level: int, diag_folder: str): # pylint: disable=unused-argument
@@ -168,7 +141,17 @@ class IntegrationCoupling(BaseCoupling):
         raise NotOverloadedError(errmsg)
 
     @classmethod
-    def validate_item_configuration(cls, item_info: Dict[str, Any]):
+    def get_integration_key(cls):
+        rtnval = f"{cls.integration_section}:{cls.integration_leaf}:{cls.integration_class}"
+        return rtnval
+    
+    @classmethod
+    def get_integration_key_parts(cls):
+        rtnval = (cls.integration_section, cls.integration_leaf, cls.integration_class)
+        return rtnval
+
+    @classmethod
+    def validate_item_configuration(cls, item_info: Dict[str, Any]) -> Tuple[List[str], List[str]]:
         errmsg = "The 'validate_item_configuration' method must be overloaded by derived integration coupling types."
         raise NotOverloadedError(errmsg)
 

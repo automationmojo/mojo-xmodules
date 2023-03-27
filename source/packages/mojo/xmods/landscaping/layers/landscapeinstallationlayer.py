@@ -55,7 +55,7 @@ class LandscapeInstallationLayer(LandscapingLayerBase):
 
             for itype in integration_coupling_types:
                 itype: IntegrationCouplingType = itype
-                integration_key = f"{itype.integration_section}:{itype.integration_leaf}:{itype.integration_class}"
+                integration_key = itype.get_integration_key()
                 self._installed_integration_couplings[integration_key] = itype
 
         return

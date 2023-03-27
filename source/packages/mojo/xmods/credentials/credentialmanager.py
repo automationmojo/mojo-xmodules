@@ -51,6 +51,19 @@ class CredentialManager:
     def credentials(self):
         return self._credentials
 
+    def lookup_credential(self, credkey: str) -> BasicCredential:
+        """
+            Lookup a credential by key.
+        """
+        
+        if credkey not in self._credentials:
+            errmsg = f"Error missing credential '{credkey}'."
+            raise ConfigurationError(errmsg)
+        
+        cred = self._credentials[credkey]
+        
+        return cred
+
     def _initialize_credentials(self):
         """
         """

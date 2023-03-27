@@ -26,6 +26,7 @@ import weakref
 from datetime import datetime
 
 from mojo.xmods.credentials.basecredential import BaseCredential
+from mojo.xmods.credentials.sshcredential import SshCredential
 from mojo.xmods.exceptions import SemanticError
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.landscapedeviceextension import LandscapeDeviceExtension
@@ -34,6 +35,7 @@ from mojo.xmods.xthreading.lockscopes import LockedScope, UnLockedScope
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
+    from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 
 class LandscapeDevice(FeatureAttachedObject):
     """
@@ -49,12 +51,14 @@ class LandscapeDevice(FeatureAttachedObject):
 
     logger = logging.getLogger()
 
-    def __init__(self, lscape: "Landscape", friendly_id: FriendlyIdentifier, device_type: str, device_config: dict):
+    def __init__(self, lscape: "Landscape", coordinator: "CoordinatorBase", friendly_id: 
+                 FriendlyIdentifier, device_type: str, device_config: dict):
         super().__init__()
 
         # These data items live for the life of the device, so they are not guarded
         # by a lock
         self._lscape_ref = weakref.ref(lscape)
+        self._coord_ref = weakref.ref(coordinator)
 
         self._friendly_id = friendly_id
         self._device_type = device_type
@@ -67,23 +71,33 @@ class LandscapeDevice(FeatureAttachedObject):
         self._is_watched = None
         self._is_isolated = None
 
-        self._extensions: Dict[str, LandscapeDeviceExtension] = None
+        self._extensions: Dict[str, LandscapeDeviceExtension] = {}
 
         self._table_for_match_callbacks = {}
         self._table_for_status_callbacks = {}
 
         self._credentials = {}
+        self._features = {}
+        if "features" in device_config:
+             self._features = device_config
 
         self._configured_ipaddr = None
         if "ipaddr" in device_config:
             self._configured_ip = device_config["ipaddr"]
 
+        credmgr = lscape.credential_manager
+
         if "credentials" in device_config:
-            lscape_credentials = lscape.credentials
             for cred_key in device_config["credentials"]:
-                if cred_key in lscape_credentials:
-                    cred_info = lscape_credentials[cred_key]
-                    self._credentials[cred_key] = cred_info
+                self._credentials[cred_key] = credmgr.lookup_credential(cred_key)
+
+        self._has_ssh_credential = False
+        self._primary_ssh_credential = None
+        for cred in self._credentials.values():
+            if isinstance(cred, SshCredential):
+                self._has_ssh_credential = True
+                self._ssh_credential = cred
+                break
 
         return
 
@@ -104,6 +118,10 @@ class LandscapeDevice(FeatureAttachedObject):
             A datetime stamp of when this device was last contacted
         """
         return self._contacted_last
+
+    @property
+    def coordinator(self) -> "CoordinatorBase":
+        return self._coord_ref()
 
     @property
     def credentials(self) -> Dict[str, BaseCredential]:
@@ -144,6 +162,13 @@ class LandscapeDevice(FeatureAttachedObject):
         return self._friendly_id.full_identifier
 
     @property
+    def has_ssh_credential(self) -> bool:
+        """
+            Indicates if a device has and SshCredential associated with it.
+        """
+        return self._has_ssh_credential
+
+    @property
     def identity(self) -> str:
         """
             Returns a string that identifies a device in logs. This property can
@@ -159,6 +184,16 @@ class LandscapeDevice(FeatureAttachedObject):
         """
         ipaddr = self._resolve_ipaddress()
         return ipaddr
+
+    @property
+    def is_configured_for_power(self):
+        rtnval = True if "power" in self._features else False
+        return rtnval
+    
+    @property
+    def is_configured_for_serial(self):
+        rtnval = True if "serial" in self._features else False
+        return rtnval
 
     @property
     def is_watched(self) -> bool:
@@ -190,30 +225,21 @@ class LandscapeDevice(FeatureAttachedObject):
         pivots = (self._friendly_id.identity,)
         return pivots
 
-    def attach_extension(self, ext_type, extension) -> None:
+    @property
+    def ssh_credential(self) -> Union[SshCredential, None]:
+        return self._ssh_credential
+
+    def attach_extension(self, ext_type: str, extension: LandscapeDeviceExtension) -> None:
         """
             Method called by device coordinators to attach a device extension to a :class:`LandscapeDevice`.
         """
+
         if ext_type not in self._extensions:
             self._extensions[ext_type] = extension
         else:
             errmsg = f"attach_extension: called for pre-existing extension type '{ext_type}'."
             raise SemanticError(errmsg)
 
-        return
-
-    def checkout(self) -> None:
-        """
-            Method that makes it convenient to checkout device.
-        """
-        self.landscape.checkout_device(self)
-        return
-
-    def checkin(self) -> None:
-        """
-            Method that makes it convenient to checkin a device.
-        """
-        self.landscape.checkin_device(self)
         return
 
     def begin_locked_scope(self) -> "LockedScope":
@@ -229,6 +255,28 @@ class LandscapeDevice(FeatureAttachedObject):
         """
         unlkd_scope = UnLockedScope(self._device_lock)
         return unlkd_scope
+
+    def checkout(self) -> None:
+        """
+            Method that makes it convenient to checkout device.
+        """
+        self.landscape.checkout_device(self)
+        return
+
+    def checkin(self) -> None:
+        """
+            Method that makes it convenient to checkin a device.
+        """
+        self.landscape.checkin_device(self)
+        return
+
+    def enhance(self):
+        """
+            Called to allow a device to enhance its metadata past what is declared in the
+            configuration file.  For device that only have a hint, this might trigger a
+            discovery process which will result in determining connectivity with the device.
+        """
+        return
 
     def initialize_credentials(self, credentials: Dict[str, BaseCredential]) -> None:
         """

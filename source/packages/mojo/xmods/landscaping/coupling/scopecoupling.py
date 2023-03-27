@@ -88,7 +88,7 @@ class ScopeCoupling(BaseCoupling):
             This API is called so that the ScopeCoupling can process configuration information.  The :class:`ScopeCoupling`
             will verify that it has a valid environment and configuration to run in.
 
-            :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
+            :raises :class:`mojo.xmods.exceptions.AKitMissingConfigError`, :class:`mojo.xmods.exceptions.ConfigurationError`:
         """
         return
 
@@ -96,10 +96,10 @@ class ScopeCoupling(BaseCoupling):
         """
             This API is called by the sequencer when a scope of state is being entered by an automation
             run.  The derived `ScopeCoupling` implementation should initialize the scope they are designed
-            to manage and if initialization fails, they should raise a :class:`akit.exceptions.AKitScopeEntryError`
+            to manage and if initialization fails, they should raise a :class:`mojo.xmods.exceptions.AKitScopeEntryError`
             error.
 
-            :raises :class:`akit.exceptions.AKitScopeEntryError`:
+            :raises :class:`mojo.xmods.exceptions.AKitScopeEntryError`:
         """
         return
 

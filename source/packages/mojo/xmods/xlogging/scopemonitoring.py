@@ -78,7 +78,7 @@ class MonitoredScope:
         global global_scope_monitor
 
         if global_scope_monitor is None:
-            global_scope_monitor = MonitoredScope()
+            global_scope_monitor = ScopeMonitor()
 
         self._timeout_ctx.mark_begin()
 
