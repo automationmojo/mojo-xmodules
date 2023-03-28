@@ -63,7 +63,7 @@ class SshCoordinator(CoordinatorBase):
     # pylint: disable=attribute-defined-outside-init
 
     def __init__(self, lscape: "Landscape", *args, **kwargs):
-        super(SshCoordinator, self).__init__(lscape, *args, **kwargs)
+        super().__init__(lscape, *args, **kwargs)
 
         self._cl_upnp_hint_to_ip_lookup: Dict[str, str] = {}
         self._cl_ip_to_host_lookup: Dict[str, str] = {}

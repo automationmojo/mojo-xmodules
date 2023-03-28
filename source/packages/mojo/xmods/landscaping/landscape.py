@@ -1,5 +1,5 @@
 
-from typing import Dict, Generator, List, Optional, Union
+from typing import Dict, List, Optional
 
 import logging
 import threading
@@ -315,7 +315,6 @@ class Landscape:
         return selected_devices
 
     def _create_layers(self):
-        
         self._layer_install = LandscapeInstallationLayer(self)
         self._layer_configuration = LandscapeConfigurationLayer(self)
         self._layer_integration = LandscapeIntegrationLayer(self)
