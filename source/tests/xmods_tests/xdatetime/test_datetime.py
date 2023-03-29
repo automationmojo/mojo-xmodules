@@ -27,8 +27,6 @@ class TestEnhancer(unittest.TestCase):
         after = ptime.timestamp()
         assert before == after, f"The after time should have equaled before time.  before={before} ftime={ftime} ptime={ptime} after={after}"
 
-    def test_parse_datetime(self):
-        return
 
 if __name__ == '__main__':
     unittest.main()
