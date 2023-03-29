@@ -7,7 +7,7 @@
 """
 
 __author__ = "Myron Walker"
-__copyright__ = "Copyright 2020, Myron W Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
@@ -75,6 +75,30 @@ class SshCoordinator(CoordinatorBase):
             potentially enhanced devices.
         """
         return
+
+    def create_landscape_device(self, landscape: "Landscape", device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, SshDevice]:
+        """
+            Called to declare a declared landscape device for a given coordinator.
+        """
+        host = device_info["host"]
+        dev_type = device_info["deviceType"]
+        fid = FriendlyIdentifier(host, host)
+
+        device = SshDevice(landscape, self, fid, dev_type, device_info)
+        
+        coord_ref = weakref.ref(self)
+        device_ref = weakref.ref(device)
+
+        ssh_agent = SshAgent(host, device.ssh_credential)
+        ssh_agent.initialize(coord_ref, device_ref, host, host, device_info)
+
+        with self.begin_locked_coordinator_scope() as locked:
+            self._cl_children[host] = ssh_agent
+            self._cl_ip_to_host_lookup[ssh_agent.ipaddr] = host
+
+        device.attach_extension("network/ssh", ssh_agent)
+
+        return fid, device
 
     def establish_connectivity(self, activation_params: LandscapeActivationParams):
         """
@@ -209,30 +233,6 @@ class SshCoordinator(CoordinatorBase):
         self._unavailable_devices = ssh_devices_unavailable
 
         return ssh_config_errors, ssh_devices_available, ssh_devices_unavailable
-
-    def create_landscape_device(self, landscape: "Landscape", device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, SshDevice]:
-        """
-            Called to declare a declared landscape device for a given coordinator.
-        """
-        host = device_info["host"]
-        dev_type = device_info["deviceType"]
-        fid = FriendlyIdentifier(host, host)
-
-        device = SshDevice(landscape, self, fid, dev_type, device_info)
-        
-        coord_ref = weakref.ref(self)
-        device_ref = weakref.ref(device)
-
-        ssh_agent = SshAgent(host, device.ssh_credential)
-        ssh_agent.initialize(coord_ref, device_ref, host, host, device_info)
-
-        with self.begin_locked_coordinator_scope() as locked:
-            self._cl_children[host] = ssh_agent
-            self._cl_ip_to_host_lookup[ssh_agent.ipaddr] = host
-
-        device.attach_extension("network/ssh", ssh_agent)
-
-        return fid, device
 
     def lookup_device_by_host(self, host: str) -> Union[LandscapeDevice, None]:
         """

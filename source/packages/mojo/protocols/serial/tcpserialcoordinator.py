@@ -7,7 +7,7 @@
 """
 
 __author__ = "Myron Walker"
-__copyright__ = "Copyright 2020, Myron W Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
@@ -15,11 +15,16 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Union, TYPE_CHECKING
+from typing import Any, Dict, Tuple, Union, TYPE_CHECKING
+
+import weakref
 
 from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
+from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.landscapeparameters import LandscapeActivationParams
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
+
+from mojo.protocols.serial.tcpserialagent import TcpSerialAgent
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
@@ -45,6 +50,31 @@ class TcpSerialCoordinator(CoordinatorBase):
             potentially enhanced devices.
         """
         return
+
+    def create_landscape_device(self, landscape: "Landscape", device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, TcpSerialAgent]:
+        """
+            Called to declare a declared landscape device for a given coordinator.
+        """
+        host = device_info["host"]
+        port = device_info["port"]
+        dev_type = device_info["deviceType"]
+        fid = FriendlyIdentifier(host, host)
+
+        device = TcpSerialAgent(landscape, self, fid, dev_type, device_info)
+        
+        coord_ref = weakref.ref(self)
+        device_ref = weakref.ref(device)
+
+        ssh_agent = TcpSerialAgent(host, port=port)
+        ssh_agent.initialize(coord_ref, device_ref, host, host, device_info)
+
+        with self.begin_locked_coordinator_scope() as locked:
+            self._cl_children[host] = ssh_agent
+            self._cl_ip_to_host_lookup[ssh_agent.ipaddr] = host
+
+        device.attach_extension("network/ssh", ssh_agent)
+
+        return fid, device
 
     def establish_connectivity(self, activation_params: LandscapeActivationParams):
         """

@@ -1,22 +1,25 @@
 
+
+
 from typing import TYPE_CHECKING
 
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
-from mojo.protocols.ssh.sshagent import SshAgent
+from mojo.protocols.serial.tcpserialagent import TcpSerialAgent
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
     from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 
-class SshDevice(LandscapeDevice):
+class TcpSerialDevice(LandscapeDevice):
 
     def __init__(self, lscape: "Landscape", coordinator: "CoordinatorBase",
                  friendly_id:FriendlyIdentifier, device_type: str, device_config: dict):
         super().__init__(lscape, coordinator, friendly_id, device_type, device_config)
 
         self._host = device_config["host"]
+        self._port = device_config["port"]
         return
 
     @property
@@ -24,7 +27,11 @@ class SshDevice(LandscapeDevice):
         return self._host
 
     @property
-    def ssh(self) -> SshAgent:
+    def port(self) -> int:
+        return self._port
+
+    @property
+    def serial(self) -> TcpSerialAgent:
         ext = self._extensions["network/ssh"]
         return ext
 
