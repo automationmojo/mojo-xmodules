@@ -24,7 +24,7 @@ import time
 
 from datetime import datetime
 
-FORMAT_DATETIME = "%Y-%m-%dT%H%M!%S"
+FORMAT_DATETIME = "%Y-%m-%dT%H%M!%S.%f"
 
 def current_time_millis() -> float:
     """
@@ -35,7 +35,7 @@ def current_time_millis() -> float:
     now_ms = time.time() * 1000
     return now_ms
 
-def format_time_with_fractional(tsecs: float) -> str:
+def format_time_with_fractional(tsecs: float, datetime_format=FORMAT_DATETIME) -> str:
     """
         Format the time in seconds as a fractional in seconds.
 
@@ -43,9 +43,8 @@ def format_time_with_fractional(tsecs: float) -> str:
 
         :returns: Formatted time in (seconds).(fractions of seconds)
     """
-    sec_comp = int(tsecs)
-    frac_comp = (tsecs - sec_comp) * 1000
-    dtstr = "%s.%06d" % (time.strftime(FORMAT_DATETIME, time.gmtime(sec_comp)), frac_comp)
+    timedt = datetime.fromtimestamp(tsecs)
+    dtstr = timedt.strftime(datetime_format)
     return dtstr
 
 def parse_datetime(dtstr: str, datetime_format: str=FORMAT_DATETIME) -> datetime:
@@ -57,12 +56,5 @@ def parse_datetime(dtstr: str, datetime_format: str=FORMAT_DATETIME) -> datetime
 
         :returns: The datetime from the parsed string.
     """
-    microsecs = 0
-
-    if dtstr.find(".") > 0:
-        dtstr, msecstr = dtstr.split(".")
-        microsecs = int(msecstr)
-
-    dtobj = datetime(*time.strptime(dtstr, datetime_format)[:6], microsecs)
-
+    dtobj = datetime.strptime(dtstr, datetime_format)
     return dtobj
