@@ -37,15 +37,21 @@ class FeatureTagNodeMeta(type):
     
     def __repr__(self):
         return "'{}'".format(self.ID)
+    
+    def __str__(self):
+        return "{}".format(self.ID)
 
 class FeatureTag(metaclass=FeatureTagNodeMeta):
     ID = None
 
 class FeatureAttachedObject:
 
+    FEATURE_TAGS = []
+
     def __init__(self):
 
         self._feature_tags = []
+        self.extend_features(self.FEATURE_TAGS)
         return
 
     @property
