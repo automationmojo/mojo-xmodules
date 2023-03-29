@@ -46,7 +46,7 @@ jobs:
       - name: Run Tests
         run: |
           source ./.venv/bin/activate
-          pushd ./source/tests
+          pushd ./source
           python3 -m unittest discover tests
           popd
           deactivate
