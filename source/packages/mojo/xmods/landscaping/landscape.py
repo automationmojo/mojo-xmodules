@@ -16,6 +16,7 @@ from mojo.xmods.landscaping.layers.landscapeinstallationlayer import LandscapeIn
 from mojo.xmods.landscaping.layers.landscapeintegrationlayer import LandscapeIntegrationLayer
 from mojo.xmods.landscaping.layers.landscapeoperationallayer import LandscapeOperationalLayer
 from mojo.xmods.landscaping.layers.topologyintegrationlayer import TopologyIntegrationLayer
+
 from mojo.xmods.landscaping.landscapeparameters import (
     LandscapeActivationParams,
     DEFAULT_LANDSCAPE_ACTIVATION_PARAMS,
@@ -105,17 +106,20 @@ class Landscape:
                                 "function located in the `mojoxmods.wellknown.singltons` module."
                         raise SemanticError(errmsg)
 
-                    self._layer_install: LandscapeInstallationLayer = LandscapeInstallationLayer(self)
-                    self._layer_configuration: LandscapeConfigurationLayer = LandscapeConfigurationLayer(self)
-                    self._layer_integration: LandscapeIntegrationLayer = LandscapeIntegrationLayer(self)
-                    self._layer_operational: LandscapeOperationalLayer = LandscapeOperationalLayer(self)
-                    self._topology_description: TopologyIntegrationLayer = TopologyIntegrationLayer(self)
-        
+                    self._layer_install: LandscapeInstallationLayer = None
+                    self._layer_configuration: LandscapeConfigurationLayer = None
+                    self._layer_integration: LandscapeIntegrationLayer = None
+                    self._layer_operational: LandscapeOperationalLayer = None
+                    self._topology_description: TopologyIntegrationLayer = None
+
                     self._landscape_configure_complete = False
                     self._landscape_integrate_complete = False
                     self._landscape_startup_complete = False
 
                     self._devices_all: List[LandscapeDevice] = []
+
+                    # We create our configuration layers in initialize_state to allow for overrides
+                    self._initialize_state()
 
                     super().__init__()
 
@@ -313,13 +317,18 @@ class Landscape:
         """
         selected_devices = self.layer_integration.get_devices(include_filters=include_filters, exclude_filters=exclude_filters)
         return selected_devices
+    
+    def _initialize_state(self):
+        """
+            Initialize the overrideable state of the Landscape object
+        """
+        
+        self._layer_install: LandscapeInstallationLayer = LandscapeInstallationLayer(self)
+        self._layer_configuration: LandscapeConfigurationLayer = LandscapeConfigurationLayer(self)
+        self._layer_integration: LandscapeIntegrationLayer = LandscapeIntegrationLayer(self)
+        self._layer_operational: LandscapeOperationalLayer = LandscapeOperationalLayer(self)
+        self._topology_description: TopologyIntegrationLayer = TopologyIntegrationLayer(self)
 
-    def _create_layers(self):
-        self._layer_install = LandscapeInstallationLayer(self)
-        self._layer_configuration = LandscapeConfigurationLayer(self)
-        self._layer_integration = LandscapeIntegrationLayer(self)
-        self._layer_operational = LandscapeOperationalLayer(self)
-        self._topology_description = TopologyIntegrationLayer(self)
         return
 
     
