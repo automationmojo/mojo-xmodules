@@ -194,7 +194,8 @@ class Landscape:
 
                     self._layer_configuration.initialize_credentials()
 
-                    self._all_devices = self._layer_configuration.attach_to_environment()
+                    if self._layer_configuration.landscape_info is not None:
+                        self._all_devices = self._layer_configuration.attach_to_environment()
 
                     self._landscape_configure_complete = True
 

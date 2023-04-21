@@ -175,17 +175,22 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
 
             layer_config = lscape.layer_configuration
 
-            # Initialize the devices so we know what they are, this will create a LandscapeDevice object for each device
-            # and register it in the all_devices table where it can be found by the device coordinators for further activation
-            devices = self._initialize_landscape_devices(layer_config)
+            if layer_config.landscape_info is not None:
+                # Initialize the devices so we know what they are, this will create a LandscapeDevice object for each device
+                # and register it in the all_devices table where it can be found by the device coordinators for further activation
+                devices = self._initialize_landscape_devices(layer_config)
 
-            if self._power_request_count > 0:
-                self._initialize_landscape_power(layer_config)
+                if self._power_request_count > 0:
+                    self._initialize_landscape_power(layer_config)
 
-            if self._serial_request_count > 0:
-                self._initialize_landscape_serial(layer_config)
+                if self._serial_request_count > 0:
+                    self._initialize_landscape_serial(layer_config)
 
-        self._integrated_devices = devices.copy()
+                self._integrated_devices = devices.copy()
+            else:
+                self._integrated_devices = {}
+                self._integrated_power = {}
+                self._integrated_serial = {}
 
         return devices
 
