@@ -171,6 +171,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
 
         lscape = self.landscape
 
+        devices = None
         with lscape.begin_locked_landscape_scope() as locked:
 
             layer_config = lscape.layer_configuration
@@ -188,6 +189,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
 
                 self._integrated_devices = devices.copy()
             else:
+                devices = {}
                 self._integrated_devices = {}
                 self._integrated_power = {}
                 self._integrated_serial = {}
