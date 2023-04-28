@@ -1,5 +1,5 @@
 """
-.. module:: osxcoordinator
+.. module:: baseclientcoordinator
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Contains the BaseClientPoolCoordinator which is used for managing connectivity with pools of OSX capable devices
 
@@ -29,7 +29,8 @@ from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 from mojo.xmods.landscaping.landscapeparameters import LandscapeActivationParams
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 
-from mojo.clients.osx.osxclient import BaseClientClient
+from mojo.clients.base.baseclient import BaseClient
+
 from mojo.protocols.ssh.sshagent import SshAgent
 
 if TYPE_CHECKING:
@@ -62,6 +63,7 @@ class BaseClientCoordinator(CoordinatorBase):
     # pylint: disable=attribute-defined-outside-init
 
     INTEGRATION_CLASS = ""
+    CLIENT_TYPE = BaseClient
 
     def __init__(self, lscape: "Landscape", *args, **kwargs):
         super().__init__(lscape, *args, **kwargs)
@@ -77,7 +79,7 @@ class BaseClientCoordinator(CoordinatorBase):
         """
         return
 
-    def create_landscape_device(self, landscape: "Landscape", device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, BaseClientClient]:
+    def create_landscape_device(self, landscape: "Landscape", device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, BaseClient]:
         """
             Called to declare a declared landscape device for a given coordinator.
         """
@@ -85,7 +87,7 @@ class BaseClientCoordinator(CoordinatorBase):
         dev_type = device_info["deviceType"]
         fid = FriendlyIdentifier(host, host)
 
-        device = BaseClientClient(landscape, self, fid, dev_type, device_info)
+        device = self.CLIENT_TYPE(landscape, self, fid, dev_type, device_info)
         
         coord_ref = weakref.ref(self)
         device_ref = weakref.ref(device)
@@ -129,7 +131,7 @@ class BaseClientCoordinator(CoordinatorBase):
             :param osxdevices: A list of osx device configuration dictionaries.
         """
 
-        lscape = self.landscape
+        lscape: "Landscape" = self.landscape
 
         osx_config_errors = []
 
@@ -138,23 +140,23 @@ class BaseClientCoordinator(CoordinatorBase):
 
         for osxdev in osxdevices:
             osxdev_config = osxdev.device_config
-            osx_credential_list = osxdev.ssh_credentials
-            if len(osx_credential_list) == 0:
+            ssh_credential_list = osxdev.ssh_credentials
+            if len(ssh_credential_list) == 0:
                 errmsg = format_client_configuration_error(
                         "All OSX client devices must have at least one valid credential.", osxdev_config)
                 raise ConfigurationError(errmsg) from None
 
-            osx_cred_by_role = {}
-            for osx_cred in osx_credential_list:
-                cred_role = osx_cred.role
-                if cred_role not in osx_cred_by_role:
-                    osx_cred_by_role[cred_role] = osx_cred
+            ssh_cred_by_role = {}
+            for ssh_cred in ssh_credential_list:
+                cred_role = ssh_cred.role
+                if cred_role not in ssh_cred_by_role:
+                    ssh_cred_by_role[cred_role] = ssh_cred
                 else:
                     errmsg = format_client_configuration_error(
                         "The OSX client device had more than one credentials with the role '{}'".format(cred_role), osxdev_config)
                     raise ConfigurationError(errmsg) from None
 
-            if "priv" not in osx_cred_by_role:
+            if "priv" not in ssh_cred_by_role:
                 errmsg = format_client_configuration_error(
                         "All OSX client devices must have a 'priv' credential.", osxdev_config)
                 raise ConfigurationError(errmsg) from None
@@ -167,30 +169,15 @@ class BaseClientCoordinator(CoordinatorBase):
             upnp_hint = None
             if "host" in osxdev_config:
                 host = osxdev_config["host"]
-            elif dev_type == "network/upnp":
-                upnp_config = osxdev_config["upnp"]
-
-                if "hint" in upnp_config:
-                    upnp_hint = upnp_config["hint"]
-                elif "USN" in upnp_config:
-                    upnp_hint = upnp_config["USN"]
-                if upnp_coord is not None:
-                    upnp_dev = upnp_coord.lookup_device_by_upnp_hint(upnp_hint)
-                    dev = upnp_dev.basedevice
-                    if dev is not None:
-                        ipaddr = upnp_dev.IPAddress
-                        host = ipaddr
-                        osxdev_config["host"] = host
-                        self._cl_upnp_hint_to_ip_lookup[upnp_hint] = ipaddr
-                else:
-                    osx_config_errors.append(osxdev_config)
+            else:
+                pass
 
             if host is not None:
                 called_id = dev.identity
                 ip = socket.gethostbyname(host)
                 self._cl_ip_to_host_lookup[ip] = host
 
-                agent = SshAgent(host, priv_cred, users=osx_cred_by_role, called_id=called_id)
+                agent = SshAgent(host, priv_cred, users=ssh_cred_by_role, called_id=called_id)
 
                 osxdev_config["ipaddr"] = agent.ipaddr
                 try:
@@ -206,16 +193,12 @@ class BaseClientCoordinator(CoordinatorBase):
 
                 coord_ref = weakref.ref(self)
 
-                basedevice = None
-                if upnp_hint is not None:
-                    basedevice = lscape._internal_lookup_device_by_hint(upnp_hint) # pylint: disable=protected-access
-                else:
-                    fdid = FriendlyIdentifier(host, host)
-                    basedevice = lscape._create_landscape_device(fdid, dev_type, osxdev_config)
-                    basedevice = lscape._enhance_landscape_device(basedevice, agent)
-                    basedevice.initialize_features()
+                fdid = FriendlyIdentifier(host, host)
+                basedevice = lscape.create_landscape_device(fdid, dev_type, osxdev_config)
+                basedevice = lscape._enhance_landscape_device(basedevice, agent)
+                basedevice.initialize_features()
 
-                basedevice.attach_extension("osx", agent)
+                basedevice.attach_extension("ssh", agent)
 
                 basedevice_ref = weakref.ref(basedevice)
                 agent.initialize(coord_ref, basedevice_ref, host, ip, osxdev_config)

@@ -6,6 +6,10 @@ from mojo.xmods.extension.configured import ExtensionPointsFactory
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
 from mojo.xmods.landscaping.extensionpoints import LandscapingExtentionPoints
 
+from mojo.clients.linux.linuxclientcoordinatorcoupling import LinuxClientCoordinatorCoupling
+from mojo.clients.osx.osxclientcoordinatorcoupling import OsxClientCoordinatorCoupling
+from mojo.clients.windows.windowsclientcoordinatorcoupling import WindowsClientCoordinatorCoupling
+
 from mojo.protocols.serial.tcpserialcoordinatorcoupling import TcpSerialCoordinatorCoupling
 from mojo.protocols.ssh.sshcoordinatorcoupling import SshCoordinatorCoupling
 
@@ -23,7 +27,10 @@ class LandscapingExtentionPointsFactory(ExtensionPointsFactory, LandscapingExten
             Used to lookup and return the most relevant list of integration coupling types.
         """
         coupling_types = [
+            LinuxClientCoordinatorCoupling,
+            OsxClientCoordinatorCoupling,
             SshCoordinatorCoupling,
-            TcpSerialCoordinatorCoupling
+            TcpSerialCoordinatorCoupling,
+            WindowsClientCoordinatorCoupling
         ]
         return coupling_types

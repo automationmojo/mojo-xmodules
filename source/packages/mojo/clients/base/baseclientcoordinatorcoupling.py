@@ -24,7 +24,7 @@ from mojo.xmods.exceptions import SemanticError
 from mojo.xmods.landscaping.coupling.coordinatorcoupling import CoordinatorCoupling
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.landscape import LandscapeDevice
-from mojo.clients.osx.osxcoordinator import BaseClientCoordinator
+from mojo.clients.osx.osxclientcoordinator import BaseClientCoordinator
 
 from mojo.xmods.landscaping.precedence import StartupLevel
 
