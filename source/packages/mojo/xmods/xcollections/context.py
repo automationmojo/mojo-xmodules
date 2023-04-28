@@ -91,6 +91,7 @@ class ContextPaths(str, Enum):
     LOGGING_LOGNAME = "/configuration/logging/logname"
     LOGGING_BRANCHED = "/configuration/logging/branched"
 
+    JOB_ID = "/environment/job/id"
     JOB_INITIATOR = "/environment/job/initiator"
     JOB_LABEL = "/environment/job/label"
     JOB_NAME = "/environment/job/name"
