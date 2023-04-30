@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING
 from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 
-from mojo.protocols.serial.tcpserialagent import TcpSerialAgent
+from mojo.interop.protocols.serial.tcpserialagent import TcpSerialAgent
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
