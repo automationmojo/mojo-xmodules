@@ -3,7 +3,7 @@ name = "mojo-xmodules"
 description = "Automation Mojo X-Modules"
 version = "0.0.25"
 authors = []
-readme = "README.md"
+readme = "README.rst"
 license = "LICENSE.txt"
 classifiers = [
     "Programming Language :: Python :: 3",
