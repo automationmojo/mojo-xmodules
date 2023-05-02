@@ -1,6 +1,8 @@
 
+
 from typing import Dict, List, Optional
 
+import inspect
 import logging
 import threading
 
@@ -100,11 +102,7 @@ class Landscape:
             
                 with self.begin_unlocked_landscape_scope() as ulkscope:
 
-                    call_function_name = get_caller_function_name()
-                    if call_function_name != "LandscapeSingleton":
-                        errmsg = "The `Landscape` object should only be instantiated from `LandscapeSingleton`" \
-                                "function located in the `mojoxmods.wellknown.singltons` module."
-                        raise SemanticError(errmsg)
+                    self._validate_init_caller()
 
                     self._layer_install: LandscapeInstallationLayer = None
                     self._layer_configuration: LandscapeConfigurationLayer = None
@@ -330,6 +328,28 @@ class Landscape:
         self._layer_operational: LandscapeOperationalLayer = LandscapeOperationalLayer(self)
         self._topology_description: TopologyIntegrationLayer = TopologyIntegrationLayer(self)
 
+        return
+    
+    def _validate_init_caller(self):
+
+        stack = inspect.stack()
+
+        caller_func_name = None
+
+        try:
+            for uidx in range(2, len(stack)):
+                caller_stack = inspect.stack()[uidx]
+                caller_func_name = caller_stack.frame.f_code.co_name
+                if caller_func_name != "__init__":
+                    break
+        except IndexError:
+            pass
+        
+        if caller_func_name != "LandscapeSingleton":
+            errmsg = "The `Landscape` object should only be instantiated from `LandscapeSingleton`" \
+                    "function located in the `mojoxmods.wellknown.singltons` module."
+            raise SemanticError(errmsg)
+        
         return
 
     
