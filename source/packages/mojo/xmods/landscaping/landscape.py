@@ -114,7 +114,7 @@ class Landscape:
                     self._landscape_integrate_complete = False
                     self._landscape_startup_complete = False
 
-                    self._devices_all: List[LandscapeDevice] = []
+                    self._devices_all: Dict[FriendlyIdentifier, LandscapeDevice] = {}
 
                     # We create our configuration layers in initialize_state to allow for overrides
                     self._initialize_state()
@@ -193,7 +193,7 @@ class Landscape:
                     self._layer_configuration.initialize_credentials()
 
                     if self._layer_configuration.landscape_info is not None:
-                        self._all_devices = self._layer_configuration.attach_to_environment()
+                        self._layer_configuration.attach_to_environment()
 
                     self._landscape_configure_complete = True
 
@@ -233,7 +233,7 @@ class Landscape:
                 # exit without the landscape initialization being finished.
                 with self.begin_unlocked_landscape_scope() as ulkscope:
 
-                    self._layer_integration.initialize_landscape()
+                    self._all_devices = self._layer_integration.initialize_landscape()
 
                     self._landscape_integrate_complete = True
 
