@@ -253,7 +253,10 @@ class ContextCursor:
                     found_node = self._lookup(found_node, path, path_parts[1:], default=default)
                 else:
                     dref[leaf_name] = default
-                    found_node = default
+                    if isinstance(default, dict):
+                        found_node = ContextCursor(default)
+                    else:
+                        found_node = default
             else:
                 raise LookupError("Context lookup failure for path=%s" % path)
         else:
@@ -422,7 +425,10 @@ class Context:
                     found_node = self._lookup(found_node, path, path_parts[1:], default=default)
                 else:
                     dref[leaf_name] = default
-                    found_node = default
+                    if isinstance(default, dict):
+                        found_node = ContextCursor(default)
+                    else:
+                        found_node = default
             else:
                 raise LookupError("Context lookup failure for path=%s" % path)
         else:
