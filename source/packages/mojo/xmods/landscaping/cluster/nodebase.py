@@ -1,15 +1,33 @@
+"""
+.. module:: nodebase
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module contains the :class:`BaseNode` object which is a base
+               class for objects that inter-operate with a compute cluster
+               node.
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2023, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@gmail.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = "MIT"
 
 from typing import TYPE_CHECKING
 
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
-
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
     from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 
-class BaseClient(LandscapeDevice):
+class NodeBase(LandscapeDevice):
 
     def __init__(self, lscape: "Landscape", coordinator: "CoordinatorBase",
                  friendly_id:FriendlyIdentifier, device_type: str, device_config: dict):

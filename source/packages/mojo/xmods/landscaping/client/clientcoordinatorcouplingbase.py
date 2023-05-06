@@ -1,8 +1,8 @@
 """
-.. module:: basenodecoordinatorcoupling
+.. module:: clientcoordinatorcouplingbase
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Contains a BaseNodeCoordinatorCoupling object to use for working with cluster
-               compute nodes.
+    :synopsis: Contains a :class:`ClientCoordinatorCouplingBase` object to use for working with the
+               computer clients.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
@@ -23,17 +23,15 @@ from functools import partial
 
 from mojo.xmods.exceptions import SemanticError
 from mojo.xmods.landscaping.coupling.coordinatorcoupling import CoordinatorCoupling
-from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
-from mojo.xmods.landscaping.landscape import LandscapeDevice
-from mojo.xmods.landscaping.cluster.basenodecoordinator import BaseNodeCoordinator
+from mojo.xmods.landscaping.client.clientcoordinatorbase import ClientCoordinatorBase
 
-from mojo.xmods.landscaping.precedence import StartupLevel
+from mojo.xmods.landscaping.constants import StartupLevel
 
 # Types imported only for type checking purposes
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
 
-SUPPORTED_INTEGRATION_CLASS = "network/node-base"
+SUPPORTED_INTEGRATION_CLASS = "network/client-osx"
 
 def is_matching_client_config(integ_class, device_info):
     is_matching_client = False
@@ -44,12 +42,10 @@ def is_matching_client_config(integ_class, device_info):
 
     return is_matching_client
 
-class BaseNodeCoordinatorCoupling(CoordinatorCoupling):
+class ClientCoordinatorCouplingBase(CoordinatorCoupling):
     """
-        The BaseNodeCoordinatorCoupling handle the requirement registration for the OSX coordinator.
+        The ClientCoordinatorCouplingBase handle the requirement registration for the OSX coordinator.
     """
-
-    pathbase = "/base"
 
     integration_section: str = "devices"
     integration_leaf: str = "deviceType"
@@ -57,7 +53,7 @@ class BaseNodeCoordinatorCoupling(CoordinatorCoupling):
 
     def __init__(self, *args, **kwargs):
         """
-            The default contructor for an :class:`BaseNodeCoordinatorIntegration`.
+            The default contructor for an :class:`BaseClientCoordinatorIntegration`.
         """
         super().__init__(*args, **kwargs)
         return
@@ -99,7 +95,7 @@ class BaseNodeCoordinatorCoupling(CoordinatorCoupling):
         """
             This API is called so that the landscape can create a coordinator for a given integration role.
         """
-        cls.coordinator = BaseNodeCoordinator(landscape)
+        cls.coordinator = ClientCoordinatorBase(landscape)
         return cls.coordinator
 
     @classmethod

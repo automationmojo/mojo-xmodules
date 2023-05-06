@@ -1,7 +1,8 @@
 
-from typing import TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING
 
 from mojo.xmods.landscaping.layers.landscapinglayerbase import LandscapingLayerBase
+from mojo.xmods.landscaping.landscapedevicecluster import LandscapeDeviceCluster
 
 from mojo.xmods.landscaping.landscapeparameters import (
     LandscapeActivationParams,
@@ -16,6 +17,9 @@ class LandscapeOperationalLayer(LandscapingLayerBase):
 
     def __init__(self, lscape: "Landscape"):
         super().__init__(lscape)
+
+        self._operational_clusters: Dict[str, LandscapeDeviceCluster] = {}
+
         return
 
     def activate_coordinators(self, activation_params: LandscapeActivationParams):
@@ -53,6 +57,9 @@ class LandscapeOperationalLayer(LandscapingLayerBase):
 
         return
     
+    def overlay_toplogy(self, activation_params: LandscapeActivationParams):
+        return
+
     def validate_features(self, activation_params: LandscapeActivationParams):
 
         if activation_params.validate_features:

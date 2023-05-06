@@ -273,6 +273,8 @@ class Landscape:
 
                     self._layer_operational.establish_connectivity(activation_params)
 
+                    self._layer_operational.overlay_toplogy(activation_params)
+
                     self._layer_operational.validate_features(activation_params)
 
                     self._layer_operational.validate_topology(activation_params)

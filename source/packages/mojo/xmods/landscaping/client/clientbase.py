@@ -1,9 +1,9 @@
 """
-.. module:: basenode
+.. module:: clientbase
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module contains the :class:`BaseNode` object which is a base
-               class for objects that inter-operate with a compute cluster
-               node.
+    :synopsis: Module contains the :class:`BaseClient` object which is a base
+               class for objects that inter-operate with a computer client
+               operating system.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -23,11 +23,12 @@ from typing import TYPE_CHECKING
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
+
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
     from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 
-class BaseNode(LandscapeDevice):
+class ClientBase(LandscapeDevice):
 
     def __init__(self, lscape: "Landscape", coordinator: "CoordinatorBase",
                  friendly_id:FriendlyIdentifier, device_type: str, device_config: dict):

@@ -1,8 +1,8 @@
 """
-.. module:: basenodecoordinator
+.. module:: clientcoordinatorbase
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module contains the :class:`BaseNodeCoordinator` object which is a base
-               class for objects create and manage cluster node objects.
+    :synopsis: Module contains the :class:`ClientCoordinatorBase` object which is a base
+               class for objects create and manage client objects.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -21,26 +21,23 @@ from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
 import os
 import pprint
-import socket
-import weakref
 
-from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
 from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 from mojo.xmods.landscaping.landscapeparameters import LandscapeActivationParams
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 
-from mojo.xmods.landscaping.cluster.basenode import BaseNode
+from mojo.xmods.landscaping.client.clientbase import ClientBase
 
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
 
 
-def format_node_configuration_error(message, osxdev_config):
+def format_client_configuration_error(message, next_dev_config):
     """
-        Takes an error message and an node configuration info dictionary and
+        Takes an error message and an client configuration info dictionary and
         formats a configuration error message.
     """
     error_lines = [
@@ -48,23 +45,23 @@ def format_node_configuration_error(message, osxdev_config):
         "DEVICE:"
     ]
 
-    dev_repr_lines = pprint.pformat(osxdev_config, indent=4).splitlines(False)
+    dev_repr_lines = pprint.pformat(next_dev_config, indent=4).splitlines(False)
     for dline in dev_repr_lines:
         error_lines.append("    " + dline)
     
     errmsg = os.linesep.join(error_lines)
     return errmsg
 
-class BaseNodeCoordinator(CoordinatorBase):
+class ClientCoordinatorBase(CoordinatorBase):
     """
-        The :class:`BaseNodePoolCoordinator` creates a pool of agents that can be used to
+        The :class:`BaseClientPoolCoordinator` creates a pool of agents that can be used to
         coordinate the interop activities of the automation process and remote OSX
-        node.
+        client.
     """
     # pylint: disable=attribute-defined-outside-init
 
     INTEGRATION_CLASS = ""
-    CLIENT_TYPE = BaseNode
+    CLIENT_TYPE = ClientBase
 
     def __init__(self, lscape: "Landscape", *args, **kwargs):
         super().__init__(lscape, *args, **kwargs)
@@ -87,7 +84,7 @@ class BaseNodeCoordinator(CoordinatorBase):
 
         return
 
-    def create_landscape_device(self, landscape: "Landscape", device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, BaseNode]:
+    def create_landscape_device(self, landscape: "Landscape", device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, ClientBase]:
         """
             Called to declare a declared landscape device for a given coordinator.
         """
@@ -166,7 +163,7 @@ class BaseNodeCoordinator(CoordinatorBase):
 
     def verify_connectivity(self, cmd: str = "echo 'It Works'", user: Optional[str] = None, raiseerror: bool = True) -> List[tuple]:
         """
-            Loops through the nodes in the node pool and utilizes the credentials for the specified user in order to verify
+            Loops through the nodes in the OSX client pool and utilizes the credentials for the specified user in order to verify
             connectivity with the remote node.
 
             :param cmd: A command to run on the remote machine in order

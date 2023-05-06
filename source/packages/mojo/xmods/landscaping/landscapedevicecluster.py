@@ -20,16 +20,15 @@ __license__ = "MIT"
 
 from typing import List
 
-from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
-from mojo.xmods.landscaping.landscapedevicegroup import LandscapeDeviceGroup
-
+from mojo.xmods.landscaping.cluster.nodebase import NodeBase
+from mojo.xmods.landscaping.landscapedevicecluster import LandscapeDeviceCluster
 class LandscapeDeviceCluster:
     """
         A :class:`LandscapeDeviceGroup` object is used to group devices to an associated
         grouping label.
     """
 
-    def __init__(self, label: str, nodes: List[LandscapeDevice], group: LandscapeDeviceGroup) -> None:
+    def __init__(self, label: str, nodes: List[NodeBase], group: LandscapeDeviceGroup) -> None:
         self._label = label
         self._nodes = nodes
         self._group = group
