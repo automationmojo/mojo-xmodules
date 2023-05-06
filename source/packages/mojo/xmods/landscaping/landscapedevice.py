@@ -64,6 +64,14 @@ class LandscapeDevice(FeatureAttachedObject):
         self._device_type = device_type
         self._device_config = device_config
 
+        # Devices can have a group assigned to support collections of devices
+        # like clusters, for clusters giving a device a group does not assign
+        # automatincaly group the device into a cluster.  It just means the
+        # device is eligible to belong to a given cluster.
+        self._group = ""
+        if "group" in device_config:
+            self._group = device_config["group"]
+
         self._device_lock = threading.RLock()
 
         self._contacted_first = None
@@ -140,6 +148,13 @@ class LandscapeDevice(FeatureAttachedObject):
             A string representing the type of device.
         """
         return self._device_type
+
+    @property
+    def group(self) -> str:
+        """
+            A string represeting the group a device has been assigned to.
+        """
+        return self._group
 
     @property
     def extensions(self) -> Dict[str, LandscapeDeviceExtension]:
@@ -277,6 +292,16 @@ class LandscapeDevice(FeatureAttachedObject):
             discovery process which will result in determining connectivity with the device.
         """
         return
+
+    def has_extension_type(self, ext_type: str) -> bool:
+        """
+            Returns a boolean value indicating if this device has the specified extension
+            type registered.
+        """
+        has_ext_type = False
+        if ext_type in self._extensions:
+            has_ext_type = True
+        return has_ext_type
 
     def initialize_credentials(self, credentials: Dict[str, BaseCredential]) -> None:
         """

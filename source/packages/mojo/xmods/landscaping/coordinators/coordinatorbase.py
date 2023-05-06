@@ -1,8 +1,9 @@
 """
 .. module:: coordinatorbase
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Contains the CoordinatorBase which is the base object for coordinators to derive from and establishes
-               patterns for coordinators which help to make them threadsafe.
+    :synopsis: Contains the CoordinatorBase which is the base object for coordinators to
+               derive from and establishes patterns for coordinators which help to make
+               them threadsafe.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
@@ -18,7 +19,6 @@ __license__ = "MIT"
 
 from typing import List, Optional, TYPE_CHECKING
 
-import logging
 import threading
 import weakref
 

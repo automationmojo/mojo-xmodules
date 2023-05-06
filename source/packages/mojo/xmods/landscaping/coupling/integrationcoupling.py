@@ -66,6 +66,16 @@ class IntegrationCoupling(BaseCoupling):
         return self._presence_establish
 
     @classmethod
+    def attach_to_framework(cls, landscape: "Landscape"):
+        """
+            This API is called so that the IntegrationCoupling can attach to the test framework and participate with
+            registration processes.  This allows the framework to ignore the bringing-up of couplings that are not being
+            included by a test.
+        """
+        cls.landscape = landscape
+        return
+
+    @classmethod
     def attach_to_environment(cls, landscape: "Landscape"):
         """
             This API is called so that the IntegrationCoupling can process configuration information.  The :class:`IntegrationCoupling`

@@ -25,6 +25,7 @@ from mojo.xmods.exceptions import SemanticError
 from mojo.xmods.interfaces.iexcludefilter import IExcludeFilter
 from mojo.xmods.interfaces.iincludefilter import IIncludeFilter
 
+from mojo.xmods.landscaping.constants import DeviceExtensionType
 from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 from mojo.xmods.landscaping.coupling.coordinatorcoupling import CoordinatorCoupling
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCouplingType
@@ -32,6 +33,7 @@ from mojo.xmods.landscaping.layers.landscapinglayerbase import LandscapingLayerB
 from mojo.xmods.landscaping.layers.landscapeconfigurationlayer import LandscapeConfigurationLayer
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
+from mojo.xmods.landscaping.landscapedevicegroup import LandscapeDeviceGroup
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
@@ -44,6 +46,8 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
         self._integrated_devices: Dict[str, LandscapeDevice] = None
         self._integrated_power: Dict[str, Any] = None
         self._integrated_serial: Dict[str, Any] = None
+
+        self._integrated_groups: Dict[str, ]
 
         self._requested_integration_couplings: Dict[str, IntegrationCouplingType] = {}
 
@@ -84,6 +88,19 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
             coord_table = self._coordinators_for_serial.copy()
 
         return coord_table
+
+    @property
+    def integrated_device_groups(self) -> Dict[str, LandscapeDeviceGroup]:
+        """
+            Provides a thread safe copy of the integration device dictionary.
+        """
+        idevicegroups = {}
+
+        lscape = self.landscape
+        with lscape.begin_locked_landscape_scope() as locked:
+            idevicegroups = self._integrated_groups.copy()
+
+        return idevicegroups
 
     @property
     def integrated_devices(self) -> Dict[str, LandscapeDevice]:
@@ -194,7 +211,32 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
                 self._integrated_power = {}
                 self._integrated_serial = {}
 
+        self._initialize_landscape_device_groups()
+
         return devices
+
+    def register_device_extension_association(self, ext_type: DeviceExtensionType, device: LandscapeDevice):
+        """
+            This method is called by coordinator device in order to register device type
+            associations for the device that a coordinator is creating.  A coornidator may
+            create devices that have the characteristics of mulitiple devices.  For example,
+            a cluster node device might have multiple device extension associations:
+
+            :param ext_type: The device extension type to associate with the device being registered.
+            :param device: The device being registered.
+        """
+
+        ext_for_type_table = None
+        
+        if ext_type in self._devices_by_ext_type:
+            ext_for_type_table = self._devices_by_ext_type[ext_type]
+        else:
+            ext_for_type_table = {}
+            self._devices_by_ext_type[ext_type] = ext_for_type_table
+        
+        ext_for_type_table[device.identity] = device
+
+        return
 
     def register_integration_dependency(self, coupling: IntegrationCouplingType):
         """
@@ -219,6 +261,29 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
 
         return
     
+
+    def _initialize_landscape_device_groups(self):
+
+        dev_group_table = {}
+
+        for dev_obj in self._integrated_devices.values():
+            group_name = dev_obj.group
+            if group_name != "":
+                device_list = None
+                if group_name in dev_group_table:
+                    device_list = dev_group_table[group_name]
+                else:
+                    device_list = []
+                    dev_group_table[group_name] = device_list
+                device_list.append(dev_obj)
+        
+        for group_name, group_items in dev_group_table.items():
+            device_group = LandscapeDeviceGroup(group_name, group_items)
+            self._integrated_groups[group_name] = device_group
+
+        return 
+    
+
     def _initialize_landscape_devices(self, layer_config: LandscapeConfigurationLayer) -> Dict[FriendlyIdentifier, LandscapeDevice]:
 
         unrecognized_device_configs = []
