@@ -33,8 +33,13 @@ class NodeBase(LandscapeDevice):
                  friendly_id:FriendlyIdentifier, device_type: str, device_config: dict):
         super().__init__(lscape, coordinator, friendly_id, device_type, device_config)
 
+        self._name = device_config["name"]
         self._host = device_config["host"]
         return
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def host(self) -> str:

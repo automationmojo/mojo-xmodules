@@ -22,11 +22,15 @@ from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 import os
 import pprint
 
+from mojo.xmods.exceptions import ConfigurationError
+
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
 from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 from mojo.xmods.landscaping.landscapeparameters import LandscapeActivationParams
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
+from mojo.xmods.landscaping.landscapedevicecluster import LandscapeDeviceCluster
+from mojo.xmods.landscaping.landscapedevicegroup import LandscapeDeviceGroup
 
 from mojo.xmods.landscaping.cluster.nodebase import NodeBase
 
@@ -62,6 +66,7 @@ class BaseNodeCoordinator(CoordinatorBase):
 
     INTEGRATION_CLASS = ""
     CLIENT_TYPE = NodeBase
+    CLUSTER_TYPE = LandscapeDeviceCluster
 
     def __init__(self, lscape: "Landscape", *args, **kwargs):
         super().__init__(lscape, *args, **kwargs)
@@ -83,6 +88,51 @@ class BaseNodeCoordinator(CoordinatorBase):
         """
 
         return
+
+    def create_cluster_for_devices(self, cluster_name: str, group: LandscapeDeviceGroup,
+                                   nodes: List[str], spares: List[str]) -> LandscapeDeviceCluster:
+        """
+            Called in order to create a cluster object for a given group of devices, list of node
+            names and list of spare node names.
+        """
+        node_devices = {}
+        spare_devices = {}
+
+        grplable = group.label
+
+        unexpected_devices = {}
+
+        for dev in group.items:
+            node_name = dev.name
+            if node_name in nodes:
+                node_devices[node_name] = dev
+            elif node_name in spares:
+                spare_devices[node_name] = dev
+            else:
+                unexpected_devices[node_name] = dev
+        
+        if len(unexpected_devices) > 0:
+            errmsg_lines = [
+                f"The group '{grplable}' contained devices that were not in the nodes or spares lists.",
+                "NODES:"
+            ]
+            for nname in nodes:
+                errmsg_lines.append(f"    {nname}")
+
+            errmsg_lines.append("SPARES:")
+            for nname in spares:
+                errmsg_lines.append(f"    {nname}")
+
+            errmsg_lines.append("UNEXPECTED:")
+            for nname in unexpected_devices.keys():
+                errmsg_lines.append(f"    {nname}")
+
+            errmsg = os.linesep.join(errmsg_lines)
+            raise ConfigurationError(errmsg)
+
+        cluster = self.CLUSTER_TYPE(cluster_name, nodes, spares, group)
+
+        return cluster
 
     def create_landscape_device(self, landscape: "Landscape", device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, NodeBase]:
         """

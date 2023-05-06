@@ -18,30 +18,38 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import List
+from typing import Dict
 
 from mojo.xmods.landscaping.cluster.nodebase import NodeBase
-from mojo.xmods.landscaping.landscapedevicecluster import LandscapeDeviceCluster
+from mojo.xmods.landscaping.landscapedevicegroup import LandscapeDeviceGroup
+
 class LandscapeDeviceCluster:
     """
-        A :class:`LandscapeDeviceGroup` object is used to group devices to an associated
-        grouping label.
+        A :class:`LandscapeDeviceCluster` object is used to manage a group of
+        nodes that are part of a computer cluster and a collection of spares
+        that are eligible to participate in the cluster.
     """
 
-    def __init__(self, label: str, nodes: List[NodeBase], group: LandscapeDeviceGroup) -> None:
+    def __init__(self, label: str, nodes: Dict[str, NodeBase], spares: Dict[str, NodeBase],
+                 group: LandscapeDeviceGroup) -> None:
         self._label = label
         self._nodes = nodes
+        self._spares = spares
         self._group = group
         return
 
     @property
-    def group(self):
+    def group(self) -> LandscapeDeviceGroup:
         return self._group
 
     @property
-    def label(self):
+    def label(self) -> str:
         return self._label
 
     @property
-    def nodes(self):
+    def nodes(self) -> Dict[str, NodeBase]:
         return self._nodes
+    
+    @property
+    def spares(self) -> Dict[str, NodeBase]:
+        return self._spares
