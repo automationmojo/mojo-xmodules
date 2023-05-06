@@ -47,7 +47,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
         self._integrated_power: Dict[str, Any] = None
         self._integrated_serial: Dict[str, Any] = None
 
-        self._integrated_groups: Dict[str, ]
+        self._integrated_device_groups: Dict[str, LandscapeDeviceGroup]
 
         self._requested_integration_couplings: Dict[str, IntegrationCouplingType] = {}
 
@@ -92,13 +92,13 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
     @property
     def integrated_device_groups(self) -> Dict[str, LandscapeDeviceGroup]:
         """
-            Provides a thread safe copy of the integration device dictionary.
+            Provides a thread safe copy of the integration device group dictionary.
         """
         idevicegroups = {}
 
         lscape = self.landscape
         with lscape.begin_locked_landscape_scope() as locked:
-            idevicegroups = self._integrated_groups.copy()
+            idevicegroups = self._integrated_device_groups.copy()
 
         return idevicegroups
 
@@ -279,7 +279,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
         
         for group_name, group_items in dev_group_table.items():
             device_group = LandscapeDeviceGroup(group_name, group_items)
-            self._integrated_groups[group_name] = device_group
+            self._integrated_device_groups[group_name] = device_group
 
         return 
     
