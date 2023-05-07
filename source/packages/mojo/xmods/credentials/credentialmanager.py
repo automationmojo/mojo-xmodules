@@ -37,6 +37,7 @@ logger = logging.getLogger()
 class CredentialManager:
 
     _instance = None
+    _initialized = False
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
@@ -44,9 +45,14 @@ class CredentialManager:
         return cls._instance
 
     def __init__(self):
-        self._credentials = {}
+        thisType = type(self)
 
-        self._initialize_credentials()
+        if not thisType._initialized:
+            thisType._initialized = True
+
+            self._credentials = {}
+            self._initialize_credentials()
+
         return
 
     @property
@@ -96,10 +102,12 @@ class CredentialManager:
                             errmsg = "Credential items in 'environment/credentials' must have an 'category' member."
                             raise ConfigurationError(errmsg)
                         category = credential["category"]
+                        del credential["category"]
 
                         if isinstance(category, list):
                             categories = list(category)
                             credential["categories"] = categories
+
                             username = credential["username"]
                             password = credential["password"]
 
