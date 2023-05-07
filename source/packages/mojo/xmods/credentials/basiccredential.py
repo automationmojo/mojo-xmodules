@@ -16,7 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Optional
+from typing import List, Optional
 
 import os
 
@@ -35,17 +35,18 @@ class BasicCredential(BaseCredential):
 
     """
 
-    def __init__(self, *, identifier: str, category: str, username: str, password: str, role: Optional[str] = "priv"):
+    def __init__(self, *, identifier: str, categories: List[str], username: str, password: str,
+                 role: Optional[str] = "priv"):
         """
             :param identifier: The identifier that is used to reference this credential.  (required)
-            :param category: The category of credential.
+            :param categories: The categories of authentication that are supported by the credential
             :param username: The username associated with this credential.
             :param password: The password associated with this credential.  A password is not required if a
                              keyfile parameter is provided or if 'allow_agent' is passed as 'True'.
         """
-        super().__init__(identifier=identifier, category=category, role=role)
+        super().__init__(identifier=identifier, categories=categories, role=role)
 
-        if category != "basic":
+        if "basic" not in categories:
             raise ValueError("The BasicCredential should only be given credentials of category 'basic'.")
         if len(username) == 0:
             raise ValueError("The BasicCredential constructor requires a 'username' parameter be provided.")

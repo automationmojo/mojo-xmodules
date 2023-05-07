@@ -16,7 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Optional
+from typing import List, Optional
 
 class BaseCredential:
     """
@@ -27,25 +27,26 @@ class BaseCredential:
             "identifier": "player-ssh"
             "category": "(category)"
     """
-    def __init__(self, *, identifier: str, category: str, role: Optional[str]="priv"):
+    def __init__(self, *, identifier: str, categories: List[str], role: Optional[str]="priv"):
         """
             :param identifier: The identifier that is used to reference this credential.  (required)
-            :param category: The category of credential.
+            :param categories: The categories of authentication that the credential can
+                               be used for.
             :param role: Identifies the role of the credential
         """
         if len(identifier) == 0:
             raise ValueError("The BaseCredential constructor requires a 'identifier' parameter be provided.")
-        if len(category) == 0:
-            raise ValueError("The BaseCredential constructor requires a 'category' parameter be provided.")
+        if len(categories) == 0:
+            raise ValueError("The BaseCredential constructor requires a 'categories' parameter be provided.")
 
         self._identifier = identifier
-        self._category = category
+        self._categories = categories
         self._role = role
         return
 
     @property
-    def category(self):
-        return self._category
+    def categories(self):
+        return self._categories
 
     @property
     def identifier(self):

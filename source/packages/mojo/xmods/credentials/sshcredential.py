@@ -16,7 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Optional
+from typing import List, Optional
 
 import os
 
@@ -38,12 +38,12 @@ class SshCredential(BaseCredential):
             "allow_agent": False
     """
 
-    def __init__(self, *, identifier: str, category: str, role: Optional[str] = "priv", username: str = "",
+    def __init__(self, *, identifier: str, categories: List[str], role: Optional[str] = "priv", username: str = "",
                  password: Optional[str] = None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
                  allow_agent: bool = False, primitive: bool=False):
         """
             :param identifier: The identifier that is used to reference this credential.  (required)
-            :param category: The category of credential.
+            :param categories: The categories of authentication that are supported by the credential
             :param role: An optional parameter that identifies the role that the credential is assigned to.
             :param username: The username associated with this credential.
             :param password: The password associated with this credential.  A password is not required if a
@@ -54,9 +54,9 @@ class SshCredential(BaseCredential):
             :param allow_agent: Indicates if the SSH Agent can be used to authenticate connections.
             :param primitive: When True, simulate file transfers and directory services with ssh commands.
         """
-        super().__init__(identifier=identifier, category=category, role=role)
+        super().__init__(identifier=identifier, categories=categories, role=role)
 
-        if category != "ssh":
+        if "ssh" not in categories:
             raise ValueError("The SshCredential should only be given credentials of category 'ssh'.")
         if len(username) == 0:
             raise ValueError("The SshCredential constructor requires a 'username' parameter be provided.")
@@ -130,3 +130,15 @@ class SshCredential(BaseCredential):
             raise ConfigurationError(errmsg) from None
 
         return
+
+def is_ssh_credential(cred: BaseCredential):
+    """
+        Checks to see if a credential is a credential that has been designated
+        for use with SSH.
+    """
+    rtnval = False
+    
+    if "ssh" in cred.categories:
+        rtnval = True
+    
+    return rtnval

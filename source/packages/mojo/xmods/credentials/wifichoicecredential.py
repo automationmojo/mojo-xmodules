@@ -36,15 +36,15 @@ class WifiChoiceCredential(BaseCredential):
 
     """
 
-    def __init__(self, *, identifier: str, category: str, networks: List[Dict[str, str]], role: Optional[str] = "priv"):
+    def __init__(self, *, identifier: str, categories: List[str], networks: List[Dict[str, str]], role: Optional[str] = "priv"):
         """
             :param identifier: The identifier that is used to reference this credential.  (required)
-            :param category: The category of credential.
+            :param categories: The categories of authentication that are supported by the credential
             :param networks: List of network credentials.
         """
-        super().__init__(identifier=identifier, category=category, role=role)
+        super().__init__(identifier=identifier, categories=categories, role=role)
 
-        if category != "wifi-choice":
+        if "wifi-choice" not in categories:
             raise ValueError("The WifiChoiceCredential should only be given credentials of category 'basic'.")
         if len(networks) == 0:
             raise ValueError("The WifiChoiceCredential constructor should have at least one network.")

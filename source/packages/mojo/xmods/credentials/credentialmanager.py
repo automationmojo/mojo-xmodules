@@ -16,6 +16,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import List, Optional
+
 import logging
 import os
 
@@ -91,21 +93,35 @@ class CredentialManager:
                             raise ConfigurationError(errmsg)
                         category = credential["category"]
 
-                        if category == "basic":
+                        categories = category
+                        if isinstance(category, list):
+                            categories = set(category)
+
+                            username = credential["username"]
+                            password = credential["password"]
+
                             BasicCredential.validate(credential)
-                            credobj = BasicCredential(**credential)
+                            credobj = BasicCredential(identifier=ident, categories=categories,
+                                                     username=username, password=password)
                             self._credentials[ident] = credobj
-                        elif category == "ssh":
-                            SshCredential.validate(credential)
-                            credobj = SshCredential(**credential)
-                            self._credentials[ident] = credobj
-                        elif category == "wifi-choice":
-                            WifiChoiceCredential.validate(credential)
-                            credobj = WifiChoiceCredential(**credential)
-                            self._credentials[ident] = credobj
+
                         else:
-                            warnmsg = f"Unknown category '{category}' found in credential '{ident}'"
-                            logger.warn(warnmsg)
+                            if category == "basic":
+                                BasicCredential.validate(credential)
+                                credobj = BasicCredential(**credential)
+                                self._credentials[ident] = credobj
+                            elif category == "ssh":
+                                SshCredential.validate(credential)
+                                credobj = SshCredential(**credential)
+                                self._credentials[ident] = credobj
+                            elif category == "wifi-choice":
+                                WifiChoiceCredential.validate(credential)
+                                credobj = WifiChoiceCredential(**credential)
+                                self._credentials[ident] = credobj
+                            else:
+                                warnmsg = f"Unknown category '{category}' found in credential '{ident}'"
+                                logger.warn(warnmsg)
+
                 else:
                     errmsg_lines = [
                         f"Errors found in credentials.",
