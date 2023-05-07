@@ -83,6 +83,10 @@ class CredentialManager:
 
                 if len(errors) == 0:
                     for credential in credentials_list:
+                        # Copy the credential so if we modify it, we dont modify the
+                        # original declaration.
+                        credential = credential.copy()
+
                         if "identifier" not in credential:
                             errmsg = "Credential items in 'environment/credentials' must have an 'identifier' member."
                             raise ConfigurationError(errmsg)
