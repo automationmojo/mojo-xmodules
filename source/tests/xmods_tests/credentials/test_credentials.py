@@ -4,7 +4,9 @@ import tempfile
 import unittest
 
 from mojo.xmods.xcollections.context import Context, ContextPaths
+
 from mojo.xmods.credentials.credentialmanager import CredentialManager
+from mojo.xmods.credentials.sshcredential import is_ssh_credential
 
 CREDENTIAL_CONTENT = """
 credentials:
@@ -54,6 +56,13 @@ class TestCredentials(unittest.TestCase):
         assert "adminuser" in credentials, "There should have been a 'adminuser' credential."
         assert "datauser" in credentials, "There should have been a 'datauser' credential."
         assert "pi-cluster" in credentials, "There should have been a 'pi-cluster' credential."
+
+        admincred = credentials["adminuser"]
+
+        assert "basic" in admincred.categories, "The 'adminuser' credential should include the 'basic' category."
+        assert "ssh" in admincred.categories, "The 'adminuser' credential should include the 'basic' category."
+
+        assert is_ssh_credential(admincred), "The 'adminuser' should be considered an SSH credential."
 
         return
 
