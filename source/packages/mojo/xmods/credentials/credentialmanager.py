@@ -93,10 +93,9 @@ class CredentialManager:
                             raise ConfigurationError(errmsg)
                         category = credential["category"]
 
-                        categories = category
                         if isinstance(category, list):
-                            categories = set(category)
-
+                            categories = list(category)
+                            credential["categories"] = categories
                             username = credential["username"]
                             password = credential["password"]
 
@@ -106,6 +105,8 @@ class CredentialManager:
                             self._credentials[ident] = credobj
 
                         else:
+                            credential["categories"] = [category]
+
                             if category == "basic":
                                 BasicCredential.validate(credential)
                                 credobj = BasicCredential(**credential)
