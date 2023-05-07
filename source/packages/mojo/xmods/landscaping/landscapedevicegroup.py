@@ -20,6 +20,8 @@ __license__ = "MIT"
 
 from typing import List
 
+from weakref
+
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 
 class LandscapeDeviceGroup:
@@ -31,8 +33,14 @@ class LandscapeDeviceGroup:
     def __init__(self, label: str, items: List[LandscapeDevice]) -> None:
         self._label = label
         self._items = items
+        
+        self._coord_ref = weakref.ref(self._items[0].coordinator)
         return
     
+    @property
+    def coordinator(self):
+        return self._coord_ref()
+
     @property
     def items(self):
         return self._items

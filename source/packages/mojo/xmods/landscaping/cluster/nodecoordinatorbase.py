@@ -56,9 +56,9 @@ def format_node_configuration_error(message, osxdev_config):
     errmsg = os.linesep.join(error_lines)
     return errmsg
 
-class BaseNodeCoordinator(CoordinatorBase):
+class NodeCoordinatorBase(CoordinatorBase):
     """
-        The :class:`BaseNodePoolCoordinator` creates a pool of agents that can be used to
+        The :class:`NodeCoordinatorBase` creates a pool of agents that can be used to
         coordinate the interop activities of the automation process and remote OSX
         node.
     """
