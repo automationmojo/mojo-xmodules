@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 
 import os
 
-from mojo.xmods.exceptions import SemanticError
+from mojo.xmods.exceptions import CheckinError, CheckoutError, SemanticError
 
 from mojo.xmods.interfaces.iexcludefilter import IExcludeFilter
 from mojo.xmods.interfaces.iincludefilter import IIncludeFilter
@@ -118,7 +118,7 @@ class LandscapeOperationalLayer(LandscapingLayerBase):
                     err_msg_lines.append(f"    {ncname}")
 
                 err_msg = os.linesep.join(err_msg_lines)
-                raise SemanticError(err_msg)
+                raise CheckinError(err_msg)
         
             for node in cluster.nodes.values():
                 for did in node.identity:
@@ -157,7 +157,7 @@ class LandscapeOperationalLayer(LandscapingLayerBase):
                     err_msg_lines.append(f"    {did}")
 
                 err_msg = os.linesep.join(err_msg_lines)
-                raise SemanticError(err_msg)
+                raise CheckinError(err_msg)
             
             del self._operational_device_outstanding[dev_identity]
             self._operational_device_outstanding[dev_identity] = device
@@ -182,16 +182,16 @@ class LandscapeOperationalLayer(LandscapingLayerBase):
                     err_msg_lines.append(f"    {exnames}")
 
                 err_msg = os.lines.join(err_msg_lines)
-                raise KeyError(err_msg)
+                raise CheckoutError(err_msg)
             
             if cname not in self._operational_clusters_pool:
                 if cname not in self._operational_clusters_outstanding:
                     err_msg = f"The specified cluster '{cname}' was not found in the pool or outstanding clusters."
-                    raise RuntimeError(err_msg)
+                    raise CheckoutError(err_msg)
 
                 # Trying to checkout a cluster that has already been checked out
                 err_msg = f"The specified cluster '{cname}' has already been checked out of the pool."
-                raise SemanticError(err_msg)
+                raise CheckoutError(err_msg)
 
             # When we checkout a cluster, we have to make sure all of its devices
             # are available for checkout
@@ -209,7 +209,7 @@ class LandscapeOperationalLayer(LandscapingLayerBase):
                 for node in unavailable_nodes:
                     err_msg_lines.append(f"    {node.name}")
                 err_msg = os.linesep.join(err_msg_lines)
-                raise SemanticError(err_msg)
+                raise CheckoutError(err_msg)
 
             # The cluster is available and all the devices are available, complete the checkout
             for node in cluster.nodes.values():
@@ -235,7 +235,7 @@ class LandscapeOperationalLayer(LandscapingLayerBase):
 
             if device_identity not in self._operational_device_pool:
                 err_msg = f"The specified device '{device_identity}' is not available for checkout."
-                raise SemanticError(err_msg)
+                raise CheckoutError(err_msg)
 
             del self._operational_device_pool[device_identity]
             self._operational_device_outstanding[device_identity] = device
