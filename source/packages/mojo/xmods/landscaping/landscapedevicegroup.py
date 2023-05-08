@@ -20,7 +20,7 @@ __license__ = "MIT"
 
 from typing import List
 
-from weakref
+import weakref
 
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 

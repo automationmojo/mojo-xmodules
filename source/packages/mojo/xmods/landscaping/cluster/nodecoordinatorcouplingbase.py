@@ -25,7 +25,7 @@ from mojo.xmods.exceptions import SemanticError
 from mojo.xmods.landscaping.coupling.coordinatorcoupling import CoordinatorCoupling
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.landscape import LandscapeDevice
-from mojo.xmods.landscaping.cluster.nodecoordinatorbase import BaseNodeCoordinator
+from mojo.xmods.landscaping.cluster.nodecoordinatorbase import NodeCoordinatorBase
 
 from mojo.xmods.landscaping.constants import StartupLevel
 
@@ -52,6 +52,8 @@ class NodeCoordinatorCouplingBase(CoordinatorCoupling):
     integration_section: str = "devices"
     integration_leaf: str = "deviceType"
     integration_class: str = SUPPORTED_INTEGRATION_CLASS
+
+    COORDINATOR_TYPE = NodeCoordinatorBase
 
     def __init__(self, *args, **kwargs):
         """
@@ -97,7 +99,7 @@ class NodeCoordinatorCouplingBase(CoordinatorCoupling):
         """
             This API is called so that the landscape can create a coordinator for a given integration role.
         """
-        cls.coordinator = BaseNodeCoordinator(landscape)
+        cls.coordinator = cls.COORDINATOR_TYPE(landscape)
         return cls.coordinator
 
     @classmethod
