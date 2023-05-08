@@ -32,6 +32,17 @@ class CommandError(RuntimeError):
         self.stderr = stderr
         return
 
+
+class CheckinError(RuntimeError):
+    """
+        This error is raised when an error occurs during the checking in of a resource.
+    """
+
+class CheckoutError(RuntimeError):
+    """
+        This error is raised when an error occurs during the checkout of a resource.
+    """
+
 class ConfigurationError(BaseException):
     """
         The base error object for errors that indicate that there is an issue related
