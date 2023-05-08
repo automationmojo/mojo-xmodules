@@ -30,9 +30,9 @@ class LandscapeDeviceCluster:
         that are eligible to participate in the cluster.
     """
 
-    def __init__(self, label: str, nodes: Dict[str, NodeBase], spares: Dict[str, NodeBase],
+    def __init__(self, name: str, nodes: Dict[str, NodeBase], spares: Dict[str, NodeBase],
                  group: LandscapeDeviceGroup) -> None:
-        self._label = label
+        self._name = name
         self._nodes = nodes
         self._spares = spares
         self._group = group
@@ -43,8 +43,8 @@ class LandscapeDeviceCluster:
         return self._group
 
     @property
-    def label(self) -> str:
-        return self._label
+    def name(self) -> str:
+        return self._name
 
     @property
     def nodes(self) -> Dict[str, NodeBase]:
