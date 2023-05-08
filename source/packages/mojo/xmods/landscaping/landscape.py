@@ -1,6 +1,6 @@
 
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import inspect
 import logging
@@ -24,6 +24,7 @@ from mojo.xmods.landscaping.landscapeparameters import (
     DEFAULT_LANDSCAPE_ACTIVATION_PARAMS,
 )
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
+from mojo.xmods.landscaping.landscapedevicecluster import LandscapeDeviceCluster
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
@@ -310,6 +311,48 @@ class Landscape:
         unlkd_scope = UnLockedScope(self.landscape_lock)
         return unlkd_scope
     
+    def checkin_cluster(self, cluster: LandscapeDeviceCluster):
+        """
+            Checkin clusters and associated devices to the operational pool.
+        """
+        self.layer_operational.checkin_cluster(cluster)
+        return
+
+    def checkin_device(self, device: LandscapeDevice):
+        """
+            Checkin devices to the operational pool.
+        """
+        self.layer_operational.checkin_device(device)
+        return
+
+    def checkout_cluster(self, cluster: LandscapeDeviceCluster):
+        """
+            Checkout clusters and associated devices from the operational pool.
+        """
+        self.layer_operational.checkout_cluster(cluster)
+        return
+    
+    def checkout_device(self, device: LandscapeDevice):
+        """
+            Checkout devices from the operational pool.
+        """
+        self.layer_operational.checkout_device(device)
+        return
+
+    def get_cluster_by_name(self, cluster_name: str) -> Union[LandscapeDeviceCluster, None]:
+        """
+            Gets a cluster by name.
+        """
+        cluster = self.layer_operational.get_cluster_by_name(cluster_name)
+        return cluster
+
+    def get_clusters(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None):
+        """
+            Gets a copy of the operational clusters list.
+        """
+        selected_clusters = self.layer_operational.get_clusters(include_filters=include_filters, exclude_filters=exclude_filters)
+        return selected_clusters
+
     def get_devices(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None):
         """
             Gets a copy of the integrated devices list.
