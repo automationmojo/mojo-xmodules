@@ -130,7 +130,7 @@ class NodeCoordinatorBase(CoordinatorBase):
             errmsg = os.linesep.join(errmsg_lines)
             raise ConfigurationError(errmsg)
 
-        cluster = self.CLUSTER_TYPE(cluster_name, nodes, spares, group)
+        cluster = self.CLUSTER_TYPE(cluster_name, node_devices, spare_devices, group)
 
         return cluster
 

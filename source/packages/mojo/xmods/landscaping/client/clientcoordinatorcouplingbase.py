@@ -51,6 +51,8 @@ class ClientCoordinatorCouplingBase(CoordinatorCoupling):
     integration_leaf: str = "deviceType"
     integration_class: str = SUPPORTED_INTEGRATION_CLASS
 
+    COORDINATOR_TYPE = ClientCoordinatorBase
+
     def __init__(self, *args, **kwargs):
         """
             The default contructor for an :class:`BaseClientCoordinatorIntegration`.
@@ -95,7 +97,7 @@ class ClientCoordinatorCouplingBase(CoordinatorCoupling):
         """
             This API is called so that the landscape can create a coordinator for a given integration role.
         """
-        cls.coordinator = ClientCoordinatorBase(landscape)
+        cls.coordinator = cls.COORDINATOR_TYPE(landscape)
         return cls.coordinator
 
     @classmethod
