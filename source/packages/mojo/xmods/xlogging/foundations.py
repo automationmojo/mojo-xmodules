@@ -339,6 +339,13 @@ class LoggerWrapper:
     def propagate(self):
         return self._logger.propagate
 
+    def addFilter(self, filter):
+        """
+            Add the specified filter to this handler.
+        """
+        self._logger.addFilter(filter)
+        return
+
     def addHandler(self, hdlr):
         """
             Add the specified handler to this logger.
@@ -364,6 +371,25 @@ class LoggerWrapper:
             logger.debug("Houston, we have a %s", "thorny problem", exc_info=1)
         """
         self._logger.debug(msg, *args, **kwargs)
+        return
+
+    def log(self, level, msg, *args, **kwargs):
+        """
+        Log 'msg % args' with the integer severity 'level'.
+
+        To pass exception information, use the keyword argument exc_info with
+        a true value, e.g.
+
+        logger.log(level, "We have a %s", "mysterious problem", exc_info=1)
+        """
+        self._logger.log(level, msg, *args, **kwargs)
+        return
+
+    def removeFilter(self, filter):
+        """
+            Remove the specified filter from this handler.
+        """
+        self._logger.removeFilter(filter)
         return
 
     def test_begin(self, testname, **test_args):

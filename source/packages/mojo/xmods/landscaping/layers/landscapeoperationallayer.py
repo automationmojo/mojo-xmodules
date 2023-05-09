@@ -121,9 +121,9 @@ class LandscapeOperationalLayer(LandscapingLayerBase):
                 raise CheckinError(err_msg)
         
             for node in cluster.nodes.values():
-                for did in node.identity:
-                    del self._operational_device_outstanding[did]
-                    self._operational_device_pool[did] = node
+                did = node.identity
+                del self._operational_device_outstanding[did]
+                self._operational_device_pool[did] = node
 
             del self._operational_clusters_outstanding[cname]
             self._operational_clusters_pool[cname] = cluster
