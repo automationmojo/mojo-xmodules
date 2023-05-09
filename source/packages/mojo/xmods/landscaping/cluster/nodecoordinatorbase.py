@@ -24,6 +24,7 @@ import pprint
 
 from mojo.xmods.exceptions import ConfigurationError, NotOverloadedError
 
+from mojo.xmods.credentials.basecredential import BaseCredential
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
 from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
