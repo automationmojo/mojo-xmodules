@@ -22,6 +22,9 @@ from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 import os
 import pprint
 
+from mojo.xmods.exceptions import ConfigurationError, NotOverloadedError
+
+from mojo.xmods.credentials.basecredential import BaseCredential
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
 from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
@@ -63,6 +66,8 @@ class ClientCoordinatorBase(CoordinatorBase):
     INTEGRATION_CLASS = ""
     CLIENT_TYPE = ClientBase
 
+    MUST_INCLUDE_SSH = False
+
     def __init__(self, lscape: "Landscape", *args, **kwargs):
         super().__init__(lscape, *args, **kwargs)
 
@@ -81,6 +86,48 @@ class ClientCoordinatorBase(CoordinatorBase):
         """
             Called when a landscape device is created in order to attach device extensions.
         """
+        self.attach_extension_for_ssh(landscape, device_info, device)
+        return
+
+    def attach_extension_for_ssh(self, landscape: "Landscape", device_info: Dict[str, Any], device: LandscapeDevice):
+
+        credentials = device.credentials
+
+        ssh_cred = None
+        for cred in credentials.values():
+            if "ssh" in cred.categories:
+                ssh_cred = cred
+                break
+
+        ssh_add_error = None
+        
+        if ssh_cred is not None:
+            if "host" in device_info:
+                host = device_info["host"]
+
+                users = None
+                if "users" in device_info:
+                    users = device_info["users"]
+
+                port = 22
+                if "port" in device_info:
+                    port = device_info["port"]
+
+                pty_params = None
+                if "pty_params" in device_info:
+                    pty_params = device_info["pty_params"]
+
+                self.create_ssh_agent(device, device_info, host, ssh_cred, 
+                                      users=users, port=port, pty_params=pty_params)
+            else:
+                ssh_add_error = "missing 'host'"
+        else:
+            ssh_add_error = "missing 'ssh' credential"
+
+        if self.MUST_INCLUDE_SSH and ssh_add_error is not None:
+            type_name = type(self).__name__
+            err_msg = f"{type_name} client needs to have an 'ssh' credential. ({ssh_add_error})"
+            raise ConfigurationError(err_msg)
 
         return
 
@@ -97,6 +144,15 @@ class ClientCoordinatorBase(CoordinatorBase):
         self.attach_device_extensions(landscape, device_info, device)
 
         return fid, device
+
+    def create_ssh_agent(self, device: LandscapeDevice, device_info: Dict[str, Any], host: str, cred: BaseCredential,
+                         users: Optional[dict] = None, port: int = 22, pty_params: Optional[dict] = None):
+        
+        if self.MUST_INCLUDE_SSH:
+            err_mgs = "if 'MUST_INCLUDE_SSH' is 'True' then 'create_ssh_agent' must be overloaded."
+            raise NotOverloadedError(err_mgs)
+
+        return
 
     def establish_connectivity(self, activation_params: LandscapeActivationParams):
         """

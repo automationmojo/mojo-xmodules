@@ -15,11 +15,13 @@ from threading import RLock
 from mojo.xmods.extension.configured import SuperFactory
 
 if TYPE_CHECKING:
+    from mojo.xmods.credentials.credentialmanager import CredentialManager
     from mojo.xmods.landscaping.landscape import Landscape
 
 
 SUPER_FACTORY_SINGLETON = None
 LANDSCAPE_SINGLETON = None
+CREDENTIAL_MANAGER_SINGLETON = None
 
 
 SINGLETON_LOCK = RLock()
@@ -45,6 +47,24 @@ def SuperFactorySinglton() -> SuperFactory:
 
     return SUPER_FACTORY_SINGLETON
 
+def CredentialManagerSingleton() -> "CredentialManager":
+    """
+        Instantiates and gets a global instance of the :class:`CredentialManager` class.  The
+        :class:`CredentialManager` provides for management of credentials.
+    """
+    global CREDENTIAL_MANAGER_SINGLETON
+
+    if CREDENTIAL_MANAGER_SINGLETON is None:
+        SINGLETON_LOCK.acquire()
+        try:
+            from mojo.xmods.credentials.credentialmanager import CredentialManager
+
+            if SUPER_FACTORY_SINGLETON is None:
+                SUPER_FACTORY_SINGLETON = CredentialManager()
+        finally:
+            SINGLETON_LOCK.release()
+    
+    return CREDENTIAL_MANAGER_SINGLETON
 
 def LandscapeSingleton() -> "Landscape":
     """
