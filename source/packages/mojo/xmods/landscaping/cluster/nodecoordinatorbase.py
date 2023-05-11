@@ -189,6 +189,9 @@ class NodeCoordinatorBase(CoordinatorBase):
 
         device = self.CLIENT_TYPE(landscape, self, fid, dev_type, device_info)
 
+        with self.begin_locked_coordinator_scope() as lkscope:
+            self._cl_children[device.identity] = device
+
         self.attach_device_extensions(landscape, device_info, device)
 
         return fid, device
