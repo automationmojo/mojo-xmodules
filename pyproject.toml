@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mojo-xmodules"
 description = "Automation Mojo X-Modules"
-version = "0.0.34"
+version = "0.0.35"
 authors = []
 readme = "README.rst"
 license = "LICENSE.txt"
