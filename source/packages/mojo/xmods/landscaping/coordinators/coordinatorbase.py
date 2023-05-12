@@ -104,21 +104,6 @@ class CoordinatorBase:
 
         self._coord_lock.acquire()
         try:
-            chlist = [c.basedevice for c in self._cl_children.values()]
-        finally:
-            self._coord_lock.release()
-
-        return chlist
-
-    @property
-    def children_as_extension(self) -> List[LandscapeDeviceExtension]:
-        """
-            Returns a list of the device protocol extensions created by this coordinator that have been attached to a landscape device.
-        """
-        chlist = []
-
-        self._coord_lock.acquire()
-        try:
             chlist = [c for c in self._cl_children.values()]
         finally:
             self._coord_lock.release()
