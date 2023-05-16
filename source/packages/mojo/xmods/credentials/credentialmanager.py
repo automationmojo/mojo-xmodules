@@ -65,7 +65,17 @@ class CredentialManager:
         """
         
         if credkey not in self._credentials:
-            errmsg = f"Error missing credential '{credkey}'."
+            ctx = Context()
+
+            errmsg_lines = [
+                f"Error missing credential '{credkey}'.",
+                "CREDENTIAL FILES:"
+            ]
+        
+            for cfile in ctx.lookup(ContextPaths.CONFIG_CREDENTIAL_FILES, []):
+                errmsg_lines.append(f"    {cfile}")
+
+            errmsg = os.linesep.join(errmsg_lines)
             raise ConfigurationError(errmsg)
         
         cred = self._credentials[credkey]
