@@ -1,8 +1,10 @@
 [tool.poetry]
 name = "mojo-xmodules"
 description = "Automation Mojo X-Modules"
-version = "0.0.38"
-authors = []
+version = "0.0.39"
+authors = [
+    "Myron Walker <myron.walker@gmail.com>"
+]
 readme = "README.rst"
 license = "LICENSE.txt"
 classifiers = [
@@ -11,9 +13,13 @@ classifiers = [
     "Operating System :: POSIX"
 ]
 keywords = [
-    "python"
+    "python",
+    "support"
 ]
 packages = [{include="mojo", from="source/packages"}]
+
+homepage = "http://automationmojo.com"
+repository = "https://github.com/automationmojo/mojo-xmodules"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
