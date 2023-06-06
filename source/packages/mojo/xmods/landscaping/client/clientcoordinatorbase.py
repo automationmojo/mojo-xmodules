@@ -166,14 +166,16 @@ class ClientCoordinatorBase(CoordinatorBase):
 
         cmd: str = "echo 'It Works'"
 
-        for agent in self.children_as_extension:
-            host = agent.host
-            ipaddr = agent.ipaddr
-            try:
-                status, stdout, stderr = agent.run_cmd(cmd)
-                results.append((host, ipaddr, status, stdout, stderr, None))
-            except Exception as xcpt: # pylint: disable=broad-except
-                results.append((host, ipaddr, None, None, None, xcpt))
+        for dev in self.children:
+            if dev.has_ssh_credential:
+                agent = dev.ssh
+                host = agent.host
+                ipaddr = agent.ipaddr
+                try:
+                    status, stdout, stderr = agent.run_cmd(cmd)
+                    results.append((host, ipaddr, status, stdout, stderr, None))
+                except Exception as xcpt: # pylint: disable=broad-except
+                    results.append((host, ipaddr, None, None, None, xcpt))
 
         return results
 
