@@ -43,6 +43,12 @@ def landscape_example_main():
     for dev in all_devices:
         print(f"{dev}")
 
+    all_services = lscape.get_services()
+
+    for svc in all_services:
+        print(f"{svc}")
+
+
     return
 
 if __name__ == "__main__":

@@ -27,16 +27,15 @@ class ICommandContext(Protocol):
         The :class:`ICommandContext` interface is used to provide a common interface for both SSH and Serial command runners.
     """
 
-    def open_session(self, primitive: bool = False, ssh_session: Optional["ICommandContext"] = None,
+    def open_session(self, primitive: bool = False, cmd_context: Optional["ICommandContext"] = None,
                      aspects: Optional[AspectsCmd] = None) -> "ICommandContext": # pylint: disable=arguments-differ
         """
-            Provies a mechanism to create a :class:`SshSession` object with derived settings.  This method allows various parameters for the session
+            Provides a mechanism to create a :class:`SshSession` object with derived settings.  This method allows various parameters for the session
             to be overridden.  This allows for the performing of a series of SSH operations under a particular set of shared settings and or credentials.
 
             :param primitive: Use primitive mode for FTP operations for the session.
-            :param pty_params: The default pty parameters to use to request a PTY when running commands through the session.
             :param interactive: Creates an interactive session which holds open an interactive shell so commands can interact in the shell.
-            :param ssh_session: An optional SshSession instance to use.  This allows re-use of sessions.
+            :param cmd_context: An optional SshSession instance to use.  This allows re-use of sessions.
             :param aspects: The default run aspects to use for the operations performed by the session.
         """
 

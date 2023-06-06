@@ -20,13 +20,13 @@ __license__ = "MIT"
 from typing import Union
 
 from mojo.xmods.exceptions import ConfigurationError
-from mojo.xmods.landscaping.landscapedeviceextension import LandscapeDeviceExtension
+from mojo.xmods.landscaping.protocolextension import ProtocolExtension
 
-class PowerAgentBase(LandscapeDeviceExtension):
+class PowerAgentBase(ProtocolExtension):
     """
     """
     def __init__(self):
-        LandscapeDeviceExtension.__init__(self)
+        ProtocolExtension.__init__(self)
         return
 
     def _lookup_power_interface(self, interface_name: str) -> Union[dict, None]:

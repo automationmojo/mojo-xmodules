@@ -1,8 +1,8 @@
 """
-.. module:: nodecoordinatorbase
+.. module:: servicecoordinatorbase
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module contains the :class:`NodeCoordinatorBase` object which is a base
-               class for objects create and manage cluster node objects.
+    :synopsis: Module contains the :class:`ServiceCoordinatorBase` object which is a base
+               class for objects create and manage service objects.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -29,20 +29,18 @@ from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
 from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 from mojo.xmods.landscaping.landscapeparameters import LandscapeActivationParams
-from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
-from mojo.xmods.landscaping.landscapedevicecluster import LandscapeDeviceCluster
-from mojo.xmods.landscaping.landscapedevicegroup import LandscapeDeviceGroup
+from mojo.xmods.landscaping.landscapeservice import LandscapeService
 
-from mojo.xmods.landscaping.cluster.nodebase import NodeBase
+from mojo.xmods.landscaping.service.servicebase import ServiceBase
 
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
 
 
-def format_node_configuration_error(message, osxdev_config):
+def format_service_configuration_error(message, next_dev_config):
     """
-        Takes an error message and an node configuration info dictionary and
+        Takes an error message and an service configuration info dictionary and
         formats a configuration error message.
     """
     error_lines = [
@@ -50,24 +48,23 @@ def format_node_configuration_error(message, osxdev_config):
         "DEVICE:"
     ]
 
-    dev_repr_lines = pprint.pformat(osxdev_config, indent=4).splitlines(False)
+    dev_repr_lines = pprint.pformat(next_dev_config, indent=4).splitlines(False)
     for dline in dev_repr_lines:
         error_lines.append("    " + dline)
     
     errmsg = os.linesep.join(error_lines)
     return errmsg
 
-class NodeCoordinatorBase(CoordinatorBase):
+class ServiceCoordinatorBase(CoordinatorBase):
     """
-        The :class:`NodeCoordinatorBase` creates a pool of agents that can be used to
+        The :class:`BaseServicePoolCoordinator` creates a pool of agents that can be used to
         coordinate the interop activities of the automation process and remote OSX
-        node.
+        service.
     """
     # pylint: disable=attribute-defined-outside-init
 
     INTEGRATION_CLASS = ""
-    CLIENT_TYPE = NodeBase
-    CLUSTER_TYPE = LandscapeDeviceCluster
+    CLIENT_TYPE = ServiceBase
 
     MUST_INCLUDE_SSH = False
 
@@ -81,20 +78,20 @@ class NodeCoordinatorBase(CoordinatorBase):
     def activate(self, activation_params: LandscapeActivationParams):
         """
             Called by the :class:`LandscapeOperationalLayer` in order for the coordinator to be able to
-            potentially enhanced devices.
+            potentially enhanced services.
         """
         return
 
-    def attach_protocol_extensions(self, landscape: "Landscape", device_info: Dict[str, Any], device: LandscapeDevice):
+    def attach_protocol_extensions(self, landscape: "Landscape", service_info: Dict[str, Any], service: LandscapeService):
         """
-            Called when a landscape device is created in order to attach device extensions.
+            Called when a landscape service is created in order to attach protocol extensions.
         """
-        self.attach_extension_for_ssh(landscape, device_info, device)
+        self.attach_extension_for_ssh(landscape, service_info, service)
         return
 
-    def attach_extension_for_ssh(self, landscape: "Landscape", device_info: Dict[str, Any], device: LandscapeDevice):
+    def attach_extension_for_ssh(self, landscape: "Landscape", service_info: Dict[str, Any], service: LandscapeService):
 
-        credentials = device.credentials
+        credentials = service.credentials
 
         ssh_cred = None
         for cred in credentials.values():
@@ -105,22 +102,22 @@ class NodeCoordinatorBase(CoordinatorBase):
         ssh_add_error = None
         
         if ssh_cred is not None:
-            if "host" in device_info:
-                host = device_info["host"]
+            if "host" in service_info:
+                host = service_info["host"]
 
                 users = None
-                if "users" in device_info:
-                    users = device_info["users"]
+                if "users" in service_info:
+                    users = service_info["users"]
 
                 port = 22
-                if "port" in device_info:
-                    port = device_info["port"]
+                if "port" in service_info:
+                    port = service_info["port"]
 
                 pty_params = None
-                if "pty_params" in device_info:
-                    pty_params = device_info["pty_params"]
+                if "pty_params" in service_info:
+                    pty_params = service_info["pty_params"]
 
-                self.create_ssh_agent(device, device_info, host, ssh_cred, 
+                self.create_ssh_agent(service, service_info, host, ssh_cred, 
                                       users=users, port=port, pty_params=pty_params)
             else:
                 ssh_add_error = "missing 'host'"
@@ -129,74 +126,26 @@ class NodeCoordinatorBase(CoordinatorBase):
 
         if self.MUST_INCLUDE_SSH and ssh_add_error is not None:
             type_name = type(self).__name__
-            err_msg = f"{type_name} client needs to have an 'ssh' credential. ({ssh_add_error})"
+            err_msg = f"{type_name} service needs to have an 'ssh' credential. ({ssh_add_error})"
             raise ConfigurationError(err_msg)
 
         return
 
-    def create_cluster_for_devices(self, cluster_name: str, group: LandscapeDeviceGroup,
-                                   nodes: List[str], spares: List[str]) -> LandscapeDeviceCluster:
+    def create_landscape_service(self, landscape: "Landscape", service_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, ServiceBase]:
         """
-            Called in order to create a cluster object for a given group of devices, list of node
-            names and list of spare node names.
+            Called to declare a declared landscape service for a given coordinator.
         """
-        node_devices = {}
-        spare_devices = {}
-
-        grplable = group.label
-
-        unexpected_devices = {}
-
-        for dev in group.items:
-            node_name = dev.name
-            if node_name in nodes:
-                node_devices[node_name] = dev
-            elif node_name in spares:
-                spare_devices[node_name] = dev
-            else:
-                unexpected_devices[node_name] = dev
-        
-        if len(unexpected_devices) > 0:
-            errmsg_lines = [
-                f"The group '{grplable}' contained devices that were not in the nodes or spares lists.",
-                "NODES:"
-            ]
-            for nname in nodes:
-                errmsg_lines.append(f"    {nname}")
-
-            errmsg_lines.append("SPARES:")
-            for nname in spares:
-                errmsg_lines.append(f"    {nname}")
-
-            errmsg_lines.append("UNEXPECTED:")
-            for nname in unexpected_devices.keys():
-                errmsg_lines.append(f"    {nname}")
-
-            errmsg = os.linesep.join(errmsg_lines)
-            raise ConfigurationError(errmsg)
-
-        cluster = self.CLUSTER_TYPE(cluster_name, node_devices, spare_devices, group)
-
-        return cluster
-
-    def create_landscape_device(self, landscape: "Landscape", device_info: Dict[str, Any]) -> Tuple[FriendlyIdentifier, NodeBase]:
-        """
-            Called to declare a declared landscape device for a given coordinator.
-        """
-        host = device_info["host"]
-        dev_type = device_info["deviceType"]
+        host = service_info["host"]
+        dev_type = service_info["serviceType"]
         fid = FriendlyIdentifier(host, host)
 
-        device = self.CLIENT_TYPE(landscape, self, fid, dev_type, device_info)
+        service = self.CLIENT_TYPE(landscape, self, fid, dev_type, service_info)
 
-        with self.begin_locked_coordinator_scope() as lkscope:
-            self._cl_children[device.identity] = device
+        self.attach_protocol_extensions(landscape, service_info, service)
 
-        self.attach_protocol_extensions(landscape, device_info, device)
+        return fid, service
 
-        return fid, device
-
-    def create_ssh_agent(self, device: LandscapeDevice, device_info: Dict[str, Any], host: str, cred: BaseCredential,
+    def create_ssh_agent(self, service: LandscapeService, service_info: Dict[str, Any], host: str, cred: BaseCredential,
                          users: Optional[dict] = None, port: int = 22, pty_params: Optional[dict] = None):
         
         if self.MUST_INCLUDE_SSH:
@@ -208,7 +157,7 @@ class NodeCoordinatorBase(CoordinatorBase):
     def establish_connectivity(self, activation_params: LandscapeActivationParams):
         """
             Called by the :class:`LandscapeOperationalLayer` in order for the coordinator to be able to
-            verify connectivity with devices.
+            verify connectivity with services.
         """
         results = []
 
@@ -225,36 +174,36 @@ class NodeCoordinatorBase(CoordinatorBase):
 
         return results
 
-    def lookup_device_by_host(self, host: str) -> Union[LandscapeDevice, None]:
+    def lookup_service_by_host(self, host: str) -> Union[LandscapeService, None]:
         """
-            Looks up the agent for a device by its hostname.  If the
+            Looks up the agent for a service by its hostname.  If the
             agent is not found then the API returns None.
 
-            :param host: The host name of the LandscapeDevice to search for.
+            :param host: The host name of the LandscapeService to search for.
 
-            :returns: The found LandscapeDevice or None
+            :returns: The found LandscapeService or None
         """
-        device = None
+        service = None
 
         self._coord_lock.acquire()
         try:
             if host in self._cl_children:
-                device = self._cl_children[host].basedevice
+                service = self._cl_children[host].extended
         finally:
             self._coord_lock.release()
 
-        return device
+        return service
 
-    def lookup_device_by_ip(self, ip) -> Union[LandscapeDevice, None]:
+    def lookup_service_by_ip(self, ip) -> Union[LandscapeService, None]:
         """
-            Looks up the agent for a device by its ip address.  If the
+            Looks up the agent for a service by its ip address.  If the
             agent is not found then the API returns None.
 
             :param ip: The ip address of the LandscapeDevice to search for.
 
             :returns: The found LandscapeDevice or None
         """
-        device = None
+        service = None
 
         self._coord_lock.acquire()
         try:
@@ -262,15 +211,15 @@ class NodeCoordinatorBase(CoordinatorBase):
                 if ip in self._cl_ip_to_host_lookup:
                     host = self._cl_ip_to_host_lookup[ip]
                     if host in self._cl_children:
-                        device = self._cl_children[host].basedevice
+                        service = self._cl_children[host].extended
         finally:
             self._coord_lock.release()
 
-        return device
+        return service
 
     def verify_connectivity(self, cmd: str = "echo 'It Works'", user: Optional[str] = None, raiseerror: bool = True) -> List[tuple]:
         """
-            Loops through the nodes in the node pool and utilizes the credentials for the specified user in order to verify
+            Loops through the nodes in the OSX service pool and utilizes the credentials for the specified user in order to verify
             connectivity with the remote node.
 
             :param cmd: A command to run on the remote machine in order
@@ -280,7 +229,7 @@ class NodeCoordinatorBase(CoordinatorBase):
                          credentials of the default or priviledged user will be used.
             :param raiseerror: A boolean value indicating if this API should raise an Exception on failure.
 
-            :returns: A list of errors encountered when verifying connectivity with the devices managed or watched by the coordinator.
+            :returns: A list of errors encountered when verifying connectivity with the services managed or watched by the coordinator.
         """
         results = []
 

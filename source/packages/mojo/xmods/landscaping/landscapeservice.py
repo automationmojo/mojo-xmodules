@@ -1,7 +1,7 @@
 """
-.. module:: landscapedevice
+.. module:: landscapeservice
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the :class:`LandscapeDevice` class.
+    :synopsis: Module containing the :class:`LandscapeService` class.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -37,11 +37,11 @@ if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
     from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
 
-class LandscapeDevice(FeatureAttachedObject):
+class LandscapeService(FeatureAttachedObject):
     """
-        The base class for all landscape devices.  The :class:`LandscapeDevice' represents attributes that are common
-        to all connected devices and provides attachements points and mechanisms for adding DeviceExtentions to
-        the :class:`LandscapeDevice` device.
+        The base class for all landscape services.  The :class:`LandscapeService' represents attributes that are common
+        to all services that might be present in a test landscape.   mechanisms for adding ServiceExtentions to
+        the :class:`LandscapeService` device.
     """
 
     # Base landscape devices don't have any feature tags, but we want all devices to have feature
@@ -52,7 +52,7 @@ class LandscapeDevice(FeatureAttachedObject):
     logger = logging.getLogger()
 
     def __init__(self, lscape: "Landscape", coordinator: "CoordinatorBase", friendly_id: 
-                 FriendlyIdentifier, device_type: str, device_config: dict):
+                 FriendlyIdentifier, service_type: str, service_config: dict):
         super().__init__()
 
         # These data items live for the life of the device, so they are not guarded
@@ -61,18 +61,10 @@ class LandscapeDevice(FeatureAttachedObject):
         self._coord_ref = weakref.ref(coordinator)
 
         self._friendly_id = friendly_id
-        self._device_type = device_type
-        self._device_config = device_config
+        self._service_type = service_type
+        self._service_config = service_config
 
-        # Devices can have a group assigned to support collections of devices
-        # like clusters, for clusters giving a device a group does not assign
-        # automatincaly group the device into a cluster.  It just means the
-        # device is eligible to belong to a given cluster.
-        self._group = ""
-        if "group" in device_config:
-            self._group = device_config["group"]
-
-        self._device_lock = threading.RLock()
+        self._service_lock = threading.RLock()
 
         self._contacted_first = None
         self._contacted_last = None
@@ -86,17 +78,17 @@ class LandscapeDevice(FeatureAttachedObject):
 
         self._credentials = {}
         self._features = {}
-        if "features" in device_config:
-             self._features = device_config
+        if "features" in service_config:
+             self._features = service_config
 
         self._configured_ipaddr = None
-        if "ipaddr" in device_config:
-            self._configured_ip = device_config["ipaddr"]
+        if "ipaddr" in service_config:
+            self._configured_ip = service_config["ipaddr"]
 
         credmgr = lscape.credential_manager
 
-        if "credentials" in device_config:
-            for cred_key in device_config["credentials"]:
+        if "credentials" in service_config:
+            for cred_key in service_config["credentials"]:
                 self._credentials[cred_key] = credmgr.lookup_credential(cred_key)
 
         self._has_ssh_credential = False
@@ -136,18 +128,18 @@ class LandscapeDevice(FeatureAttachedObject):
         return self._credentials
 
     @property
-    def device_config(self) -> dict:
+    def service_config(self) -> dict:
         """
             A dictionary of the configuration information for this device.
         """
-        return self._device_config
+        return self._service_config
 
     @property
-    def device_type(self) -> str:
+    def service_type(self) -> str:
         """
             A string representing the type of device.
         """
-        return self._device_type
+        return self._service_type
 
     @property
     def group(self) -> str:
@@ -246,7 +238,7 @@ class LandscapeDevice(FeatureAttachedObject):
 
     def attach_extension(self, ext_type: str, extension: ProtocolExtension) -> None:
         """
-            Method called by device coordinators to attach a device extension to a :class:`LandscapeDevice`.
+            Method called by device coordinators to attach a device extension to a :class:`LandscapeService`.
         """
 
         if ext_type not in self._extensions:
@@ -261,14 +253,14 @@ class LandscapeDevice(FeatureAttachedObject):
         """
             Method that creates a locked scope for this device.
         """
-        lkd_scope = LockedScope(self._device_lock)
+        lkd_scope = LockedScope(self._service_lock)
         return lkd_scope
 
     def begin_unlocked_scope(self) -> "UnLockedScope":
         """
             Method that creates an unlocked scope for this device.
         """
-        unlkd_scope = UnLockedScope(self._device_lock)
+        unlkd_scope = UnLockedScope(self._service_lock)
         return unlkd_scope
 
     def checkout(self) -> None:
@@ -316,8 +308,8 @@ class LandscapeDevice(FeatureAttachedObject):
             Initializes the features of the device based on the feature declarations and the information
             found in the feature config.
         """
-        if "features" in self._device_config:
-            feature_info = self._device_config["features"]
+        if "features" in self._service_config:
+            feature_info = self._service_config["features"]
             for fkey, fval in feature_info.items():
                 if fkey == "isolation":
                     self._is_isolated = fval
@@ -327,7 +319,7 @@ class LandscapeDevice(FeatureAttachedObject):
 
     def match_using_params(self, match_type, *match_params) -> bool:
         """
-            Method that allows you to match :class:`LandscapeDevice` objects by providing a match_type and
+            Method that allows you to match :class:`LandscapeService` objects by providing a match_type and
             parameters.  The match type is mapped to functions that are registered by device coordinators
             and then the function is called with the match parameters to determine if a device is a match.
         """
@@ -335,7 +327,7 @@ class LandscapeDevice(FeatureAttachedObject):
         match_func = None
         match_self = None
 
-        with self.begin_locked_scope(self._device_lock) as lk_locked:
+        with self.begin_locked_scope(self._service_lock) as lk_locked:
 
             if match_type in self._table_for_match_callbacks:
                 dext_attr, match_func = self._table_for_match_callbacks[match_type]
@@ -363,7 +355,7 @@ class LandscapeDevice(FeatureAttachedObject):
             Method called  to update the match functions.
         """
 
-        with self.begin_locked_scope(self._device_lock) as lk_locked:
+        with self.begin_locked_scope(self._service_lock) as lk_locked:
 
             self._table_for_match_callbacks.update(match_table)
 
@@ -374,7 +366,7 @@ class LandscapeDevice(FeatureAttachedObject):
             Method called  to update the verification callback functions for a given protocol.
         """
 
-        with self.begin_locked_scope(self._device_lock) as lk_locked:
+        with self.begin_locked_scope(self._service_lock) as lk_locked:
 
             self._table_for_status_callbacks[protocol] = status_callback
 
@@ -404,8 +396,8 @@ class LandscapeDevice(FeatureAttachedObject):
 
     def _repr_html_(self) -> str:
         html_repr_lines = [
-            "<h1>LandscapeDevice</h1>",
-            "<h2>     type: {}</h2>".format(self._device_type),
+            "<h1>LandscapeService</h1>",
+            "<h2>     type: {}</h2>".format(self._service_type),
             "<h2>    identity: {}</h2>".format(self.identity),
             "<h2>       ip: {}</h2>".format(self.ipaddr)
         ]
@@ -428,7 +420,7 @@ class LandscapeDevice(FeatureAttachedObject):
         except RuntimeError:
             pass
 
-        devstr = "<{} type={} identity={} ip={} >".format(thisType.__name__, self._device_type, self.identity, ipaddr)
+        devstr = "<{} type={} identity={} ip={} >".format(thisType.__name__, self._service_type, self.identity, ipaddr)
 
         return devstr
 
