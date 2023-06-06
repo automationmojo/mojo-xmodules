@@ -38,6 +38,7 @@ class IntegrationCoupling(BaseCoupling):
 
     landscape: "Landscape" = None
 
+    integration_root: str = None
     integration_section: str = None
     integration_leaf: str = None
     integration_class: str = None
@@ -152,12 +153,12 @@ class IntegrationCoupling(BaseCoupling):
 
     @classmethod
     def get_integration_key(cls):
-        rtnval = f"{cls.integration_section}:{cls.integration_leaf}:{cls.integration_class}"
+        rtnval = f"{cls.integration_root}:{cls.integration_section}:{cls.integration_leaf}:{cls.integration_class}"
         return rtnval
     
     @classmethod
     def get_integration_key_parts(cls):
-        rtnval = (cls.integration_section, cls.integration_leaf, cls.integration_class)
+        rtnval = (cls.integration_root, cls.integration_section, cls.integration_leaf, cls.integration_class)
         return rtnval
 
     @classmethod
