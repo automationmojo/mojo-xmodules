@@ -14,6 +14,8 @@ from types import SimpleNamespace
 class LandscapeActivationParams(SimpleNamespace):
     allow_missing_devices: bool=False
     allow_unknown_devices: bool=False
+    allow_missing_services: bool=False
+    allow_unknown_services: bool=False
     validate_features: bool=True
     validate_topology: bool=True
 

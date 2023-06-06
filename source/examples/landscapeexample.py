@@ -34,7 +34,7 @@ def landscape_example_main():
     ctx.insert(ContextPaths.CONFIG_LANDSCAPE_FILES, landscape_files)
     ctx.insert(ContextPaths.OUTPUT_DIRECTORY, output_dir)
 
-    activation_params = LandscapeActivationParams()
+    activation_params = LandscapeActivationParams(allow_unknown_devices=True, allow_unknown_services=True)
 
     lscape = startup_landscape(activation_params=activation_params)
 

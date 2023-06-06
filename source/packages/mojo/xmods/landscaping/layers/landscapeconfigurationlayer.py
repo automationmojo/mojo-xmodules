@@ -113,12 +113,12 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
     def get_service_configs(self) -> List[dict]:
         lscape = self.landscape
 
-        device_configs = []
+        service_configs = []
 
         with lscape.begin_locked_landscape_scope() as locked:
-            device_configs = self.locked_get_service_configs()
+            service_configs = self.locked_get_service_configs()
 
-        return device_configs
+        return service_configs
 
 
     def attach_to_environment(self):
