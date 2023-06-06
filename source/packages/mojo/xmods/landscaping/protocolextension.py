@@ -1,8 +1,9 @@
 """
-.. module:: landscapedeviceextension
+.. module:: landscapeprotocolextension
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the :class:`LandscapeDeviceExtension` class which is used
+    :synopsis: Module containing the :class:`ProtocolExtension` class which is used
                to attached protocol agents and interop capability to a :class:`LandscapeDevice`
+               or :class:`LandscapeService`.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -25,23 +26,24 @@ import weakref
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.coordinators.coordinatorbase import CoordinatorBase
     from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
+    from mojo.xmods.landscaping.landscapeservice import LandscapeService
 
-class LandscapeDeviceExtension:
+class ProtocolExtension:
     """
-        The :class:`LandscapeDeviceExtension` object is the base class object that allows for the
-        extension of functionality for a :class:`LandscapeDevice`.  The :class:`LandscapeDeviceExtension`
-        is used by the UPnP, SSH and Other coordinators to extend landscape devices with metadata and
-        device connectivity for the UPnp, SSH and Other protocols.
+        The :class:`ProtocolExtension` object is the base class object that allows for the
+        extension of functionality for a :class:`LandscapeDevice` or :class:`LandscapeService`.  The 
+        :class:`ProtocolExtension` is used by the UPnP, SSH and Other coordinators to extend landscape
+        devices with metadata and device connectivity for the UPnp, SSH and Other protocols.
     """
 
     logger = logging.getLogger()
 
     def __init__(self):
         """
-            Constructor use to create an instance of and to initialize a :class:`LandscapeDeviceExtension`.
+            Constructor use to create an instance of and to initialize a :class:`ProtocolExtension`.
         """
         self._coord_ref = None
-        self._basedevice_ref = None
+        self._extends_ref = None
         self._configinfo = None
         self._extid = None
         self._location = None
@@ -49,19 +51,19 @@ class LandscapeDeviceExtension:
         return
 
     @property
-    def basedevice(self) -> "LandscapeDevice":
+    def extends(self) -> Union["LandscapeDevice", "LandscapeService"]:
         """
-            Returns a reference to the base :class:`LandscapeDevice` that this extension was attached to.
+            Returns a reference to the base :class:`LandscapeDevice` or :class:`LandscapeService` that this extension id attached to.
         """
         dev = None
-        if self._basedevice_ref is not None:
-            dev = self._basedevice_ref()
+        if self._extends_ref is not None:
+            dev = self._extends_ref()
         return dev
 
     @property
     def coordinator(self) -> "CoordinatorBase":
         """
-            Returns a reference to the coordinator that created the :class:`LandscapeDeviceExtension`.
+            Returns a reference to the coordinator that created the :class:`LandscapeDevice`.
         """
         coord = None
         if self._coord_ref is not None:
@@ -90,22 +92,22 @@ class LandscapeDeviceExtension:
         """
         return self._location
 
-    def initialize(self, coord_ref: weakref.ReferenceType, basedevice_ref: weakref.ReferenceType,
+    def initialize(self, coord_ref: weakref.ReferenceType, extends_ref: weakref.ReferenceType,
                    extid: str, location: str, configinfo: dict) -> None:
         """
             Initializes the landscape device extension.
         """
         self._coord_ref = coord_ref
-        self._basedevice_ref = basedevice_ref
+        self._extends_ref = extends_ref
         self._extid = extid
         self._location = location
         self._configinfo = configinfo
         return
 
-    def update_base_device_ref(self, basedevice_ref: weakref.ref) -> None:
+    def update_extends_ref(self, extends_ref: weakref.ref) -> None:
         """
             Used by derived Landscape classes to update the reference to the base device if the base landscape
             device is swapped out to provide enhanced device functionality.
         """
-        self._basedevice_ref = basedevice_ref
+        self._extends_ref = extends_ref
         return

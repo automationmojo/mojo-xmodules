@@ -19,11 +19,11 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 from mojo.xmods.interfaces.icommandcontext import ICommandContext
-from mojo.xmods.landscaping.landscapedeviceextension import LandscapeDeviceExtension
+from mojo.xmods.landscaping.protocolextension import ProtocolExtension
 
-class SerialAgentBase(LandscapeDeviceExtension, ICommandContext):
+class SerialAgentBase(ProtocolExtension, ICommandContext):
     """
     """
     def __init__(self):
-        LandscapeDeviceExtension.__init__(self)
+        ProtocolExtension.__init__(self)
         return

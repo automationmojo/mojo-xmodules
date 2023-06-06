@@ -82,7 +82,7 @@ class ClientCoordinatorBase(CoordinatorBase):
         """
         return
 
-    def attach_device_extensions(self, landscape: "Landscape", device_info: Dict[str, Any], device: LandscapeDevice):
+    def attach_protocol_extensions(self, landscape: "Landscape", device_info: Dict[str, Any], device: LandscapeDevice):
         """
             Called when a landscape device is created in order to attach device extensions.
         """
@@ -144,7 +144,7 @@ class ClientCoordinatorBase(CoordinatorBase):
         with self.begin_locked_coordinator_scope() as lkscope:
             self._cl_children[device.identity] = device
 
-        self.attach_device_extensions(landscape, device_info, device)
+        self.attach_protocol_extensions(landscape, device_info, device)
 
         return fid, device
 

@@ -88,6 +88,11 @@ def LandscapeSingleton() -> "Landscape":
             if LANDSCAPE_SINGLETON is None:
                 LandscapeType = super_factory.get_override_types_by_order(
                     LandscapingExtentionPoints.get_landscape_type)
+
+                if LandscapeType is None:
+                    from mojo.xmods.landscaping.landscape import Landscape
+                    LandscapeType = Landscape
+
                 LANDSCAPE_SINGLETON = LandscapeType()
         finally:
             SINGLETON_LOCK.release()

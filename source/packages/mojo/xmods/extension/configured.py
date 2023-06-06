@@ -34,19 +34,23 @@ def scan_for_mojo_factory_modules():
 
     factory_modules = []
 
-    import mojo.factories as mojo_factories
+    try:
+        import mojo.factories as mojo_factories
 
-    mojo_factory_dirs = [fp for fp in mojo_factories.__path__]
+        mojo_factory_dirs = [fp for fp in mojo_factories.__path__]
 
-    for mfdir in mojo_factory_dirs:
-        for  dirpath, _, filenames in os.walk(mfdir):
-            mod_path_prefix = dirpath[:dirpath.find("mojo/factories")]
-            for fname in filenames:
-                if fnmatch.fnmatch(fname, "*.py"):
-                    fbase, _ = os.path.splitext(os.path.basename(fname))
-                    pname = dirpath[len(mod_path_prefix):].replace("/", ".")
-                    mod_name = f"{pname}.{fbase}"
-                    factory_modules.append(mod_name)
+        for mfdir in mojo_factory_dirs:
+            for  dirpath, _, filenames in os.walk(mfdir):
+                mod_path_prefix = dirpath[:dirpath.find("mojo/factories")]
+                for fname in filenames:
+                    if fnmatch.fnmatch(fname, "*.py"):
+                        fbase, _ = os.path.splitext(os.path.basename(fname))
+                        pname = dirpath[len(mod_path_prefix):].replace("/", ".")
+                        mod_name = f"{pname}.{fbase}"
+                        factory_modules.append(mod_name)
+    except ImportError:
+        logger.info("No modules found in 'mojo.factories'")
+
 
     return factory_modules
 

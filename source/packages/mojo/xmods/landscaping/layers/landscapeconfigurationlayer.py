@@ -110,6 +110,17 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
 
         return serial_configs
 
+    def get_service_configs(self) -> List[dict]:
+        lscape = self.landscape
+
+        device_configs = []
+
+        with lscape.begin_locked_landscape_scope() as locked:
+            device_configs = self.locked_get_service_configs()
+
+        return device_configs
+
+
     def attach_to_environment(self):
 
         lscape = self.landscape
@@ -204,12 +215,13 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
 
         device_config_list = []
 
-        pod_info = self._landscape_info["pod"]
-        if "devices" in pod_info:
-            for dev_config_info in pod_info["devices"]:
-                if "skip" in dev_config_info and dev_config_info["skip"]:
-                    continue
-                device_config_list.append(dev_config_info)
+        if "pod" in self._landscape_info:
+            pod_info = self._landscape_info["pod"]
+            if "devices" in pod_info:
+                for dev_config_info in pod_info["devices"]:
+                    if "skip" in dev_config_info and dev_config_info["skip"]:
+                        continue
+                    device_config_list.append(dev_config_info)
 
         return device_config_list
 
@@ -224,10 +236,11 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
 
         power_config_list = []
 
-        pod_info = self._landscape_info["pod"]
-        if "power" in pod_info:
-            for power_config_info in pod_info["power"]:
-                power_config_list.append(power_config_info)
+        if "pod" in self._landscape_info:
+            pod_info = self._landscape_info["pod"]
+            if "power" in pod_info:
+                for power_config_info in pod_info["power"]:
+                    power_config_list.append(power_config_info)
 
         return power_config_list
     
@@ -242,13 +255,34 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
 
         serial_config_list = []
 
-        pod_info = self._landscape_info["pod"]
-        if "serial" in pod_info:
-            for serial_config_info in pod_info["serial"]:
-                serial_config_list.append(serial_config_info)
+        if "pod" in self._landscape_info:
+            pod_info = self._landscape_info["pod"]
+            if "serial" in pod_info:
+                for serial_config_info in pod_info["serial"]:
+                    serial_config_list.append(serial_config_info)
 
         return serial_config_list
 
+    def locked_get_service_configs(self) -> List[dict]:
+        """
+            Returns the list of service configurations from the landscape.  This will
+            skip any services that have a "skip": true declared in the configuration.
+
+            ..note: It is assumed that this call is being made in a thread safe context
+                    or with the landscape lock held.
+        """
+
+        service_config_list = []
+
+        if "infrastructure" in self._landscape_info:
+            infrastructure_info = self._landscape_info["infrastructure"]
+            if "services" in infrastructure_info:
+                for svc_config_info in infrastructure_info["services"]:
+                    if "skip" in svc_config_info and svc_config_info["skip"]:
+                        continue
+                    service_config_list.append(svc_config_info)
+
+        return service_config_list
 
     def record_configuration(self, log_to_directory: str):
         """

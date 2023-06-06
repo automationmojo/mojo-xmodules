@@ -309,7 +309,8 @@ class LandscapeOperationalLayer(LandscapingLayerBase):
         topology_info = lscape.layer_configuration.topology_info
         integ_layer = lscape.layer_integration
 
-        self._create_clusters(integ_layer, topology_info)
+        if topology_info is not None:
+            self._create_clusters(integ_layer, topology_info)
 
         self._operational_device_pool = integ_layer.integrated_devices
         self._operational_clusters_pool = self._operational_clusters.copy()

@@ -34,6 +34,7 @@ from mojo.xmods.landscaping.layers.landscapeconfigurationlayer import LandscapeC
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.landscapedevicegroup import LandscapeDeviceGroup
+from mojo.xmods.landscaping.landscapeservice import LandscapeService
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
@@ -46,6 +47,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
         self._integrated_devices: Dict[str, LandscapeDevice] = None
         self._integrated_power: Dict[str, Any] = None
         self._integrated_serial: Dict[str, Any] = None
+        self._integrated_services: Dict[str, LandscapeService] = None
 
         self._integrated_device_groups: Dict[str, LandscapeDeviceGroup] = {}
 
@@ -54,6 +56,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
         self._coordinators_for_devices = {}
         self._coordinators_for_power = {}
         self._coordinators_for_serial = {}
+        self._coordinators_for_services = {}
 
         self._power_request_count = 0
         self._serial_request_count = 0
@@ -86,6 +89,16 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
         lscape = self.landscape
         with lscape.begin_locked_landscape_scope() as locked:
             coord_table = self._coordinators_for_serial.copy()
+
+        return coord_table
+
+    @property
+    def coordinators_for_services(self) -> Dict[str, CoordinatorBase]:
+        coord_table = {}
+
+        lscape = self.landscape
+        with lscape.begin_locked_landscape_scope() as locked:
+            coord_table = self._coordinators_for_services.copy()
 
         return coord_table
 
@@ -142,13 +155,26 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
         return iserial
 
     @property
+    def integrated_services(self) -> Dict[str, LandscapeService]:
+        """
+            Provides a thread safe copy of the integration services dictionary.
+        """
+        iservices = {}
+
+        lscape = self.landscape
+        with lscape.begin_locked_landscape_scope() as locked:
+            iservices = self._integrated_services.copy()
+
+        return iservices
+
+    @property
     def requested_integration_couplings(self) -> Dict[str, IntegrationCouplingType]:
         """
             Returns a table of the installed integration couplings found.
         """
         return self._requested_integration_couplings
 
-    def get_devices(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None):
+    def get_devices(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None) -> LandscapeDevice:
         """
             Gets a copy of the integrated devices list.
         """
@@ -183,8 +209,44 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
                         selected_devices.append(dev)
 
         return selected_devices
+    
+    def get_services(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None) -> LandscapeService:
+        """
+            Gets a copy of the integrated service list.
+        """
+        lscape = self.landscape
 
-    def initialize_landscape(self) -> Dict[FriendlyIdentifier, LandscapeDevice]:
+        candidate_services = None
+
+        with lscape.begin_locked_landscape_scope() as locked:
+            candidate_services = [svc for svc in self._integrated_services]
+        
+        selected_services = []
+
+        if include_filters is None:
+            selected_services = candidate_services
+        else:
+            while len(candidate_services):
+                svc = candidate_services.pop()
+                for ifilter in include_filters:
+                    if ifilter.should_include(svc):
+                        selected_services.append(svc)
+                        break
+
+        if exclude_filters is not None:
+            candidate_services = selected_services
+
+            selected_services = []
+
+            while len(candidate_services):
+                svc = candidate_services.pop()
+                for xfilter in exclude_filters:
+                    if not xfilter.should_exclude(svc):
+                        selected_services.append(svc)
+
+        return selected_services
+
+    def initialize_landscape(self):
 
         lscape = self.landscape
 
@@ -204,16 +266,20 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
                 if self._serial_request_count > 0:
                     self._initialize_landscape_serial(layer_config)
 
+                services = self._initialize_landscape_services(layer_config)
+
                 self._integrated_devices = devices.copy()
+                self._integrated_services = services.copy()
             else:
                 devices = {}
                 self._integrated_devices = {}
                 self._integrated_power = {}
                 self._integrated_serial = {}
+                self._integrated_services = {}
 
         self._initialize_landscape_device_groups()
 
-        return devices
+        return
 
     def register_device_extension_association(self, ext_type: DeviceExtensionType, device: LandscapeDevice):
         """
@@ -337,7 +403,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
 
             for pwr_config_info in power_configs:
                 power_type = pwr_config_info["powerType"]
-                power_integ_key = f"power:powerType:{power_type}"
+                power_integ_key = f"apod:power:powerType:{power_type}"
 
         return
 
@@ -351,6 +417,43 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
 
             for serial_config_info in serial_configs:
                 serial_type = serial_config_info["serialType"]
-                serial_integ_key = f"serial:serialType:{serial_type}"
+                serial_integ_key = f"apod:serial:serialType:{serial_type}"
 
         return
+
+    def _initialize_landscape_services(self, layer_config: LandscapeConfigurationLayer) -> Dict[FriendlyIdentifier, LandscapeService]:
+
+        unrecognized_service_configs = []
+
+        services: Dict[FriendlyIdentifier: LandscapeService] = {}
+
+        requested_coupling_table = self._requested_integration_couplings
+
+        service_configs = layer_config.get_service_configs()
+
+        if len(service_configs) > 0:
+            lscape = self.landscape
+
+            for svc_config_info in service_configs:
+                svc_type = svc_config_info["serviceType"]
+                svc_integ_key = f"infrastructure:services:serviceType:{svc_type}"
+
+                if svc_integ_key in requested_coupling_table:
+                    coord_coupling: CoordinatorCoupling = requested_coupling_table[svc_integ_key]
+
+                    # If we don't have a device coordinator for this type of device yet,
+                    # create one.
+                    coordinator = None
+                    if svc_integ_key in self._coordinators_for_services:
+                        coordinator = self._coordinators_for_services[svc_integ_key]
+                    else:
+                        coordinator = coord_coupling.create_coordinator(lscape)
+                        self._coordinators_for_services[svc_integ_key] = coordinator
+
+                    friendly_id, lssvc = coordinator.create_landscape_service(lscape, svc_config_info)
+
+                    services[friendly_id.identity] = lssvc
+                else:
+                    unrecognized_service_configs.append(svc_config_info)
+
+        return services

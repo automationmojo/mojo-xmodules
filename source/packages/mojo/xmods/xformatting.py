@@ -30,7 +30,7 @@ class CommandOutputFormat:
     JSON = 1
     YAML = 2
 
-def format_command_result(msg: str, status: int, stdout: str, stderr: str, exp_status: Optional[List[int]]=None) -> str:
+def format_command_result(msg: str, status: int, stdout: str, stderr: str, exp_status: Optional[List[int]]=None, target: Optional[str]=None) -> str:
     """
         Takes a message and command results and formats a message for output to the logs.
 
@@ -38,12 +38,19 @@ def format_command_result(msg: str, status: int, stdout: str, stderr: str, exp_s
         :param status: The return status code associated with the command.
         :param stdout: The std out text from the command.
         :param stderr: The std error text from the command.
+        :param exp_status: The expected status from the command.
+        :param target: The target the command was run against.
 
         :returns: The formatted message output.
     """
 
-    fmt_msg_lines = [msg, "STATUS: {}".format(status)]
-    
+    fmt_msg_lines = [msg]
+
+    if target is not None:
+        fmt_msg_lines.append("TARGET: {}".format(target))
+
+    fmt_msg_lines.append("STATUS: {}".format(status))
+
     if exp_status is not None:
         fmt_msg_lines.append("EXPECTED: {}".format(repr(exp_status)))
 

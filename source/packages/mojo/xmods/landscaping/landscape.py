@@ -25,6 +25,7 @@ from mojo.xmods.landscaping.landscapeparameters import (
 )
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.landscapedevicecluster import LandscapeDeviceCluster
+from mojo.xmods.landscaping.landscapeservice import LandscapeService
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
@@ -359,6 +360,13 @@ class Landscape:
         """
         selected_devices = self.layer_integration.get_devices(include_filters=include_filters, exclude_filters=exclude_filters)
         return selected_devices
+
+    def get_services(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None) -> List[LandscapeService]:
+        """
+            Gets a copy of the integrated devices list.
+        """
+        selected_services = self.layer_integration.get_services(include_filters=include_filters, exclude_filters=exclude_filters)
+        return selected_services
 
     def _initialize_state(self):
         """
