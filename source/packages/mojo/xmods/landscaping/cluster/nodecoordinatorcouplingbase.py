@@ -49,6 +49,7 @@ class NodeCoordinatorCouplingBase(CoordinatorCoupling):
         The BaseNodeCoordinatorCoupling handle the requirement registration for the OSX coordinator.
     """
 
+    integration_root: str = "apod"
     integration_section: str = "devices"
     integration_leaf: str = "deviceType"
     integration_class: str = SUPPORTED_INTEGRATION_CLASS
