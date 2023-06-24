@@ -34,7 +34,7 @@ VALID_MEMBER_TRACE_POLICY = ["Brief", "Full", "Hide"]
 
 class TRACEBACK_CONFIG:
     TRACEBACK_POLICY_OVERRIDE = None
-    TRACEBACK_MAX_FULL_DISPLAY = 10
+    TRACEBACK_MAX_FULL_DISPLAY = 5
 
 class EnhancedErrorMixIn:
     def __init__(self, *args, **kwargs):
@@ -93,7 +93,7 @@ def collect_stack_frames(calling_frame, ex_inst):
         co_argcount = tb_code.co_argcount
         co_locals = tb_frame.f_locals
 
-        co_format_policy = TracebackFormatPolicy.Full
+        co_format_policy = TracebackFormatPolicy.Brief
 
         if TRACEBACK_CONFIG.TRACEBACK_POLICY_OVERRIDE is None:
             co_module = inspect.getmodule(tb_code)
