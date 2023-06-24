@@ -91,8 +91,6 @@ class ContextPaths(str, Enum):
     LOGGING_LOGNAME = "/configuration/logging/logname"
     LOGGING_BRANCHED = "/configuration/logging/branched"
 
-    RUN_ID = "/environment/runid"
-
     PIPELINE_ID = "/environment/pipeline/id"
     PIPELINE_NAME = "/environment/pipeline/name"
 
