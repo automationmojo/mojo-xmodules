@@ -35,6 +35,7 @@ VALID_MEMBER_TRACE_POLICY = ["Brief", "Full", "Hide"]
 class TRACEBACK_CONFIG:
     TRACEBACK_POLICY_OVERRIDE = None
     TRACEBACK_MAX_FULL_DISPLAY = 5
+    TRACEBACK_EXPAND_FIRST_N = 1
 
 class EnhancedErrorMixIn:
     def __init__(self, *args, **kwargs):
@@ -64,6 +65,7 @@ class EnhancedErrorMixIn:
 def collect_stack_frames(calling_frame, ex_inst):
 
     max_full_display = TRACEBACK_CONFIG.TRACEBACK_MAX_FULL_DISPLAY
+    expand_first_n = TRACEBACK_CONFIG.TRACEBACK_EXPAND_FIRST_N
 
     last_items = None
     tb_code = None
@@ -119,14 +121,15 @@ def collect_stack_frames(calling_frame, ex_inst):
         traceback_list.append(items)
         last_items = items
 
-        if max_full_display > 0 and co_format_policy == TracebackFormatPolicy.Full \
-            and os.path.exists(co_filename) and co_filename.endswith(".py"):
-            context_lines, context_startline = inspect.getsourcelines(tb_code)
-            context_lines = [cline.rstrip() for cline in context_lines]
-            clindex = (tb_lineno - context_startline)
-            last_items[-2] = context_lines[clindex].strip()
-            last_items[-1] = context_lines
-            max_full_display -= 1
+        if expand_first_n > 0 or (max_full_display > 0 and co_format_policy == TracebackFormatPolicy.Full):
+            if os.path.exists(co_filename) and co_filename.endswith(".py"):
+                context_lines, context_startline = inspect.getsourcelines(tb_code)
+                context_lines = [cline.rstrip() for cline in context_lines]
+                clindex = (tb_lineno - context_startline)
+                last_items[-2] = context_lines[clindex].strip()
+                last_items[-1] = context_lines
+                max_full_display -= 1
+                expand_first_n -= 1
 
     return traceback_list
 
