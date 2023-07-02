@@ -38,14 +38,7 @@ def import_by_name(modulename: str) -> ModuleType:
     if modulename in sys.modules:
         mod = sys.modules[modulename]
     else:
-        module_parts = modulename.split(".")
-        mname = module_parts[0]
-        pname = ""
-
-        if len(module_parts) > 1:
-            pname = ".".join(module_parts)
-
-        mod = importlib.import_module(mname, pname)
+        mod = importlib.import_module(modulename)
 
     return mod
 
