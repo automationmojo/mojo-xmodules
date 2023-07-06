@@ -94,6 +94,7 @@ class ContextPaths(str, Enum):
 
     PIPELINE_ID = "/environment/pipeline/id"
     PIPELINE_NAME = "/environment/pipeline/name"
+    PIPELINE_INSTANCE = "/environment/pipeline/instance"
 
     JOB_ID = "/environment/job/id"
     JOB_INITIATOR = "/environment/job/initiator"
