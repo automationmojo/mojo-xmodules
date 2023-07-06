@@ -50,6 +50,7 @@ def validate_path_name(path: str) -> List[str]:
 class ContextPaths(str, Enum):
     BEHAVIORS_LOG_CONFIGURATION = "/environment/behaviors/log-configuration-declarations"
 
+    BUILD_RELEASE = "/environment/build/release"
     BUILD_BRANCH = "/environment/build/branch"
     BUILD_FLAVOR = "/environment/build/flavor"
     BUILD_NAME = "/environment/build/name"
