@@ -28,6 +28,7 @@ from mojo.xmods.exceptions import ConfigurationError
 from mojo.xmods.xcollections.context import Context, ContextPaths
 from mojo.xmods.xyaml import safe_load_yaml_files_as_mergemap
 
+from mojo.xmods.credentials.azureclientsecretcredential import AzureClientSecretCredential
 from mojo.xmods.credentials.basiccredential import BasicCredential
 from mojo.xmods.credentials.sshcredential import SshCredential
 from mojo.xmods.credentials.wifichoicecredential import WifiChoiceCredential
@@ -129,7 +130,11 @@ class CredentialManager:
                         else:
                             credential["categories"] = [category]
 
-                            if category == "basic":
+                            if category == 'azure-client-secret':
+                                AzureClientSecretCredential.validate(credential)
+                                credobj = AzureClientSecretCredential(**credential)
+                                self._credentials[ident] = credobj
+                            elif category == "basic":
                                 BasicCredential.validate(credential)
                                 credobj = BasicCredential(**credential)
                                 self._credentials[ident] = credobj
