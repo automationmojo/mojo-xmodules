@@ -29,12 +29,13 @@ class NormalizedStringParamType(click.ParamType):
         else:
             value = str(value)
 
-        # If our string is quoted, normalize the string by remove the quotes.
-        first_char = value[0]
-        last_char = value[-1]
-        if (first_char == "'" and last_char == "'") or \
-           (first_char == '"' and last_char == '"'):
-            value = value[1:-1]
+        if len(value) > 1:
+            # If our string is quoted, normalize the string by remove the quotes.
+            first_char = value[0]
+            last_char = value[-1]
+            if (first_char == "'" and last_char == "'") or \
+            (first_char == '"' and last_char == '"'):
+                value = value[1:-1]
 
         return value
 
