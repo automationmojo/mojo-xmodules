@@ -44,7 +44,7 @@ class ServiceBase(LandscapeService):
     def enhance(self):
         """
             Called to allow a service to enhance its metadata past what is declared in the
-            configuration file.  For device that only have a hint, this might trigger a
+            configuration file.  For service that only have a hint, this might trigger a
             discovery process which will result in determining connectivity with the service.
         """
         return

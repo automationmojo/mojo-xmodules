@@ -183,7 +183,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
         candidate_devices = None
 
         with lscape.begin_locked_landscape_scope() as locked:
-            candidate_devices = [dev for dev in self._integrated_devices]
+            candidate_devices = [dev for dev in self._integrated_devices.values()]
         
         selected_devices = []
 
@@ -219,7 +219,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
         candidate_services = None
 
         with lscape.begin_locked_landscape_scope() as locked:
-            candidate_services = [svc for svc in self._integrated_services]
+            candidate_services = [svc for svc in self._integrated_services.values()]
         
         selected_services = []
 

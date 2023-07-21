@@ -85,9 +85,14 @@ class LandscapeDevice(FeatureAttachedObject):
         self._table_for_status_callbacks = {}
 
         self._credentials = {}
+
+        self._name = None
+        if "name" in device_config:
+            self._name = device_config["name"]
+
         self._features = {}
         if "features" in device_config:
-             self._features = device_config
+             self._features = device_config["features"]
 
         self._configured_ipaddr = None
         if "ipaddr" in device_config:
@@ -148,6 +153,13 @@ class LandscapeDevice(FeatureAttachedObject):
             A string representing the type of device.
         """
         return self._device_type
+
+    @property
+    def name(self) -> str:
+        """
+            A string representing a name for the devices 
+        """
+        return self._name
 
     @property
     def group(self) -> str:

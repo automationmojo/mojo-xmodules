@@ -77,9 +77,14 @@ class LandscapeService(FeatureAttachedObject):
         self._table_for_status_callbacks = {}
 
         self._credentials = {}
+
+        self._name = None
+        if "name" in service_config:
+            self._name = service_config["name"]
+
         self._features = {}
         if "features" in service_config:
-             self._features = service_config
+             self._features = service_config["features"]
 
         self._configured_ipaddr = None
         if "ipaddr" in service_config:
@@ -108,14 +113,14 @@ class LandscapeService(FeatureAttachedObject):
     @property
     def contacted_first(self) -> datetime:
         """
-            A datetime stamp of when this device was first contacted
+            A datetime stamp of when this service was first contacted
         """
         return self._contacted_first
 
     @property
     def contacted_last(self) -> datetime:
         """
-            A datetime stamp of when this device was last contacted
+            A datetime stamp of when this service was last contacted
         """
         return self._contacted_last
 
@@ -128,23 +133,30 @@ class LandscapeService(FeatureAttachedObject):
         return self._credentials
 
     @property
+    def name(self) -> str:
+        """
+            A string representing a name for the service. 
+        """
+        return self._name
+
+    @property
     def service_config(self) -> dict:
         """
-            A dictionary of the configuration information for this device.
+            A dictionary of the configuration information for this service.
         """
         return self._service_config
 
     @property
     def service_type(self) -> str:
         """
-            A string representing the type of device.
+            A string representing the type of service.
         """
         return self._service_type
 
     @property
     def group(self) -> str:
         """
-            A string represeting the group a device has been assigned to.
+            A string represeting the group a service has been assigned to.
         """
         return self._group
 

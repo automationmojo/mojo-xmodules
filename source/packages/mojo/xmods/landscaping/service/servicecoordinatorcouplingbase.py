@@ -31,13 +31,13 @@ from mojo.xmods.landscaping.constants import StartupLevel
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
 
-SUPPORTED_INTEGRATION_CLASS = "network/service-osx"
+SUPPORTED_INTEGRATION_CLASS = "network/service-base"
 
-def is_matching_service_config(integ_class, device_info):
+def is_matching_service_config(integ_class, service_info):
     is_matching_service = False
 
-    dev_type = device_info["deviceType"]
-    if dev_type == integ_class:
+    svc_type = service_info["serviceType"]
+    if svc_type == integ_class:
         is_matching_service = True
 
     return is_matching_service
@@ -74,7 +74,7 @@ class ServiceCoordinatorCouplingBase(CoordinatorCoupling):
 
         service_list = layer_config.get_service_configs()
         if len(service_list) > 0:
-            svc_service_list = [dev for dev in filter(partial(is_matching_service_config, cls.integration_class), service_list)]
+            svc_service_list = [svc for svc in filter(partial(is_matching_service_config, cls.integration_class), service_list)]
 
             if len(svc_service_list) > 0:
                 layer_integ = landscape.layer_integration
@@ -128,7 +128,7 @@ class ServiceCoordinatorCouplingBase(CoordinatorCoupling):
         return
 
     @classmethod
-    def establish_connectivity(cls, allow_missing_devices: bool=False) -> Tuple[List[str], dict]:
+    def establish_connectivity(cls, allow_missing_services: bool=False) -> Tuple[List[str], dict]:
         """
             This API is called so the `IntegrationCoupling` can establish connectivity with any compute or storage
             resources.
@@ -142,7 +142,7 @@ class ServiceCoordinatorCouplingBase(CoordinatorCoupling):
 
         service_list = layer_integ.get_services()
         if len(service_list) > 0:
-            svc_service_list = [dev for dev in filter(partial(is_matching_service_config, cls.integration_class), service_list)]
+            svc_service_list = [svc for svc in filter(partial(is_matching_service_config, cls.integration_class), service_list)]
 
             if len(svc_service_list) == 0:
                 raise SemanticError("We should have not been called if no services are available.")
@@ -166,7 +166,7 @@ class ServiceCoordinatorCouplingBase(CoordinatorCoupling):
             resources.
 
             :returns: A tuple with a list of error messages for failed connections and dict of connectivity
-                      reports for devices devices based on the coordinator.
+                      reports for services based on the coordinator.
         """
         return
 
@@ -175,7 +175,7 @@ class ServiceCoordinatorCouplingBase(CoordinatorCoupling):
         """
             Validate the item configuration.
 
-            -   deviceType: network/service-osx
+            -   serviceType: network/service-something
                 name: raspey03
                 host: 172.16.1.33
                 credentials:
@@ -188,11 +188,11 @@ class ServiceCoordinatorCouplingBase(CoordinatorCoupling):
         warnings = []
         
         if "host" not in item_info:
-            errmsg = "Device configuration 'network/service-osx' must have a 'host' field."
+            errmsg = "Service configuration 'network/service-base' must have a 'host' field."
             errors.append(errmsg)
 
         if "credentials" not in item_info:
-            warnmsg = "Device configuration 'network/service-osx' should have a 'credentials' field."
+            warnmsg = "Service configuration 'network/service-base' should have a 'credentials' field."
             warnings.append(warnmsg)
 
         return errors, warnings

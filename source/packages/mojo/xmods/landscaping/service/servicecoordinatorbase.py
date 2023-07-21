@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
 
 
-def format_service_configuration_error(message, next_dev_config):
+def format_service_configuration_error(message, next_svc_config):
     """
         Takes an error message and an service configuration info dictionary and
         formats a configuration error message.
@@ -48,8 +48,8 @@ def format_service_configuration_error(message, next_dev_config):
         "DEVICE:"
     ]
 
-    dev_repr_lines = pprint.pformat(next_dev_config, indent=4).splitlines(False)
-    for dline in dev_repr_lines:
+    svc_repr_lines = pprint.pformat(next_svc_config, indent=4).splitlines(False)
+    for dline in svc_repr_lines:
         error_lines.append("    " + dline)
     
     errmsg = os.linesep.join(error_lines)
@@ -64,7 +64,7 @@ class ServiceCoordinatorBase(CoordinatorBase):
     # pylint: disable=attribute-defined-outside-init
 
     INTEGRATION_CLASS = ""
-    CLIENT_TYPE = ServiceBase
+    SERVICE_TYPE = ServiceBase
 
     MUST_INCLUDE_SSH = False
 
@@ -136,10 +136,10 @@ class ServiceCoordinatorBase(CoordinatorBase):
             Called to declare a declared landscape service for a given coordinator.
         """
         host = service_info["host"]
-        dev_type = service_info["serviceType"]
+        service_type = service_info["serviceType"]
         fid = FriendlyIdentifier(host, host)
 
-        service = self.CLIENT_TYPE(landscape, self, fid, dev_type, service_info)
+        service = self.SERVICE_TYPE(landscape, self, fid, service_type, service_info)
 
         self.attach_protocol_extensions(landscape, service_info, service)
 
@@ -199,9 +199,9 @@ class ServiceCoordinatorBase(CoordinatorBase):
             Looks up the agent for a service by its ip address.  If the
             agent is not found then the API returns None.
 
-            :param ip: The ip address of the LandscapeDevice to search for.
+            :param ip: The ip address of the LandscapeService to search for.
 
-            :returns: The found LandscapeDevice or None
+            :returns: The found LandscapeService or None
         """
         service = None
 
