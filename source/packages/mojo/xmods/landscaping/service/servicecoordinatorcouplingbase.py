@@ -47,7 +47,8 @@ class ServiceCoordinatorCouplingBase(CoordinatorCoupling):
         The ServiceCoordinatorCouplingBase handle the requirement registration for the OSX coordinator.
     """
 
-    integration_section: List[str] = ["integration", "services"]
+    integration_root: "infrastructure"
+    integration_section: "services"
     integration_leaf: str = "serviceType"
     integration_class: str = SUPPORTED_INTEGRATION_CLASS
 
