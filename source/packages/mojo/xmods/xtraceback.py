@@ -18,11 +18,12 @@ __license__ = "MIT"
 
 from typing import Any, Dict, List, Tuple
 
+import dis
 import inspect
 import os
 import traceback
 
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 from mojo.xmods.xformatting import split_and_indent_lines
 
@@ -50,7 +51,7 @@ class OriginDetail:
 @dataclass
 class TraceDetail:
     origin: str
-    line: str
+    call: str
     code: List[str]
     context: Dict[str, List[str]]
 
@@ -137,13 +138,13 @@ class EnhancedErrorMixIn:
 
         return
 
-
 def collect_stack_frames(calling_frame, ex_inst):
 
     max_full_display = TRACEBACK_CONFIG.TRACEBACK_MAX_FULL_DISPLAY
     expand_first_n = TRACEBACK_CONFIG.TRACEBACK_EXPAND_FIRST_N
 
     last_items = None
+    last_co_name = None
     tb_code = None
     tb_lineno = None
 
@@ -190,9 +191,10 @@ def collect_stack_frames(calling_frame, ex_inst):
                 argval = co_locals[argname]
                 code_args.append("%s=%r" % (argname, argval))
 
-            last_items[-2] = "%s(%s)" % (co_name, ", ".join(code_args)) # pylint: disable=unsupported-assignment-operation
+            last_items[-2] = "%s(%s)" % (last_co_name, ", ".join(code_args)) # pylint: disable=unsupported-assignment-operation
 
         last_items = items
+        last_co_name = co_name
 
         traceback_list.append(items)
         last_items = items
@@ -288,7 +290,7 @@ def create_traceback_detail(ex_inst: BaseException) -> TracebackDetail:
 
     for co_filename, co_lineno, co_name, co_code, co_context in stack_frames:
         ntfile = OriginDetail(file=co_filename, lineno=co_lineno, scope=co_name)
-        ntline = co_code
+        ntcall = co_code
         ntcode = []
         ntcontext = {}
 
@@ -300,7 +302,7 @@ def create_traceback_detail(ex_inst: BaseException) -> TracebackDetail:
         if hasattr(ex_inst, "context") and co_name in ex_inst.context:
             ntcontext = ex_inst.context[co_name]
 
-        nttrace = TraceDetail(origin=ntfile, line=ntline, code=ntcode, context=ntcontext)
+        nttrace = TraceDetail(origin=ntfile, call=ntcall, code=ntcode, context=ntcontext)
         etraces.append(nttrace)
 
     tb_detail = TracebackDetail(extype=etypename, exargs=eargs, traces=etraces)
