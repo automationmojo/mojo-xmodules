@@ -19,7 +19,7 @@ from typing import Any, Dict, List
 
 import json
 
-CHAR_RECORD_SEPERATOR = "\30\n"
+CHAR_RECORD_SEPERATOR = "\x1E"
 
 def load_jsos_stream_from_file(filename: str) -> List[Dict[str, Any]]:
 
