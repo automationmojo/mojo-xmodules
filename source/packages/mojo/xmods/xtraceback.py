@@ -50,7 +50,7 @@ class OriginDetail:
 
 @dataclass
 class TraceDetail:
-    origin: str
+    origin: OriginDetail
     call: str
     code: List[str]
     context: Dict[str, List[str]]
@@ -308,4 +308,23 @@ def create_traceback_detail(ex_inst: BaseException) -> TracebackDetail:
     tb_detail = TracebackDetail(extype=etypename, exargs=eargs, traces=etraces)
 
     return tb_detail
+
+def format_traceback_detail(tbdetail: TracebackDetail) -> List[str]:
+    
+    detail_lines = [
+        f"{tbdetail.extype}: {','.join(tbdetail.exargs)}",
+        "Traceback (most recent call first):"
+    ]
+
+    for ntrace in tbdetail.traces:
+        detail_lines.append(f"  File {ntrace.origin.file}, line {ntrace.origin.lineno}, in {ntrace.origin.scope}")
+        if len(ntrace.call) > 0:
+            detail_lines.append(f"    Call {ntrace.call}")
+            if len(ntrace.code) > 0:
+                detail_lines.append("")
+                for nline in ntrace.code:
+                    detail_lines.append(f"    {nline}")
+        detail_lines.append("")
+    
+    return detail_lines
 
