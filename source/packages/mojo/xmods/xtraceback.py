@@ -16,9 +16,13 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Any, Dict, List, Tuple
+
 import inspect
 import os
 import traceback
+
+from dataclasses import dataclass
 
 from mojo.xmods.xformatting import split_and_indent_lines
 
@@ -31,11 +35,83 @@ class TracebackFormatPolicy:
 
 VALID_MEMBER_TRACE_POLICY = ["Brief", "Full", "Hide"]
 
-
 class TRACEBACK_CONFIG:
     TRACEBACK_POLICY_OVERRIDE = None
     TRACEBACK_MAX_FULL_DISPLAY = 5
     TRACEBACK_EXPAND_FIRST_N = 1
+
+
+@dataclass
+class OriginDetail:
+    file: str
+    lineno: int
+    scope: str
+
+@dataclass
+class TraceDetail:
+    origin: str
+    line: str
+    code: List[str]
+    context: Dict[str, List[str]]
+
+@dataclass
+class TracebackDetail:
+    extype: str
+    exargs: List[str]
+    traces: List[TraceDetail]
+
+def is_field(candidate):
+
+    if inspect.ismodule(candidate):
+        return False
+    if inspect.isclass(candidate):
+        return False
+    if inspect.isfunction(candidate):
+        return False
+    if inspect.isgeneratorfunction(candidate):
+        return False
+    if inspect.isgenerator(candidate):
+        return False
+    if inspect.iscoroutinefunction(candidate):
+        return False
+    if inspect.iscoroutine(candidate):
+        return False
+    if inspect.isasyncgenfunction(candidate):
+        return False
+    if inspect.isasyncgen(candidate):
+        return False
+    if inspect.istraceback(candidate):
+        return False
+    if inspect.isframe(candidate):
+        return False
+    if inspect.iscode(candidate):
+        return False
+    if inspect.isbuiltin(candidate):
+        return False
+    if inspect.isroutine(candidate):
+        return False
+    if inspect.isabstract(candidate):
+        return False
+    if inspect.ismethoddescriptor(candidate):
+        return False
+    if inspect.isdatadescriptor(candidate):
+        return False
+    if inspect.isgetsetdescriptor(candidate):
+        return False
+    if inspect.ismemberdescriptor(candidate):
+        return False
+    return True
+
+def get_public_field_members(obj) -> List[Tuple[str, Any]]:
+    public_members = []
+
+    members: List[Tuple[str, Any]] = inspect.getmembers(obj, is_field)
+
+    for mname, minst in members:
+        if mname[0] != "_":
+            public_members.append((mname, minst))
+
+    return public_members
 
 class EnhancedErrorMixIn:
     def __init__(self, *args, **kwargs):
@@ -167,7 +243,7 @@ def format_exception(ex_inst: BaseException):
     eargs = ex_inst.args
 
     exmsg_lines = [
-        "%s: %s" % (etypename, repr(eargs).rstrip(",")),
+        "%s: %s" % (etypename, repr(eargs)),
         "TRACEBACK (most recent call last):"
     ]
 
@@ -189,13 +265,45 @@ def format_exception(ex_inst: BaseException):
             exmsg_lines.extend(split_and_indent_lines(cxtinfo["content"], 2, indent=3))
 
         if co_context is not None and len(co_context) > 0 and stack_frames_len > 1:
-            exmsg_lines.append('    CODE:')
             firstline = co_context[0]
             lstrip_len = len(firstline) - len(firstline.lstrip())
             co_context = [cline[lstrip_len:] for cline in co_context]
             co_context = ["      %s" % cline for cline in co_context]
             exmsg_lines.extend(co_context)
+
         exmsg_lines.append('')
 
     return exmsg_lines
+
+def create_traceback_detail(ex_inst: BaseException) -> TracebackDetail:
+
+    etypename = type(ex_inst).__name__
+    eargs = [repr(a) for a in ex_inst.args]
+    etraces = []
+
+    previous_frame = inspect.currentframe().f_back
+
+    stack_frames = collect_stack_frames(previous_frame, ex_inst)
+    stack_frames_len = len(stack_frames)
+
+    for co_filename, co_lineno, co_name, co_code, co_context in stack_frames:
+        ntfile = OriginDetail(file=co_filename, lineno=co_lineno, scope=co_name)
+        ntline = co_code
+        ntcode = []
+        ntcontext = {}
+
+        if co_context is not None and len(co_context) > 0 and stack_frames_len > 1:
+            firstline = co_context[0]
+            lstrip_len = len(firstline) - len(firstline.lstrip())
+            ntcode = [cline[lstrip_len:] for cline in co_context]
+
+        if hasattr(ex_inst, "context") and co_name in ex_inst.context:
+            ntcontext = ex_inst.context[co_name]
+
+        nttrace = TraceDetail(origin=ntfile, line=ntline, code=ntcode, context=ntcontext)
+        etraces.append(nttrace)
+
+    tb_detail = TracebackDetail(extype=etypename, exargs=eargs, traces=etraces)
+
+    return tb_detail
 
