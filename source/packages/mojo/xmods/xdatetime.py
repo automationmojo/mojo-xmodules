@@ -24,7 +24,9 @@ import time
 
 from datetime import datetime
 
-FORMAT_DATETIME = "%Y-%m-%dT%H%MS%S.%f"
+DATETIME_FORMAT_FILESYSTEM = "%Y-%m-%dT%H%MS%S.%f"
+
+DATETIME_FORMAT_TIMESTAMP = "%Y-%m-%dT%H:%M:%S.%f"
 
 def current_time_millis() -> float:
     """
@@ -35,7 +37,7 @@ def current_time_millis() -> float:
     now_ms = time.time() * 1000
     return now_ms
 
-def format_time_with_fractional(tsecs: float, datetime_format=FORMAT_DATETIME) -> str:
+def format_time_with_fractional(tsecs: float, datetime_format=DATETIME_FORMAT_TIMESTAMP) -> str:
     """
         Format the time in seconds as a fractional in seconds.
 
@@ -47,7 +49,7 @@ def format_time_with_fractional(tsecs: float, datetime_format=FORMAT_DATETIME) -
     dtstr = timedt.strftime(datetime_format)
     return dtstr
 
-def parse_datetime(dtstr: str, datetime_format: str=FORMAT_DATETIME) -> datetime:
+def parse_datetime(dtstr: str, datetime_format: str=DATETIME_FORMAT_TIMESTAMP) -> datetime:
     """
         Parses a date time from string and includes the microseconds component.
 
