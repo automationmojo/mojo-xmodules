@@ -134,7 +134,7 @@ class CredentialManager:
                                 AzureClientSecretCredential.validate(credential)
                                 credobj = AzureClientSecretCredential(**credential)
                                 self._credentials[ident] = credobj
-                            elif category == "basic":
+                            elif category == "basic" or category == "rest-basic":
                                 BasicCredential.validate(credential)
                                 credobj = BasicCredential(**credential)
                                 self._credentials[ident] = credobj
