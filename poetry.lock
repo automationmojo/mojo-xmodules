@@ -529,6 +529,18 @@ files = [
 ]
 
 [[package]]
+name = "mojo-errors"
+version = "0.0.1"
+description = "Automation Mojo Errors Module"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "mojo_errors-0.0.1-py3-none-any.whl", hash = "sha256:2fce119addbba21b2f59d0dff47c1267a1fc9dbc5e0788f89966a00cc35946e8"},
+    {file = "mojo_errors-0.0.1.tar.gz", hash = "sha256:9f2bf0c11ef7f334e136f5259101e56f4ba68fb7ee6023e9b0bb253019a1bdf5"},
+]
+
+[[package]]
 name = "mojo-waiting"
 version = "1.0.3"
 description = "Automation Mojo Waiting Module"
@@ -966,4 +978,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4.0"
-content-hash = "de8614c4ad6f74416805e4cef849a4106ba11870aac592bff35400b7b90bdd09"
+content-hash = "3350c18bbc9828baa76203127f5698c4bda1243fc43ff2a07211c14f784d2596"
