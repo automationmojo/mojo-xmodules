@@ -17,7 +17,7 @@ __license__ = "MIT"
 
 import logging
 
-from mojo.collections.context import ContextUser
+from mojo.collections.contextuser import ContextUser
 
 class BaseCoupling(ContextUser):
     """

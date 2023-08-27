@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mojo-xmodules"
 description = "Automation Mojo X-Modules"
-version = "0.0.74"
+version = "0.0.75"
 authors = [
     "Myron Walker <myron.walker@gmail.com>"
 ]
@@ -28,6 +28,7 @@ debugpy = "^1.6.6"
 paramiko = "^3.1.0"
 click = "^8.1.5"
 mojo-errors = ">=0.0.1 < 1.0.0"
+mojo-collections = ">=0.0.10 <0.1.0"
 mojo-config = ">=0.0.15 <0.1.0"
 
 [tool.poetry.group.dev.dependencies]
