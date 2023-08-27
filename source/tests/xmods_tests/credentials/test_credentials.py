@@ -3,6 +3,10 @@ import os
 import tempfile
 import unittest
 
+from mojo.config.configurationmaps import resolve_configuration_maps
+from mojo.config.optionoverrides import MOJO_CONFIG_OPTION_OVERRIDES
+from mojo.config.variables import resolve_configuration_variables
+
 from mojo.collections.contextpaths import ContextPaths
 from mojo.collections.wellknown import ContextSingleton
 
@@ -39,9 +43,13 @@ class TestCredentials(unittest.TestCase):
             cf.write(CREDENTIAL_CONTENT)
 
         credential_files = [self._cred_file]
-        context = ContextSingleton()
 
-        context.insert(ContextPaths.CONFIG_CREDENTIAL_FILES, credential_files)
+        resolve_configuration_variables()
+
+        MOJO_CONFIG_OPTION_OVERRIDES.override_config_credentials_files(credential_files)
+
+        resolve_configuration_maps(use_credentials=True)
+
         return
     
     def tearDown(self) -> None:
