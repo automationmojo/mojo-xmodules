@@ -27,7 +27,7 @@ import yaml
 
 from mojo.errors.exceptions import ConfigurationError
 
-from mojo.collections.context import ContextPaths
+from mojo.collections.contextpaths import ContextPaths
 from mojo.collections.mergemap import MergeMap
 from mojo.collections.wellknown import ContextSingleton
 

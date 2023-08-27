@@ -3,7 +3,7 @@ import os
 import tempfile
 import unittest
 
-from mojo.collections.context import ContextPaths
+from mojo.collections.contextpaths import ContextPaths
 from mojo.collections.wellknown import ContextSingleton
 
 from mojo.xmods.credentials.credentialmanager import CredentialManager

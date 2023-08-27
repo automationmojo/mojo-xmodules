@@ -25,7 +25,7 @@ import logging
 import threading
 import time
 
-from mojo.collections.context import ContextPaths
+from mojo.collections.contextpaths import ContextPaths
 from mojo.collections.wellknown import ContextSingleton
 
 logger = logging.getLogger()

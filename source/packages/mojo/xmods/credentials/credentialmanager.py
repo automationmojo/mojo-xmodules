@@ -23,7 +23,7 @@ import os
 
 from mojo.errors.exceptions import ConfigurationError
 
-from mojo.collections.context import ContextPaths
+from mojo.collections.contextpaths import ContextPaths
 from mojo.collections.wellknown import ContextSingleton
 
 from mojo.config.configurationmaps import CONFIGURATION_MAPS

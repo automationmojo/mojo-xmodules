@@ -8,7 +8,7 @@ import threading
 
 from mojo.errors.exceptions import SemanticError
 
-from mojo.collections.context import ContextPaths
+from mojo.collections.contextpaths import ContextPaths
 from mojo.collections.wellknown import ContextSingleton
 
 from mojo.xmods.interfaces.iexcludefilter import IExcludeFilter

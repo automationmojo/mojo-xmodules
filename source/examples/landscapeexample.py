@@ -1,7 +1,7 @@
 
 import os
 
-from mojo.collections.context import ContextPaths
+from mojo.collections.contextpaths import ContextPaths
 from mojo.collections.wellknown import ContextSingleton
 
 from mojo.xmods.landscaping.landscapeparameters import LandscapeActivationParams
