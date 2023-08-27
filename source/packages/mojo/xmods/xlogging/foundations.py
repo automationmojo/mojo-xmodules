@@ -25,8 +25,11 @@ import time
 import traceback
 
 
+from mojo.collections.context import ContextPaths
+from mojo.collections.wellknown import ContextSingleton
+
+
 from mojo.xmods.xlogging.levels import LogLevel
-from mojo.xmods.xcollections.context import Context, ContextPaths
 
 
 # Start Logging to Standard Out.  We need to make sure it is initialized to something as early as possible,
@@ -586,7 +589,7 @@ def logging_initialize():
         original_get_logger = logging.getLogger
         logging.getLogger = mojo_get_logger
 
-        ctx = Context()
+        ctx = ContextSingleton()
 
         consolelevel = ctx.lookup(ContextPaths.LOGGING_LEVEL_CONSOLE, "INFO")
         logfilelevel = ctx.lookup(ContextPaths.LOGGING_LEVEL_LOGFILE, "DEBUG")
@@ -665,7 +668,7 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
 
     basecomp, extcomp = os.path.splitext(logfile_basename)
 
-    ctx = Context()
+    ctx = ContextSingleton()
 
     debug_logfilename = os.path.join(output_dir, basecomp + ".DEBUG" + extcomp)
     other_logfilename = os.path.join(output_dir, basecomp + ".OTHER" + extcomp)

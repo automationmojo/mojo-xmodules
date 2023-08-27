@@ -6,9 +6,10 @@ import inspect
 import logging
 import threading
 
-from mojo.xmods.xcollections.context import Context, ContextPaths
+from mojo.errors.exceptions import SemanticError
 
-from mojo.xmods.exceptions import SemanticError
+from mojo.collections.context import ContextPaths
+from mojo.collections.wellknown import ContextSingleton
 
 from mojo.xmods.interfaces.iexcludefilter import IExcludeFilter
 from mojo.xmods.interfaces.iincludefilter import IIncludeFilter
@@ -60,7 +61,7 @@ class Landscape:
                 object, you must ensure the proper use of `super` in its constructor.
     """
 
-    context = Context()
+    context = ContextSingleton()
     logger = logging.getLogger()
     landscape_lock = threading.RLock()
 

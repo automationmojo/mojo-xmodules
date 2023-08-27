@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 
 import os
 
-from mojo.xmods.exceptions import CheckinError, CheckoutError, SemanticError
+from mojo.errors.exceptions import CheckinError, CheckoutError, SemanticError
 
 from mojo.xmods.interfaces.iexcludefilter import IExcludeFilter
 from mojo.xmods.interfaces.iincludefilter import IIncludeFilter

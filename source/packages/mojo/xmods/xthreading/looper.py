@@ -20,7 +20,7 @@ from typing import Optional
 
 from threading import Event, Thread
 
-from mojo.xmods.exceptions import NotOverloadedError, LooperError
+from mojo.errors.exceptions import NotOverloadedError, LooperError
 
 from mojo.xmods.xthreading.looperqueue import LooperQueue, LooperQueueShutdown
 

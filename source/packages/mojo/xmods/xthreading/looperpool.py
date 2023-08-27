@@ -18,7 +18,7 @@ __license__ = "MIT"
 
 from threading import RLock
 
-from mojo.xmods.exceptions import LooperError
+from mojo.errors.exceptions import LooperError
 
 from mojo.xmods.xthreading.looper import Looper
 from mojo.xmods.xthreading.looperqueue import LooperQueue, LooperQueueShutdown

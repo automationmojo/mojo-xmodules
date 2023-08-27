@@ -3,7 +3,8 @@ import os
 import tempfile
 import unittest
 
-from mojo.xmods.xcollections.context import Context, ContextPaths
+from mojo.collections.context import ContextPaths
+from mojo.collections.wellknown import ContextSingleton
 
 from mojo.xmods.credentials.credentialmanager import CredentialManager
 from mojo.xmods.credentials.sshcredential import is_ssh_credential
@@ -38,7 +39,7 @@ class TestCredentials(unittest.TestCase):
             cf.write(CREDENTIAL_CONTENT)
 
         credential_files = [self._cred_file]
-        context = Context()
+        context = ContextSingleton()
 
         context.insert(ContextPaths.CONFIG_CREDENTIAL_FILES, credential_files)
         return

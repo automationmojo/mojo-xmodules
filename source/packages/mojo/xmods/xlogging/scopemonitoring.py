@@ -33,7 +33,8 @@ from datetime import datetime, timedelta
 
 from mojo.waiting.waitmodel import TimeoutContext
 
-from mojo.xmods.xcollections.helpers import insert_into_ordered_list_ascending
+from mojo.collections.helpers import insert_into_ordered_list_ascending
+
 from mojo.xmods.xformatting import split_and_indent_lines
 
 DEFAULT_MONITORED_SCOPE_NOTIFY_DELAY = timedelta(seconds=60)

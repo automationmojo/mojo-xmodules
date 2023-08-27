@@ -25,7 +25,8 @@ import logging
 import threading
 import time
 
-from mojo.xmods.xcollections.context import Context, ContextPaths
+from mojo.collections.context import ContextPaths
+from mojo.collections.wellknown import ContextSingleton
 
 logger = logging.getLogger()
 
@@ -50,7 +51,7 @@ def in_vscode_debugger():
 
 def debugger_wellknown_breakpoint_entry(breakpoint_name: str):
 
-    ctx = Context()
+    ctx = ContextSingleton()
 
     debugger = ctx.lookup(ContextPaths.DEBUG_BREAKPOINTS, None)
     breakpoints = ctx.lookup(ContextPaths.DEBUG_DEBUGGER, DEBUGGER.DEBUGPY)
@@ -77,7 +78,7 @@ def debugger_wellknown_breakpoint_entry(breakpoint_name: str):
 
 def debugger_wellknown_breakpoint_code_append(breakpoint_name: str, code_lines: list, current_indent: str):
 
-    ctx = Context()
+    ctx = ContextSingleton()
 
     debugger = ctx.lookup(ContextPaths.DEBUG_BREAKPOINTS, None)
     breakpoints = ctx.lookup(ContextPaths.DEBUG_DEBUGGER, DEBUGGER.DEBUGPY)

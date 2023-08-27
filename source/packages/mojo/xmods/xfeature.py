@@ -26,7 +26,7 @@ import bisect
 
 from enum import Enum
 
-from mojo.xmods.exceptions import SemanticError
+from mojo.errors.exceptions import SemanticError
 
 class FeatureTagNodeMeta(type):
 

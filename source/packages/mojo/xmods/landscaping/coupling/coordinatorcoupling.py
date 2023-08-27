@@ -19,7 +19,7 @@ __license__ = "MIT"
 
 from typing import TYPE_CHECKING
 
-from mojo.xmods.exceptions import NotOverloadedError
+from mojo.errors.exceptions import NotOverloadedError
 
 from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
 

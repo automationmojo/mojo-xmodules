@@ -21,7 +21,7 @@ from typing import Any, Dict, List, Tuple, TYPE_CHECKING
 
 from functools import partial
 
-from mojo.xmods.exceptions import SemanticError
+from mojo.errors.exceptions import SemanticError
 from mojo.xmods.landscaping.coupling.coordinatorcoupling import CoordinatorCoupling
 from mojo.xmods.landscaping.client.clientcoordinatorbase import ClientCoordinatorBase
 

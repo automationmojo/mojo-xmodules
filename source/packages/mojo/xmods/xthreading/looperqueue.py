@@ -19,7 +19,7 @@ __license__ = "MIT"
 
 from threading import RLock, Semaphore
 
-from mojo.xmods.exceptions import LooperError
+from mojo.errors.exceptions import LooperError
 
 
 class LooperQueueShutdown:

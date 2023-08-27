@@ -22,7 +22,7 @@ from typing import List, Optional, TYPE_CHECKING
 import threading
 import weakref
 
-from mojo.xmods.exceptions import NotOverloadedError
+from mojo.errors.exceptions import NotOverloadedError
 from mojo.xmods.landscaping.landscapeparameters import LandscapeActivationParams
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.xthreading.lockscopes import LockedScope, UnLockedScope

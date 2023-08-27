@@ -24,8 +24,9 @@ from types import TracebackType
 import inspect
 import weakref
 
+from mojo.collections.context import ContextUser
+
 from mojo.xmods.landscaping.coupling.basecoupling import BaseCoupling
-from mojo.xmods.xcollections.context import ContextUser
 
 class ScopeCoupling(BaseCoupling):
     """

@@ -20,7 +20,7 @@ from typing import List, Optional
 
 import os
 
-from mojo.xmods.exceptions import ConfigurationError
+from mojo.errors.exceptions import ConfigurationError
 from mojo.xmods.credentials.basecredential import BaseCredential
 
 class BasicCredential(BaseCredential):

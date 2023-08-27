@@ -20,7 +20,7 @@ __license__ = "MIT"
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from mojo.xmods.exceptions import SemanticError
+from mojo.errors.exceptions import SemanticError
 
 from mojo.xmods.interfaces.iexcludefilter import IExcludeFilter
 from mojo.xmods.interfaces.iincludefilter import IIncludeFilter

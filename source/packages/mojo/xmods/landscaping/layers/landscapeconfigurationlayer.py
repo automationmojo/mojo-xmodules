@@ -25,12 +25,15 @@ import os
 import traceback
 import yaml
 
+from mojo.errors.exceptions import ConfigurationError
+
+from mojo.collections.context import ContextPaths
+from mojo.collections.mergemap import MergeMap
+from mojo.collections.wellknown import ContextSingleton
+
+from mojo.config.configurationmaps import CONFIGURATION_MAPS
 
 from mojo.xmods.credentials.credentialmanager import CredentialManager
-from mojo.xmods.xcollections.context import Context, ContextPaths
-from mojo.xmods.xcollections.mergemap import MergeMap
-from mojo.xmods.exceptions import ConfigurationError
-from mojo.xmods.xyaml import safe_load_yaml_files_as_mergemap
 
 from mojo.xmods.landscaping.layers.landscapinglayerbase import LandscapingLayerBase
 
@@ -57,7 +60,7 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
 
         # We can get runtime configuration from the global context which
         # should already be loaded
-        self._global_context = Context()
+        self._global_context = ContextSingleton()
         return
 
     @property
@@ -149,11 +152,9 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
             Loads and validates the landscape description file.
         """
 
-        self._landscape_files = self._global_context.lookup(ContextPaths.CONFIG_LANDSCAPE_FILES, [])
+        if CONFIGURATION_MAPS.LANDSCAPE_CONFIGURATION_MAP is not None:
 
-        if len(self._landscape_files):
-
-            self._landscape_info = safe_load_yaml_files_as_mergemap(self._landscape_files, context="Landscape")
+            self._landscape_info = CONFIGURATION_MAPS.LANDSCAPE_CONFIGURATION_MAP
 
             errors, warnings = self.validate_landscape(self._landscape_info)
 
@@ -179,11 +180,9 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
             Loads the topology file.
         """
 
-        self._topology_files = self._global_context.lookup(ContextPaths.CONFIG_TOPOLOGY_FILES, [])
+        if CONFIGURATION_MAPS.TOPOLOGY_CONFIGURATION_MAP is not None:
 
-        if len(self._topology_files):
-
-            self._topology_info = safe_load_yaml_files_as_mergemap(self._topology_files, context="Topology")
+            self._topology_info = CONFIGURATION_MAPS.TOPOLOGY_CONFIGURATION_MAP
 
             errors, warnings = self.validate_topology(self._topology_info)
 
