@@ -21,6 +21,7 @@ from typing import Dict, List, Optional
 import os
 
 from mojo.errors.exceptions import ConfigurationError
+
 from mojo.xmods.credentials.basecredential import BaseCredential
 
 class WifiChoiceCredential(BaseCredential):

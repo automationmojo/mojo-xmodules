@@ -25,9 +25,10 @@ import weakref
 
 from datetime import datetime
 
+from mojo.errors.exceptions import SemanticError
+
 from mojo.xmods.credentials.basecredential import BaseCredential
 from mojo.xmods.credentials.sshcredential import SshCredential
-from mojo.errors.exceptions import SemanticError
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.protocolextension import ProtocolExtension
 from mojo.xmods.xfeature import FeatureAttachedObject

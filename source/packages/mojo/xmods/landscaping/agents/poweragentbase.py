@@ -20,6 +20,7 @@ __license__ = "MIT"
 from typing import Union
 
 from mojo.errors.exceptions import ConfigurationError
+
 from mojo.xmods.landscaping.protocolextension import ProtocolExtension
 
 class PowerAgentBase(ProtocolExtension):

@@ -15,9 +15,11 @@ import re
 
 from pprint import pformat
 
+from mojo.errors.xtraceback import TracebackFormatPolicy
+
+
 from mojo.xmods.xformatting import indent_lines
 
-from mojo.xmods.xtraceback import TracebackFormatPolicy
 
 __traceback_format_policy__ = TracebackFormatPolicy.Hide
 

@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Tuple, TYPE_CHECKING
 from functools import partial
 
 from mojo.errors.exceptions import SemanticError
+
 from mojo.xmods.landscaping.coupling.coordinatorcoupling import CoordinatorCoupling
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.landscape import LandscapeDevice
@@ -69,7 +70,7 @@ class NodeCoordinatorCouplingBase(CoordinatorCoupling):
             This API is called so that the IntegrationCoupling can process configuration information.  The :class:`IntegrationCoupling`
             will verify that it has a valid environment and configuration to run in.
 
-            :raises :class:`mojo.xmods.exceptions.AKitMissingConfigError`, :class:`mojo.xmods.exceptions.ConfigurationError`:
+            :raises :class:`mojo.errors.exceptions.AKitMissingConfigError`, :class:`mojo.errors.exceptions.ConfigurationError`:
         """
 
         cls.landscape = landscape
@@ -91,7 +92,7 @@ class NodeCoordinatorCouplingBase(CoordinatorCoupling):
             This API is called so the `IntegrationCoupling` can connect with a resource management
             system and gain access to the resources required for the automation run.
 
-            :raises :class:`mojo.xmods.exceptions.AKitResourceError`:
+            :raises :class:`mojo.errors.exceptions.AKitResourceError`:
         """
         return
 
