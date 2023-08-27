@@ -28,7 +28,7 @@ debugpy = "^1.6.6"
 paramiko = "^3.1.0"
 click = "^8.1.5"
 mojo-errors = ">=0.0.1 < 1.0.0"
-mojo-config = ">=0.0.13 <0.1.0"
+mojo-config = ">=0.0.14 <0.1.0"
 
 [tool.poetry.group.dev.dependencies]
 myst-parser = "^0.18.1"

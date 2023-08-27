@@ -25,7 +25,7 @@ import time
 import traceback
 
 
-from mojo.collections.context import ContextPaths
+from mojo.collections.contextpaths import ContextPaths
 from mojo.collections.wellknown import ContextSingleton
 
 
@@ -673,8 +673,8 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     debug_logfilename = os.path.join(output_dir, basecomp + ".DEBUG" + extcomp)
     other_logfilename = os.path.join(output_dir, basecomp + ".OTHER" + extcomp)
 
-    ctx.insert("/environment/logfile_debug", debug_logfilename)
-    ctx.insert("/environment/logfile_other", other_logfilename)
+    ctx.insert(ContextPaths.LOGFILE_DEBUG, debug_logfilename)
+    ctx.insert(ContextPaths.LOGFILE_OTHER, other_logfilename)
 
     rel_logfilename = os.path.join(output_dir, basecomp + extcomp)
 
