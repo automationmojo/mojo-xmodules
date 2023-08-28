@@ -530,26 +530,26 @@ files = [
 
 [[package]]
 name = "mojo-collections"
-version = "0.0.10"
+version = "0.0.11"
 description = "Mojo Collections Package"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "mojo_collections-0.0.10-py3-none-any.whl", hash = "sha256:c973f9670a50ce818fe8e6993c16b01936dcb33e3893285dfca0b0a6b4c5bf6c"},
-    {file = "mojo_collections-0.0.10.tar.gz", hash = "sha256:c288d75f28416f65d6880d2fd980469308562285ad75051921ee32ea588945b5"},
+    {file = "mojo_collections-0.0.11-py3-none-any.whl", hash = "sha256:e41bd5493f6194d33c5cefbc0ad9562e3cfff9938becf9a8ef5469812d5e0074"},
+    {file = "mojo_collections-0.0.11.tar.gz", hash = "sha256:366e3ab6f3ab6fa5249a6e8cd6880f4e9d65ff7106cfc96e2bdcfd2770f61c91"},
 ]
 
 [[package]]
 name = "mojo-config"
-version = "0.0.18"
+version = "0.0.20"
 description = "Automation Mojo Configuration Package"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "mojo_config-0.0.18-py3-none-any.whl", hash = "sha256:7844c5fc1389fafc5d48a1ebbdf016b9cf56def6dc0e46d60c6ae70fd4a730c3"},
-    {file = "mojo_config-0.0.18.tar.gz", hash = "sha256:e44a5b0c18f8f835c0c21d68b495498c1ea1a745f7fe96c6193e7e9cd03fb111"},
+    {file = "mojo_config-0.0.20-py3-none-any.whl", hash = "sha256:8888eb63092e1a4cbbbdb5f499ef4e6d643170f50cf720f2f137c63c1c9c4724"},
+    {file = "mojo_config-0.0.20.tar.gz", hash = "sha256:07831a8634c3da1a1382cef9a46a7c1a50caee012098d0f974538f992b1dc2d6"},
 ]
 
 [package.dependencies]
@@ -1011,4 +1011,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4.0"
-content-hash = "b929645ea91854cefafd8a5382f81f225bfc3a3733ec3f97f64e146571206658"
+content-hash = "a79bca55286766d9c8e05f43568fb4223529719952ca89146970cd33d715ca91"
