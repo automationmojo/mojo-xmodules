@@ -374,7 +374,7 @@ def assert_not_equal(found: Any, not_expected: Any, api: Optional[str] = None):
             "EXPECTED:"
         ]
 
-        exp_format_lines = pformat(expected, indent=4).strip().splitlines()
+        exp_format_lines = pformat(not_expected, indent=4).strip().splitlines()
         if len(exp_format_lines) == 1:
             err_msg_lines.append("NOT EXPECTED: {}".format(exp_format_lines[0]))
         elif len(exp_format_lines) > 1:
