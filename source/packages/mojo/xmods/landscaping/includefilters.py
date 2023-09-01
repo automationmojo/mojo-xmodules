@@ -92,10 +92,11 @@ class IncludeDeviceByName(IIncludeFilter):
         return include
 
 
-class IncludeDeviceByRole(IIncludeFilter):
+class IncludeDeviceByDeviceTypeAndRole(IIncludeFilter):
 
-    def __init__(self, role: str) -> None:
+    def __init__(self, device_type: str, role: str) -> None:
         super().__init__()
+        self._device_type = device_type
         self._role = role
         return
 
@@ -109,7 +110,7 @@ class IncludeDeviceByRole(IIncludeFilter):
 
         if isinstance(check_object, LandscapeDevice):
             lsdevice: LandscapeDevice = check_object
-            if lsdevice.role == self._role:
+            if lsdevice.device_type == self._device_type and lsdevice.role == self._role:
                 include = True
 
         return include
