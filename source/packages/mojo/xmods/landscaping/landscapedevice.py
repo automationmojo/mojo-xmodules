@@ -90,6 +90,10 @@ class LandscapeDevice(FeatureAttachedObject):
         self._name = None
         if "name" in device_config:
             self._name = device_config["name"]
+        
+        self._role = None
+        if "role" in device_config:
+            self._role = device_config["role"]
 
         self._features = {}
         if "features" in device_config:
@@ -156,20 +160,6 @@ class LandscapeDevice(FeatureAttachedObject):
         return self._device_type
 
     @property
-    def name(self) -> str:
-        """
-            A string representing a name for the devices 
-        """
-        return self._name
-
-    @property
-    def group(self) -> str:
-        """
-            A string represeting the group a device has been assigned to.
-        """
-        return self._group
-
-    @property
     def extensions(self) -> Dict[str, ProtocolExtension]:
         extdict = self._extensions.copy()
         return extdict
@@ -188,6 +178,13 @@ class LandscapeDevice(FeatureAttachedObject):
             The full identifier for this device, if one has been resolved.
         """
         return self._friendly_id.full_identifier
+
+    @property
+    def group(self) -> str:
+        """
+            A string represeting the group a device has been assigned to.
+        """
+        return self._group
 
     @property
     def has_ssh_credential(self) -> bool:
@@ -245,6 +242,13 @@ class LandscapeDevice(FeatureAttachedObject):
         return self._friendly_id.identity
 
     @property
+    def name(self) -> str:
+        """
+            A string representing a name for the devices 
+        """
+        return self._name
+
+    @property
     def pivots(self) -> str:
         """
             Returns a set of pivot data points that can be used to
@@ -252,6 +256,13 @@ class LandscapeDevice(FeatureAttachedObject):
         """
         pivots = (self._friendly_id.identity,)
         return pivots
+
+    @property
+    def role(self) -> str:
+        """
+            A string representing a role assigned to the device 
+        """
+        return self._role
 
     @property
     def ssh_credential(self) -> Union[SshCredential, None]:
