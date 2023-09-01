@@ -46,6 +46,30 @@ class IncludeDeviceByDeviceType(IIncludeFilter):
         return include
 
 
+class IncludeDeviceByDeviceTypeAndRole(IIncludeFilter):
+
+    def __init__(self, device_type: str, role: str) -> None:
+        super().__init__()
+        self._device_type = device_type
+        self._role = role
+        return
+
+    def should_include(self, check_object: Any) -> bool:
+        """
+            Determines if a device matches an include criteria internalized in the filter object.
+
+            :param check_object: The object to check for a match with the exclude criteria.
+        """
+        include = False
+
+        if isinstance(check_object, LandscapeDevice):
+            lsdevice: LandscapeDevice = check_object
+            if lsdevice.device_type == self._device_type and lsdevice.role == self._role:
+                include = True
+
+        return include
+
+
 class IncludeDeviceByGroup(IIncludeFilter):
 
     def __init__(self, group: str) -> None:
@@ -92,11 +116,10 @@ class IncludeDeviceByName(IIncludeFilter):
         return include
 
 
-class IncludeDeviceByDeviceTypeAndRole(IIncludeFilter):
+class IncludeDeviceByRole(IIncludeFilter):
 
-    def __init__(self, device_type: str, role: str) -> None:
+    def __init__(self, role: str) -> None:
         super().__init__()
-        self._device_type = device_type
         self._role = role
         return
 
@@ -110,7 +133,7 @@ class IncludeDeviceByDeviceTypeAndRole(IIncludeFilter):
 
         if isinstance(check_object, LandscapeDevice):
             lsdevice: LandscapeDevice = check_object
-            if lsdevice.device_type == self._device_type and lsdevice.role == self._role:
+            if lsdevice.role == self._role:
                 include = True
 
         return include
