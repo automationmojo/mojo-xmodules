@@ -1,8 +1,9 @@
 """
-.. module:: isystemagent
+.. module:: isystemcontext
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module that contains a protocol for running system commands and working with
-               system files.  
+    :synopsis: Module that contains the `ISystemContext` protocol object which is used for conduction
+               basic operations with a system such as running commands and working with directories
+               and files.  
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
@@ -37,7 +38,7 @@ class ISystemContext(Protocol):
             :returns: A dictionary that contains information about the items in the target directory.
         """
 
-    def directory_exists(self, tgtdir: str) -> bool:
+    def directory_exists(self, remotedir: str) -> bool:
         """
             Method used to pull a remote directory to check for existance.
 
@@ -50,7 +51,7 @@ class ISystemContext(Protocol):
         """
             Method that creates a directory tree for the folder.
 
-            :param root_dir: The root directory to scan when creating the tree.
+            :param rootdir: The root directory to scan when creating the tree.
             :param depth: The dept to scan to
 
             :returns: A dictionary with a tree of information about the directory tree found on the remote system.
