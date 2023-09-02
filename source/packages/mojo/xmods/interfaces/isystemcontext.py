@@ -18,15 +18,13 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import Optional, Sequence, Tuple, Union
+from typing import Optional, Protocol, Sequence, Tuple, Union
 
 from mojo.errors.exceptions import NotOverloadedError
 
 from mojo.xmods.aspects import AspectsCmd
 
-from mojo.xmods.interfaces.icommandcontext import ICommandContext
-
-class ISystemContext(ICommandContext):
+class ISystemContext(Protocol):
     """
         The :class:`ISystemContext` interface is used to provide a common interface for both SSH and Serial command runners.
     """
