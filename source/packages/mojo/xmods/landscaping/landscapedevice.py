@@ -25,10 +25,11 @@ import weakref
 
 from datetime import datetime
 
-from mojo.errors.exceptions import SemanticError
+from mojo.errors.exceptions import NotOverloadedError, SemanticError
 
 from mojo.xmods.credentials.basecredential import BaseCredential
 from mojo.xmods.credentials.sshcredential import SshCredential
+from mojo.xmods.interfaces.isystemcontext import ISystemContext
 from mojo.xmods.landscaping.friendlyidentifier import FriendlyIdentifier
 from mojo.xmods.landscaping.protocolextension import ProtocolExtension
 from mojo.xmods.xfeature import FeatureAttachedObject
@@ -328,6 +329,13 @@ class LandscapeDevice(FeatureAttachedObject):
                 cred_list.append(cred)
 
         return cred_list
+
+    def get_default_system_context(self) -> ISystemContext:
+        """
+            Called to get an ISystemContext instance that is a default system type.
+        """
+        type_name = type(self).__name__
+        raise NotOverloadedError(f"get_default_system_context: not overloaded for type='{type_name}'")
 
     def has_extension_type(self, ext_type: str) -> bool:
         """
