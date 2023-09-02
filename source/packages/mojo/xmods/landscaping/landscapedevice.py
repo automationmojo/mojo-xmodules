@@ -317,6 +317,18 @@ class LandscapeDevice(FeatureAttachedObject):
         """
         return
 
+    def get_credentials_by_category(self, category: str):
+        """
+            Gets a list of credentials that are associated with a specific category.
+        """
+        cred_list = []
+
+        for cred in self._credentials.values():
+            if category in cred.categories:
+                cred_list.append(cred)
+
+        return cred_list
+
     def has_extension_type(self, ext_type: str) -> bool:
         """
             Returns a boolean value indicating if this device has the specified extension
