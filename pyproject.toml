@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mojo-xmodules"
 description = "Automation Mojo X-Modules"
-version = "0.0.88"
+version = "0.0.89"
 authors = [
     "Myron Walker <myron.walker@gmail.com>"
 ]

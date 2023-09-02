@@ -58,7 +58,7 @@ class LocalCommandAgent(ISystemContext):
             Provides a mechanism to create a :class:`SshSession` object with derived settings.  This method allows various parameters for the session
             to be overridden.  This allows for the performing of a series of SSH operations under a particular set of shared settings and or credentials.
 
-            :param cmd_context: An optional ICommandContext instance to use.  This allows re-use of sessions.
+            :param cmd_context: An optional ISystemContext instance to use.  This allows re-use of sessions.
             :param aspects: The default run aspects to use for the operations performed by the session.
         """
         return self

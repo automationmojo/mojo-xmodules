@@ -29,11 +29,12 @@ class ISystemContext(Protocol):
         The :class:`ISystemContext` interface is used to provide a common interface for both SSH and Serial command runners.
     """
 
-    def close():
+    def close(self):
         """
             Method that closes an open session when the context represents a session.  If the `ISystemContext` does
             not represent a session then this method is a NOOP.
         """
+        return
 
     def directory(self, rootdir: str) -> dict:
         """
