@@ -18,10 +18,10 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from mojo.xmods.interfaces.icommandcontext import ICommandContext
+from mojo.xmods.interfaces.isystemcontext import ISystemContext
 from mojo.xmods.landscaping.protocolextension import ProtocolExtension
 
-class CommandAgentBase(ProtocolExtension, ICommandContext):
+class SystemAgentBase(ProtocolExtension, ISystemContext):
     """
     """
     def __init__(self):

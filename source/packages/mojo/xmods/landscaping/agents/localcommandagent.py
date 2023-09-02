@@ -29,14 +29,14 @@ from mojo.waiting.waitmodel import TimeoutContext
 
 from mojo.errors.exceptions import ConfigurationError, SemanticError
 
-from mojo.xmods.interfaces.icommandcontext import ICommandContext
+from mojo.xmods.interfaces.isystemcontext import ISystemContext
 from mojo.xmods.aspects import AspectsCmd, DEFAULT_CMD_ASPECTS, ActionPattern, LoggingPattern
 from mojo.xmods.xformatting import indent_lines, format_command_result
 from mojo.xmods.xlogging.scopemonitoring import MonitoredScope
 
 logger = getLogger()
 
-class LocalCommandAgent(ICommandContext):
+class LocalCommandAgent(ISystemContext):
     """
         The :class:`SshBase` object provides for the sharing of state and fuctional patterns
         for APIs between the :class:`SshSession` object and the :class:`LocalAgent`.
@@ -53,27 +53,22 @@ class LocalCommandAgent(ICommandContext):
         """
         return self._aspects
 
-    def open_session(self, primitive: bool = False, cmd_context: Optional[ICommandContext] = None,
-                     aspects: Optional[AspectsCmd] = None) -> ICommandContext: # pylint: disable=arguments-differ
+    def open_session(self, sysctx: Optional[ISystemContext] = None, aspects: Optional[AspectsCmd] = None, **kwargs) -> ISystemContext: # pylint: disable=arguments-differ
         """
             Provides a mechanism to create a :class:`SshSession` object with derived settings.  This method allows various parameters for the session
             to be overridden.  This allows for the performing of a series of SSH operations under a particular set of shared settings and or credentials.
 
-            :param primitive: Use primitive mode for FTP operations for the session.
-            :param interactive: Creates an interactive session which holds open an interactive shell so commands can interact in the shell.
             :param cmd_context: An optional ICommandContext instance to use.  This allows re-use of sessions.
             :param aspects: The default run aspects to use for the operations performed by the session.
         """
         return self
 
-    def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[AspectsCmd] = None) -> Tuple[int, str, str]:
+    def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, aspects: Optional[AspectsCmd] = None) -> Tuple[int, str, str]:
         """
             Runs a command on the designated host using the specified parameters.
 
             :param command: The command to run.
             :param exp_status: An integer or sequence of integers that specify the set of expected status codes from the command.
-            :param user: The registered name of the user role to use to lookup the credentials for running the command.
-            :param pty_params: The pty parameters to use to request a PTY when running the command (currently not used for local commands)
             :param aspects: The run aspects to use when running the command.
 
             :returns: The status, stderr and stdout from the command that was run.
@@ -82,13 +77,6 @@ class LocalCommandAgent(ICommandContext):
 
         if aspects is None:
             aspects = self._aspects
-
-        if user is not None:
-            if self._users is None:
-                errmsg = "In order to pass a 'user' parameter, you must create the SSHAgent with a 'users' parameter with a dictionary of user credentials."
-                raise ConfigurationError(errmsg) from None
-            if user not in self._users:
-                errmsg = "The specified 'user=%s' was not found in the users credentials provided to SSHAgent."
 
         completion_toctx = TimeoutContext(aspects.completion_timeout, aspects.completion_interval)
         
