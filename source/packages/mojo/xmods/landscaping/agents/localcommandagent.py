@@ -25,7 +25,7 @@ import time
 
 from logging import getLogger
 
-from mojo.waiting.waitmodel import TimeoutContext
+from mojo.waiting import TimeoutContext
 
 from mojo.errors.exceptions import ConfigurationError, SemanticError
 

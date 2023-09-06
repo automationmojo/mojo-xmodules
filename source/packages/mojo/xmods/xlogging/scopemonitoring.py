@@ -31,7 +31,7 @@ import uuid
 
 from datetime import datetime, timedelta
 
-from mojo.waiting.waitmodel import TimeoutContext
+from mojo.waiting import TimeoutContext
 
 from mojo.collections.helpers import insert_into_ordered_list_ascending
 
