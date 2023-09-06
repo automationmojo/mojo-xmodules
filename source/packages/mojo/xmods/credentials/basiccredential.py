@@ -47,7 +47,7 @@ class BasicCredential(BaseCredential):
         """
         super().__init__(identifier=identifier, categories=categories, role=role)
 
-        if "basic" not in categories:
+        if "basic" not in categories and "rest-basic" not in categories:
             raise ValueError("The BasicCredential should only be given credentials of category 'basic'.")
         if len(username) == 0:
             raise ValueError("The BasicCredential constructor requires a 'username' parameter be provided.")
