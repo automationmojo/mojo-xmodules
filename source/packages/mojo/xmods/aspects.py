@@ -137,6 +137,10 @@ class AspectsCmd(Aspects):
         self.pty_params = pty_params
         return
 
+class AspectRest(Aspects):
+    """
+    """
 
 DEFAULT_ASPECTS = Aspects()
 DEFAULT_CMD_ASPECTS = AspectsCmd()
+DEFAULT_REST_ASPECTS = AspectRest()
