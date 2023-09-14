@@ -148,14 +148,14 @@ class IncludeDeviceConfigByDeviceType(IIncludeFilter):
 
     def should_include(self, check_object: Any) -> bool:
         """
-            Determines if a device matches an include criteria internalized in the filter object.
+            Determines if a device config matches an include criteria internalized in the filter object.
 
             :param check_object: The object to check for a match with the exclude criteria.
         """
         include = False
 
         if isinstance(check_object, dict):
-            devconfig: LandscapeDevice = check_object
+            devconfig: dict = check_object
             if devconfig["deviceType"] == self._device_type:
                 include = True
 

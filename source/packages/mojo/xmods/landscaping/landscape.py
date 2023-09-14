@@ -375,7 +375,7 @@ class Landscape:
     def get_device_configs(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None) -> List[dict]:
         """
         """
-        selected_device_configs = self.layer_configuration.get_service_configs(include_filters=include_filters, exclude_filters=exclude_filters)
+        selected_device_configs = self.layer_configuration.get_device_configs(include_filters=include_filters, exclude_filters=exclude_filters)
         return selected_device_configs
 
     def get_devices(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None):
