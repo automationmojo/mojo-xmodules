@@ -18,7 +18,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Any, Dict, List, Tuple, Union, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
 import json
 import os
@@ -35,7 +35,11 @@ from mojo.config.configurationmaps import CONFIGURATION_MAPS
 
 from mojo.xmods.credentials.credentialmanager import CredentialManager
 
+from mojo.xmods.interfaces.iexcludefilter import IExcludeFilter
+from mojo.xmods.interfaces.iincludefilter import IIncludeFilter
+
 from mojo.xmods.landscaping.layers.landscapinglayerbase import LandscapingLayerBase
+
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
@@ -83,15 +87,38 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
     def topology_info(self) -> Union[MergeMap, None]:
         return self._topology_info
 
-    def get_device_configs(self) -> List[dict]:
+    def get_device_configs(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None) -> List[dict]:
         lscape = self.landscape
 
-        device_configs = []
+        candidate_configs = []
 
         with lscape.begin_locked_landscape_scope() as locked:
-            device_configs = self.locked_get_device_configs()
+            candidate_configs = self.locked_get_device_configs()
 
-        return device_configs
+        selected_configs = []
+
+        if include_filters is None:
+            selected_configs = candidate_configs
+        else:
+            while len(candidate_configs):
+                dev = candidate_configs.pop()
+                for ifilter in include_filters:
+                    if ifilter.should_include(dev):
+                        selected_configs.append(dev)
+                        break
+
+        if exclude_filters is not None:
+            candidate_configs = selected_configs
+
+            selected_configs = []
+
+            while len(candidate_configs):
+                dev = candidate_configs.pop()
+                for xfilter in exclude_filters:
+                    if not xfilter.should_exclude(dev):
+                        selected_configs.append(dev)
+
+        return selected_configs
 
     def get_power_configs(self) -> List[dict]:
         lscape = self.landscape
@@ -113,7 +140,7 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
 
         return serial_configs
 
-    def get_service_configs(self) -> List[dict]:
+    def get_service_configs(self, include_filters: Optional[List[IIncludeFilter]]=None, exclude_filters: Optional[List[IExcludeFilter]]=None) -> List[dict]:
         lscape = self.landscape
 
         service_configs = []
