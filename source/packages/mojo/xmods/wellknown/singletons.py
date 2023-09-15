@@ -59,8 +59,8 @@ def CredentialManagerSingleton() -> "CredentialManager":
         try:
             from mojo.xmods.credentials.credentialmanager import CredentialManager
 
-            if SUPER_FACTORY_SINGLETON is None:
-                SUPER_FACTORY_SINGLETON = CredentialManager()
+            if CREDENTIAL_MANAGER_SINGLETON is None:
+                CREDENTIAL_MANAGER_SINGLETON = CredentialManager()
         finally:
             SINGLETON_LOCK.release()
     
