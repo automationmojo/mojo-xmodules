@@ -179,7 +179,7 @@ class Landscape:
         """
         return self._layer_install.installed_integration_couplings
 
-    def activate_configuration(self) -> None:
+    def activate_configuration(self, *, activation_params: LandscapeActivationParams=DEFAULT_LANDSCAPE_ACTIVATION_PARAMS) -> None:
         """
             Called once at the beginning of the lifetime of a Landscape derived type in order
             to load the landscape, topology and runtime information.  
@@ -198,9 +198,9 @@ class Landscape:
                 # exit without the landscape initialization being finished.
                 with self.begin_unlocked_landscape_scope() as ulkscope:
 
-                    self._layer_configuration.load_landscape()
+                    self._layer_configuration.load_landscape(activation_params)
 
-                    self._layer_configuration.load_topology()
+                    self._layer_configuration.load_topology(activation_params)
 
                     log_configuration_declarations = thisType.context.lookup(ContextPaths.BEHAVIORS_LOG_CONFIGURATION, True)
                     if log_configuration_declarations:

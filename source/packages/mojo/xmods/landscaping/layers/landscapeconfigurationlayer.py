@@ -40,6 +40,9 @@ from mojo.xmods.interfaces.iincludefilter import IIncludeFilter
 
 from mojo.xmods.landscaping.layers.landscapinglayerbase import LandscapingLayerBase
 
+from mojo.xmods.landscaping.landscapeparameters import (
+    LandscapeActivationParams
+)
 
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
@@ -174,7 +177,7 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
         self._credential_manager = CredentialManager()
         return
 
-    def load_landscape(self) -> Union[MergeMap, None]:
+    def load_landscape(self, activation_params: LandscapeActivationParams) -> Union[MergeMap, None]:
         """
             Loads and validates the landscape description file.
         """
@@ -202,7 +205,7 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
         return self._landscape_info
 
 
-    def load_topology(self) -> Union[MergeMap, None]:
+    def load_topology(self, activation_params: LandscapeActivationParams) -> Union[MergeMap, None]:
         """
             Loads the topology file.
         """
@@ -375,9 +378,19 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
                     warnings.extend(child_warnings)
                 else:
                     section_items = podinfo[section]
-                    errors, warnings = self.validate_landscape_section(section, section_items)
-        else:
-            errors.append(["/pod", "A landscape description requires a 'pod' data member."])
+                    child_errors, child_warnings = self.validate_landscape_pod_section(section, section_items)
+                    errors.extend(child_errors)
+                    warnings.extend(child_warnings)
+
+        if "integrations" in landscape_info:
+            integinfo = landscape_info["integrations"]
+            for section in integinfo:
+                if section == "services":
+                    servicesinfo = integinfo[section]
+                    child_errors, child_warnings = self.validate_landscape_integration_section(section, servicesinfo)
+                    errors.extend(child_errors)
+                    warnings.extend(child_warnings)
+
 
         return errors, warnings
 
@@ -393,7 +406,14 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
         return errors, warnings
 
 
-    def validate_landscape_section(self, section: str, section_items: List[Dict[str, Any]]) -> Tuple[List[str], List[str]]:
+    def validate_landscape_integration_section(self, section: str, section_items: List[Dict[str, Any]]) -> Tuple[List[str], List[str]]:
+
+        errors = []
+        warnings = []
+
+        return errors, warnings
+
+    def validate_landscape_pod_section(self, section: str, section_items: List[Dict[str, Any]]) -> Tuple[List[str], List[str]]:
 
         errors = []
         warnings = []
