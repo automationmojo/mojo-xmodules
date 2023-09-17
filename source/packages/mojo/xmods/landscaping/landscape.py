@@ -251,7 +251,7 @@ class Landscape:
                 # exit without the landscape initialization being finished.
                 with self.begin_unlocked_landscape_scope() as ulkscope:
 
-                    self._layer_integration.initialize_landscape()
+                    self._layer_integration.initialize_landscape(activation_params)
 
                     self._landscape_integrate_complete = True
 

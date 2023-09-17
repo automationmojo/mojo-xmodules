@@ -12,6 +12,8 @@
 from types import SimpleNamespace
 
 class LandscapeActivationParams(SimpleNamespace):
+    disable_device_activation: bool=False
+    disable_service_activation: bool=False
     allow_missing_devices: bool=False
     allow_unknown_devices: bool=False
     allow_missing_services: bool=False

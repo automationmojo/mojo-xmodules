@@ -36,6 +36,10 @@ from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.landscapedevicegroup import LandscapeDeviceGroup
 from mojo.xmods.landscaping.landscapeservice import LandscapeService
 
+from mojo.xmods.landscaping.landscapeparameters import (
+    LandscapeActivationParams
+)
+
 if TYPE_CHECKING:
     from mojo.xmods.landscaping.landscape import Landscape
 
@@ -246,7 +250,7 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
 
         return selected_services
 
-    def initialize_landscape(self):
+    def initialize_landscape(self, activation_params: LandscapeActivationParams):
 
         lscape = self.landscape
 
@@ -256,17 +260,26 @@ class LandscapeIntegrationLayer(LandscapingLayerBase):
             layer_config = lscape.layer_configuration
 
             if layer_config.landscape_info is not None:
-                # Initialize the devices so we know what they are, this will create a LandscapeDevice object for each device
-                # and register it in the all_devices table where it can be found by the device coordinators for further activation
-                devices = self._initialize_landscape_devices(layer_config)
 
-                if self._power_request_count > 0:
-                    self._initialize_landscape_power(layer_config)
+                if not activation_params.disable_device_activation:
+                    # Initialize the devices so we know what they are, this will create a LandscapeDevice object for each device
+                    # and register it in the all_devices table where it can be found by the device coordinators for further activation
+                    devices = self._initialize_landscape_devices(layer_config)
 
-                if self._serial_request_count > 0:
-                    self._initialize_landscape_serial(layer_config)
+                    if self._power_request_count > 0:
+                        self._initialize_landscape_power(layer_config)
 
-                services = self._initialize_landscape_services(layer_config)
+                    if self._serial_request_count > 0:
+                        self._initialize_landscape_serial(layer_config)
+                else:
+                    self.logger.info("LandscapeIntegrationLayer: 'Device Activation' was disabled.")
+                    devices = {}
+
+                if not activation_params.disable_service_activation:
+                    services = self._initialize_landscape_services(layer_config)
+                else:
+                    self.logger.info("LandscapeIntegrationLayer: 'Service Activation' was disabled.")
+                    services = {}
 
                 self._integrated_devices = devices.copy()
                 self._integrated_services = services.copy()
