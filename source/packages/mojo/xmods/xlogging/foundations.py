@@ -657,8 +657,8 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
             console_filter = LessThanRecordFilter(LogLevel.QUIET)
             console_filter_stderr = LessThanRecordFilter(LogLevel.QUIET)
 
-        elif hasattr(logging, consolelevel_upper):
-            consolelevel = getattr(logging, consolelevel_upper)
+        elif logging.getLevelName(consolelevel_upper) != f'Level {consolelevel_upper}':
+            consolelevel = logging.getLevelName(consolelevel_upper)
         else:
             consolelevel = logging.INFO
     else:
