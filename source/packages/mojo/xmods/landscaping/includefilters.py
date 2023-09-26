@@ -21,6 +21,7 @@ from typing import Any
 from mojo.xmods.interfaces.iincludefilter import IIncludeFilter
 
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
+from mojo.xmods.landscaping.landscapeservice import LandscapeService
 
 
 class IncludeDeviceByDeviceType(IIncludeFilter):
@@ -157,6 +158,28 @@ class IncludeDeviceConfigByDeviceType(IIncludeFilter):
         if isinstance(check_object, dict):
             devconfig: dict = check_object
             if devconfig["deviceType"] == self._device_type:
+                include = True
+
+        return include
+
+class IncludeServiceByName(IIncludeFilter):
+
+    def __init__(self, name: str) -> None:
+        super().__init__()
+        self._name = name
+        return
+
+    def should_include(self, check_object: Any) -> bool:
+        """
+            Determines if a device matches an include criteria internalized in the filter object.
+
+            :param check_object: The object to check for a match with the exclude criteria.
+        """
+        include = False
+
+        if isinstance(check_object, LandscapeService):
+            lsdevice: LandscapeService = check_object
+            if lsdevice.name == self._name:
                 include = True
 
         return include

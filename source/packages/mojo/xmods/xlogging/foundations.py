@@ -322,7 +322,7 @@ class LoggerWrapper:
         without invalidating references to the logger that we have given out.
     """
 
-    def __init__(self, logger):
+    def __init__(self, logger: logging.Logger):
         self._logger = logger
         return
 
@@ -375,6 +375,9 @@ class LoggerWrapper:
         """
         self._logger.debug(msg, *args, **kwargs)
         return
+
+    def isEnabled(self, level: int):
+        self._logger.isEnabledFor(level)
 
     def log(self, level, msg, *args, **kwargs):
         """
