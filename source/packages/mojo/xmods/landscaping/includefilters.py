@@ -23,8 +23,22 @@ from mojo.xmods.interfaces.iincludefilter import IIncludeFilter
 from mojo.xmods.landscaping.landscapedevice import LandscapeDevice
 from mojo.xmods.landscaping.landscapeservice import LandscapeService
 
+class IncludeDeviceBase(IIncludeFilter):
+    """
+        Base include type for device based includes
+    """
 
-class IncludeDeviceByDeviceType(IIncludeFilter):
+class IncludeDeviceConfigBase(IIncludeFilter):
+    """
+        Base include type for device based includes
+    """
+
+class IncludeServiceBase(IIncludeFilter):
+    """
+        Base include type for service based includes
+    """
+
+class IncludeDeviceByDeviceType(IncludeDeviceBase):
 
     def __init__(self, device_type: str) -> None:
         super().__init__()
@@ -47,7 +61,7 @@ class IncludeDeviceByDeviceType(IIncludeFilter):
         return include
 
 
-class IncludeDeviceByDeviceTypeAndRole(IIncludeFilter):
+class IncludeDeviceByDeviceTypeAndRole(IncludeDeviceBase):
 
     def __init__(self, device_type: str, role: str) -> None:
         super().__init__()
@@ -71,7 +85,7 @@ class IncludeDeviceByDeviceTypeAndRole(IIncludeFilter):
         return include
 
 
-class IncludeDeviceByGroup(IIncludeFilter):
+class IncludeDeviceByGroup(IncludeDeviceBase):
 
     def __init__(self, group: str) -> None:
         super().__init__()
@@ -94,7 +108,7 @@ class IncludeDeviceByGroup(IIncludeFilter):
         return include
 
 
-class IncludeDeviceByName(IIncludeFilter):
+class IncludeDeviceByName(IncludeDeviceBase):
 
     def __init__(self, name: str) -> None:
         super().__init__()
@@ -117,7 +131,7 @@ class IncludeDeviceByName(IIncludeFilter):
         return include
 
 
-class IncludeDeviceByRole(IIncludeFilter):
+class IncludeDeviceByRole(IncludeDeviceBase):
 
     def __init__(self, role: str) -> None:
         super().__init__()
@@ -140,7 +154,7 @@ class IncludeDeviceByRole(IIncludeFilter):
         return include
 
 
-class IncludeDeviceConfigByDeviceType(IIncludeFilter):
+class IncludeDeviceConfigByDeviceType(IncludeDeviceConfigBase):
 
     def __init__(self, device_type: str) -> None:
         super().__init__()
@@ -162,7 +176,7 @@ class IncludeDeviceConfigByDeviceType(IIncludeFilter):
 
         return include
 
-class IncludeServiceByName(IIncludeFilter):
+class IncludeServiceByName(IncludeServiceBase):
 
     def __init__(self, name: str) -> None:
         super().__init__()

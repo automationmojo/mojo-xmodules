@@ -30,8 +30,8 @@ class LogLevel(IntEnum):
     RENDER = 200
     QUIET = 1000
 
-logging.addLevelName(LogLevel.SECTION, "SECTION")
-logging.addLevelName(LogLevel.RENDER, "RENDER")
-logging.addLevelName(LogLevel.QUIET, "QUIET")
+logging.addLevelName(LogLevel.SECTION.value, "SECTION")
+logging.addLevelName(LogLevel.RENDER.value, "RENDER")
+logging.addLevelName(LogLevel.QUIET.value, "QUIET")
 
 LOG_LEVEL_NAMES = [member.name for member in LogLevel]
