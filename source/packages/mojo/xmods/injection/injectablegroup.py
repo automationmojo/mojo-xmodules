@@ -78,7 +78,7 @@ class InjectableGroup:
             sname = "{}.{}".format(self.package, sname)
         return sname
 
-    def add_descendent(self, child_ref:InjectableRef):
+    def add_descendent(self, child_ref:InjectableRef, group_type: Optional[type] = None):
 
         if self._package is not None:
             err_msg = "The 'add_descendent' API can only be called on the root package."
@@ -89,7 +89,7 @@ class InjectableGroup:
         to_walk_list = module_name.split(".")
         path_stack = []
 
-        self._add_descendent(child_ref, to_walk_list, path_stack)
+        self._add_descendent(child_ref, to_walk_list, path_stack, group_type=group_type)
 
         return
 
@@ -122,7 +122,7 @@ class InjectableGroup:
 
         return
 
-    def _add_descendent(self, child_ref: InjectableRef, to_walk_list: List[str], path_stack: List[str],):
+    def _add_descendent(self, child_ref: InjectableRef, to_walk_list: List[str], path_stack: List[str], group_type: Optional[type] = None):
         
         if len(to_walk_list) == 0:
             tbname = child_ref.base_name
@@ -138,11 +138,12 @@ class InjectableGroup:
             if child_leaf in self._children:
                 child_leaf_group = self._children[child_leaf]
             else:
-                this_type = type(self)
+                if group_type is None:
+                    group_type = type(self)
 
                 tgname = child_leaf
                 tgpkg = ".".join(path_stack) 
-                
+
                 child_leaf_group = this_type(tgname, tgpkg)
                 self._children[child_leaf] = child_leaf_group
 
