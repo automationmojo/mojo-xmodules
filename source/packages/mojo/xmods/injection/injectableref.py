@@ -62,7 +62,7 @@ class InjectableRef:
 
     @property
     def scope_name(self) -> str:
-        return self.inj_name
+        return self.name
 
     @property
     def subscriptions(self):
