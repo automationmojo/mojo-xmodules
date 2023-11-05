@@ -138,9 +138,12 @@ class InjectableGroup:
             if child_leaf in self._children:
                 child_leaf_group = self._children[child_leaf]
             else:
+                this_type = type(self)
+
                 tgname = child_leaf
                 tgpkg = ".".join(path_stack) 
-                child_leaf_group = InjectableGroup(tgname, tgpkg)
+                
+                child_leaf_group = this_type(tgname, tgpkg)
                 self._children[child_leaf] = child_leaf_group
 
             path_stack.append(child_leaf)
