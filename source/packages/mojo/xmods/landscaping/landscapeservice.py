@@ -399,7 +399,7 @@ class LandscapeService(FeatureAttachedObject):
 
         ipaddr = None
 
-        if self._configured_ip is not None:
+        if self._configured_ipaddr is not None:
             ipaddr = self._configured_ipaddr
         else:
             errmsg = f"_resolve_ipaddress: Unable to resolve IP address for dev {self}."

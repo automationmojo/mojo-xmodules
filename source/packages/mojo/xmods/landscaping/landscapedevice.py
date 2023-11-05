@@ -20,6 +20,7 @@ from typing import Callable, Dict, Union, TYPE_CHECKING
 
 import logging
 import os
+import socket
 import threading
 import weakref
 
@@ -99,6 +100,10 @@ class LandscapeDevice(FeatureAttachedObject):
         self._features = {}
         if "features" in device_config:
              self._features = device_config["features"]
+
+        self._host = None
+        if "host" in self._device_config:
+            self._host = self._device_config["host"]
 
         self._configured_ipaddr = None
         if "ipaddr" in device_config:
@@ -438,8 +443,11 @@ class LandscapeDevice(FeatureAttachedObject):
 
         ipaddr = None
 
-        if self._configured_ip is not None:
+        if self._configured_ipaddr is not None:
             ipaddr = self._configured_ipaddr
+        elif self._host is not None:
+            ipaddr = socket.gethostbyname(self._host)
+            self._configured_ipaddr = ipaddr
         else:
             errmsg = f"_resolve_ipaddress: Unable to resolve IP address for dev {self}."
             raise RuntimeError(errmsg)
