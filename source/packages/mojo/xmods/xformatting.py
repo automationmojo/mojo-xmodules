@@ -19,7 +19,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import os
 
@@ -110,6 +110,26 @@ def indent_line(lcontent: str, level: int, indent: int, pre_strip_leading: bool=
         indented = "{}{}".format(pfx, lcontent)
 
     return indented
+
+def indent_lines_list(msglines: List[str], level: int, indent: int=4) -> List[str]:
+    """
+        Takes a list of str that has already been split on new-lines and indents each line
+        to the specified level using 'indent' spaces for each level.
+
+        :param msglines: The list of text lines to indent.
+        :param level: The integer level number to indent to.
+        :param indent: The number of spaces to indent for each level.
+
+        :returns: The indenting lines
+    """
+    outlines = [] 
+
+    pfx = " " * (level * indent)
+
+    for nxtline in msglines:
+        outlines.append(f"{pfx}{nxtline}")
+
+    return outlines
 
 def split_and_indent_lines(msg: str, level: int, indent: int=4, pre_strip_leading: bool=True) -> List[str]:
     """
