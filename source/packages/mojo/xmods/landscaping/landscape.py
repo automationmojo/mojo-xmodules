@@ -454,7 +454,7 @@ def startup_landscape(activation_params: LandscapeActivationParams=DEFAULT_LANDS
     lscape = LandscapeSingleton()
     lscape.interactive_mode = interactive_mode
 
-    lscape.activate_configuration()
+    lscape.activate_configuration(activation_params=activation_params)
 
     # After all the coordinators have had an opportunity to register with the
     # 'landscape' object, transition the landscape to the activated 'phase'
