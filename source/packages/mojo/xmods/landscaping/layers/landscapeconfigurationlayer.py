@@ -244,8 +244,8 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
 
         device_config_list = []
 
-        if "pod" in self._landscape_info:
-            pod_info = self._landscape_info["pod"]
+        if "apod" in self._landscape_info:
+            pod_info = self._landscape_info["apod"]
             if "devices" in pod_info:
                 for dev_config_info in pod_info["devices"]:
                     if "skip" in dev_config_info and dev_config_info["skip"]:
@@ -265,8 +265,8 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
 
         power_config_list = []
 
-        if "pod" in self._landscape_info:
-            pod_info = self._landscape_info["pod"]
+        if "apod" in self._landscape_info:
+            pod_info = self._landscape_info["apod"]
             if "power" in pod_info:
                 for power_config_info in pod_info["power"]:
                     power_config_list.append(power_config_info)
@@ -284,8 +284,8 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
 
         serial_config_list = []
 
-        if "pod" in self._landscape_info:
-            pod_info = self._landscape_info["pod"]
+        if "apod" in self._landscape_info:
+            pod_info = self._landscape_info["apod"]
             if "serial" in pod_info:
                 for serial_config_info in pod_info["serial"]:
                     serial_config_list.append(serial_config_info)
@@ -368,8 +368,8 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
         errors = []
         warnings = []
 
-        if "pod" in landscape_info:
-            podinfo = landscape_info["pod"]
+        if "apod" in landscape_info:
+            podinfo = landscape_info["apod"]
             for section in podinfo:
                 if section == "environment":
                     envinfo = landscape_info["environment"]
