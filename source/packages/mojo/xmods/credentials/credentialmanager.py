@@ -87,7 +87,8 @@ class CredentialManager:
         """
         """
 
-        if CONFIGURATION_MAPS.CREDENTIAL_CONFIGURATION_MAP is not None:
+        if CONFIGURATION_MAPS.CREDENTIAL_CONFIGURATION_MAP is not None and \
+            len(CONFIGURATION_MAPS.CREDENTIAL_CONFIGURATION_MAP) > 0:
 
             credential_info = CONFIGURATION_MAPS.CREDENTIAL_CONFIGURATION_MAP
 

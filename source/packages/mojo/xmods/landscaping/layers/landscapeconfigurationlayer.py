@@ -182,7 +182,8 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
             Loads and validates the landscape description file.
         """
 
-        if CONFIGURATION_MAPS.LANDSCAPE_CONFIGURATION_MAP is not None:
+        if CONFIGURATION_MAPS.LANDSCAPE_CONFIGURATION_MAP is not None and \
+            len(CONFIGURATION_MAPS.LANDSCAPE_CONFIGURATION_MAP) > 0:
 
             self._landscape_info = CONFIGURATION_MAPS.LANDSCAPE_CONFIGURATION_MAP
 
@@ -210,7 +211,8 @@ class LandscapeConfigurationLayer(LandscapingLayerBase):
             Loads the topology file.
         """
 
-        if CONFIGURATION_MAPS.TOPOLOGY_CONFIGURATION_MAP is not None:
+        if CONFIGURATION_MAPS.TOPOLOGY_CONFIGURATION_MAP is not None and \
+            len(CONFIGURATION_MAPS.TOPOLOGY_CONFIGURATION_MAP) > 0:
 
             self._topology_info = CONFIGURATION_MAPS.TOPOLOGY_CONFIGURATION_MAP
 
