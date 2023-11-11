@@ -135,17 +135,14 @@ class DebugPyAssistant():
         debugpy.listen(self._endpoint)
         
         while self._running:
-            # While we are connected to the debugger, have the debug assistant
-            # thread loop
-            if  debugpy.is_client_connected():
-                while debugpy.is_client_connected():
-                    time.sleep(2)
 
             debugpy.wait_for_client()
+            debugpy.breakpoint()
 
-            # Only hit a breakpoint if we have a client connected
-            if  debugpy.is_client_connected():
-                debugpy.breakpoint()
+            # While we are connected to the debugger, have the debug assistant
+            # thread loop
+            while debugpy.is_client_connected():
+                time.sleep(2)
 
         return
 
