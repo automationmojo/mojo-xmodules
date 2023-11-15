@@ -20,6 +20,8 @@ from mojo.xmods.injection.integrationsource import IntegrationSource
 from mojo.xmods.injection.resourcelifespan import ResourceLifespan
 from mojo.xmods.injection.parameterorigin import ParameterOrigin
 
+from mojo.xmods.xinspect import is_typed_from_type
+
 def param(source, *, identifier: Optional[None], constraints: Optional[Dict]=None):
     def decorator(subscriber: Callable) -> Callable:
         nonlocal source
@@ -79,8 +81,11 @@ def originate_parameter(source_func, *, identifier: Optional[None], life_span: R
     
     if life_span is None:
         res_type = source_info.resource_type
-        if issubclass(res_type, IntegrationCoupling):
-            life_span = ResourceLifespan.Session
+        if is_typed_from_type(res_type):
+            if issubclass(res_type, IntegrationCoupling):
+                life_span = ResourceLifespan.Session
+            else:
+                life_span = ResourceLifespan.Package
         else:
             life_span = ResourceLifespan.Package
 

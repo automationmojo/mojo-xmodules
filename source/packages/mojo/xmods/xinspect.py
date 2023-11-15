@@ -67,3 +67,20 @@ def get_module_ancestry(module_name: str):
     module_list.append(amod)
 
     return module_list
+
+
+class ReferenceForType:
+    """
+        This object is a generic type we use to get the value of the 'Type' class
+    """
+
+ClassOfType = type(ReferenceForType)
+
+def is_typed_from_type(obj) -> bool:
+    is_of_type = False
+
+    if type(obj) == ClassOfType:
+        is_of_type = True
+    
+    return is_of_type
+    
