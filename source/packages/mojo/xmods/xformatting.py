@@ -60,7 +60,7 @@ def format_command_result(msg: str, status: int, stdout: str, stderr: str, exp_s
 
     if stderr is not None and len(stderr.strip()) > 0:
         fmt_msg_lines.append("STDERR:")
-        fmt_msg_lines.append(indent_lines(stdout, 1))
+        fmt_msg_lines.append(indent_lines(stderr, 1))
 
     fmt_msg = os.linesep.join(fmt_msg_lines)
 
