@@ -44,6 +44,9 @@ class LoggingPattern:
 DEFAULT_COMPLETION_TIMEOUT = 600
 DEFAULT_COMPLETION_INTERVAL = 10
 
+DEFAULT_CONNECTION_TIMEOUT = 120
+DEFAULT_CONNECTION_INTERVAL = 10
+
 DEFAULT_INACTIVITY_TIMEOUT = 600
 DEFAULT_INACTIVITY_INTERVAL = .5
 
@@ -68,6 +71,8 @@ class Aspects:
     def __init__(self, action_pattern: ActionPattern = ActionPattern.SINGLE_CALL,
                        completion_timeout: float = DEFAULT_COMPLETION_TIMEOUT,
                        completion_interval: float = DEFAULT_COMPLETION_INTERVAL,
+                       connection_timeout: float = DEFAULT_CONNECTION_TIMEOUT,
+                       connection_interval: float = DEFAULT_CONNECTION_INTERVAL,
                        inactivity_timeout: float = DEFAULT_INACTIVITY_TIMEOUT,
                        inactivity_interval: float = DEFAULT_INACTIVITY_INTERVAL,
                        monitor_delay: float = DEFAULT_MONITOR_DELAY,
@@ -85,6 +90,9 @@ class Aspects:
                                        timeout for the activity to complete.
             :param completion_interval: The time in seconds as a float that is waited before reattempting
                                         an activity.
+            :param connection_timeout: The time in seconds as a float that is the timeout for making a connection.
+            :param connection_interval: The time in seconds as a float that is waited before reattempting
+                                        to connect.
             :param inactivity_timeout: The time in seconds as a float that is the max time before timeout
                                        that is waited before a :class:`TimeoutError` is raised due to inactivity.
             :param inactivity_interval: The time in seconds as a float that is waited before reattempting an activity.
@@ -95,6 +103,8 @@ class Aspects:
         self.action_pattern = action_pattern
         self.completion_timeout = completion_timeout
         self.completion_interval = completion_interval
+        self.connection_timeout = connection_timeout
+        self.connection_interval = connection_interval
         self.inactivity_timeout = inactivity_timeout
         self.inactivity_interval = inactivity_interval
         self.monitor_delay = monitor_delay
@@ -118,6 +128,8 @@ class AspectsCmd(Aspects):
                        action_pattern: ActionPattern = ActionPattern.SINGLE_CALL,
                        completion_timeout: float = DEFAULT_COMPLETION_TIMEOUT,
                        completion_interval: float = DEFAULT_COMPLETION_INTERVAL,
+                       connection_timeout: float = DEFAULT_CONNECTION_TIMEOUT,
+                       connection_interval: float = DEFAULT_CONNECTION_INTERVAL,
                        inactivity_timeout: float = DEFAULT_INACTIVITY_TIMEOUT,
                        inactivity_interval: float = DEFAULT_INACTIVITY_INTERVAL,
                        monitor_delay: float = DEFAULT_MONITOR_DELAY,
@@ -127,7 +139,8 @@ class AspectsCmd(Aspects):
                        logger: Optional[logging.Logger]=None):
         
         Aspects.__init__(self, action_pattern=action_pattern, completion_timeout=completion_timeout,
-                            completion_interval=completion_interval, inactivity_timeout=inactivity_timeout,
+                            completion_interval=completion_interval, connection_timeout=connection_timeout,
+                            connection_interval=connection_interval, inactivity_timeout=inactivity_timeout,
                             inactivity_interval=inactivity_interval, monitor_delay=monitor_delay,
                             logging_pattern=logging_pattern, retry_logging_interval=retry_logging_interval,
                             allowed_error_codes=allowed_error_codes, logger=logger)
