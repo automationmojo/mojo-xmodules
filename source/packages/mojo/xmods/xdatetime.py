@@ -37,6 +37,17 @@ def current_time_millis() -> float:
     now_ms = time.time() * 1000
     return now_ms
 
+def format_datetime_with_fractional(timestamp: datetime, datetime_format=DATETIME_FORMAT_TIMESTAMP) -> str:
+    """
+        Format the time in seconds as a fractional in seconds.
+
+        :param tsecs: Time in seconds as a float.
+
+        :returns: Formatted time in (seconds).(fractions of seconds)
+    """
+    dtstr = timestamp.strftime(datetime_format)
+    return dtstr
+
 def format_time_with_fractional(tsecs: float, datetime_format=DATETIME_FORMAT_TIMESTAMP) -> str:
     """
         Format the time in seconds as a fractional in seconds.
