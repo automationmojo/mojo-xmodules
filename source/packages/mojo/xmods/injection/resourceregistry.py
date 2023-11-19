@@ -14,6 +14,7 @@ from mojo.errors.exceptions import SemanticError
 
 from mojo.xmods.injection.integrationsource import IntegrationSource
 from mojo.xmods.injection.parameterorigin import ParameterOrigin
+from mojo.xmods.injection.resourcelifespan import ResourceLifespan
 from mojo.xmods.injection.resourcescope import ResourceScope
 from mojo.xmods.injection.resourcesource import ResourceSource
 from mojo.xmods.injection.scopesource import ScopeSource
@@ -107,6 +108,15 @@ class ResourceRegistry:
     @property
     def unknown_parameters(self):
         return self._unknown_parameters
+
+    def add_implied_session_resource(self, identifier: str):
+        """
+            Adds an implied session resources that is inherent to the code generation of the
+            test framework.
+        """
+        origin = ParameterOrigin("<session>", identifier, ResourceLifespan.Session, source=None, implied=True)
+        self._scope_tree_root.add_descendent_parameter_origination("<session>", origin)
+        return
 
     def rename_resource_origins_from_main(self, new_origin):
         """
