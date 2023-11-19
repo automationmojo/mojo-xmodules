@@ -17,11 +17,12 @@ from mojo.xmods.injection.resourcelifespan import ResourceLifespan
 
 class ParameterOrigin:
 
-    def __init__(self, originating_scope: str, identifier: str, life_span: ResourceLifespan, source: Optional[SourceBase] = None, constraints: Optional[Dict] = {}):
+    def __init__(self, originating_scope: str, identifier: str, life_span: ResourceLifespan, source: Optional[SourceBase] = None, implied: bool = False, constraints: Optional[Dict] = {}):
         self._originating_scope = originating_scope
         self._identifier = identifier
         self._life_span = life_span
         self._source = source
+        self._implied = implied
         self._constraints = constraints
         return
 
@@ -43,6 +44,10 @@ class ParameterOrigin:
     @property
     def identifier(self) -> str:
         return self._identifier
+
+    @property
+    def implied(self) -> bool:
+        return self._implied
 
     @property
     def life_span(self) -> ResourceLifespan:
