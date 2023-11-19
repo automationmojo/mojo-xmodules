@@ -100,26 +100,28 @@ class ResourceScope:
 
         for param_orig in self._parameter_originations.values():
 
-            source_function = param_orig.source_function
-            param_resource_type = param_orig.source_resource_type
+            if not param_orig.implied:
 
-            if len(typing_get_args(param_resource_type)) > 0:
-                for type_arg in typing_get_args(param_resource_type):
-                    if issubclass(type_arg, IntegrationCoupling):
+                source_function = param_orig.source_function
+                param_resource_type = param_orig.source_resource_type
+
+                if len(typing_get_args(param_resource_type)) > 0:
+                    for type_arg in typing_get_args(param_resource_type):
+                        if issubclass(type_arg, IntegrationCoupling):
+                            # There should never be more than one fixture with the same well-known or
+                            # declared name in the same collection of injectables.
+                            integration_table[source_function] = type_arg
+                            break
+                        elif issubclass(type_arg, ScopeCoupling):
+                            scope_table[source_function] = type_arg
+                            break
+                else:
+                    if issubclass(param_resource_type, IntegrationCoupling):
                         # There should never be more than one fixture with the same well-known or
                         # declared name in the same collection of injectables.
-                        integration_table[source_function] = type_arg
-                        break
-                    elif issubclass(type_arg, ScopeCoupling):
-                        scope_table[source_function] = type_arg
-                        break
-            else:
-                if issubclass(param_resource_type, IntegrationCoupling):
-                    # There should never be more than one fixture with the same well-known or
-                    # declared name in the same collection of injectables.
-                    integration_table[source_function] = param_resource_type
-                elif issubclass(param_resource_type, ScopeCoupling):
-                    scope_table[source_function] = param_resource_type
+                        integration_table[source_function] = param_resource_type
+                    elif issubclass(param_resource_type, ScopeCoupling):
+                        scope_table[source_function] = param_resource_type
 
         for child_scope in self._children.values():
 
