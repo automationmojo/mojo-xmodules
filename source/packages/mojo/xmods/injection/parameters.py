@@ -44,7 +44,7 @@ def param(source, *, identifier: Optional[None], constraints: Optional[Dict]=Non
 
         assigned_scope = "{}#{}".format(subscriber.__module__, subscriber.__name__)
 
-        param_origin = ParameterOrigin(assigned_scope, identifier, source_info, life_span, constraints)
+        param_origin = ParameterOrigin(assigned_scope, identifier, life_span, source_info, constraints)
         resource_registry.register_parameter_origin(identifier, param_origin)
 
         return subscriber
@@ -95,7 +95,7 @@ def originate_parameter(source_func, *, identifier: Optional[None], life_span: R
     elif life_span == ResourceLifespan.Session:
         assigned_scope = "<session>"
 
-    param_origin = ParameterOrigin(assigned_scope, identifier, source_info, life_span, constraints)
+    param_origin = ParameterOrigin(assigned_scope, identifier, life_span, source_info, constraints)
     resource_registry.register_parameter_origin(identifier, param_origin)
 
     return

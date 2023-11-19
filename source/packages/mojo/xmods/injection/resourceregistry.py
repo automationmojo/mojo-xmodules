@@ -17,7 +17,6 @@ from mojo.xmods.injection.parameterorigin import ParameterOrigin
 from mojo.xmods.injection.resourcescope import ResourceScope
 from mojo.xmods.injection.resourcesource import ResourceSource
 from mojo.xmods.injection.scopesource import ScopeSource
-from mojo.xmods.injection.parameterorigin import ParameterOrigin
 
 from mojo.xmods.injection.injectableref import InjectableRef
 
