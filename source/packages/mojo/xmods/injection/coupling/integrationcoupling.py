@@ -21,7 +21,7 @@ from typing import Any, Dict, List, Tuple, TypeVar, TYPE_CHECKING
 
 import inspect
 
-from mojo.xmods.injection.basecoupling import BaseCoupling
+from mojo.xmods.injection.coupling.basecoupling import BaseCoupling
 from mojo.errors.exceptions import NotOverloadedError
 
 
