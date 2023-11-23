@@ -24,8 +24,8 @@ import os
 
 NoneType = type(None)
 
-from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
-from mojo.xmods.landscaping.coupling.scopecoupling import ScopeCoupling
+from mojo.xmods.injection.coupling.integrationcoupling import IntegrationCoupling
+from mojo.xmods.injection.coupling.scopecoupling import ScopeCoupling
 
 from mojo.errors.exceptions import SemanticError
 

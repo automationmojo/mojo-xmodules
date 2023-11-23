@@ -12,7 +12,7 @@ from typing import Callable, Dict, Optional
 import inspect
 
 from mojo.errors.exceptions import SemanticError
-from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
+from mojo.xmods.injection.coupling.integrationcoupling import IntegrationCoupling
 
 from mojo.xmods.injection.resourceregistry import resource_registry
 

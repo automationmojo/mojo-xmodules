@@ -11,7 +11,7 @@ __license__ = "MIT"
 
 from typing import Callable, Union
 
-from mojo.xmods.landscaping.coupling.scopecoupling import ScopeCoupling
+from mojo.xmods.injection.coupling.scopecoupling import ScopeCoupling
 
 from mojo.xmods.injection.sourcebase import SourceBase
 

@@ -10,7 +10,7 @@ __license__ = "MIT"
 
 from typing import Callable
 
-from mojo.xmods.landscaping.coupling.integrationcoupling import IntegrationCoupling
+from mojo.xmods.injection.coupling.integrationcoupling import IntegrationCoupling
 
 from mojo.xmods.injection.sourcebase import SourceBase
 
