@@ -44,8 +44,9 @@ class LoggingPattern:
 DEFAULT_COMPLETION_TIMEOUT = 600
 DEFAULT_COMPLETION_INTERVAL = 10
 
-DEFAULT_CONNECTION_TIMEOUT = 120
-DEFAULT_CONNECTION_INTERVAL = 10
+DEFAULT_CONNECTION_TIMEOUT = 16
+DEFAULT_CONNECTION_INTERVAL = 2
+DEFAULT_ALLOWED_CONNECTION_EXCEPTIONS = List[BaseException] = []
 
 DEFAULT_INACTIVITY_TIMEOUT = 600
 DEFAULT_INACTIVITY_INTERVAL = .5
@@ -79,6 +80,7 @@ class Aspects:
                        logging_pattern: LoggingPattern = DEFAULT_LOGGING_PATTERN,
                        retry_logging_interval: int = DEFAULT_RETRY_LOGGING_INTERVAL,
                        allowed_error_codes: List[int] = DEFAULT_ALLOWED_ERROR_CODES,
+                       allowed_connection_exceptions: List[BaseException] = DEFAULT_ALLOWED_CONNECTION_EXCEPTIONS,
                        must_connect: bool = DEFAULT_MUST_CONNECT,
                        logger: Optional[logging.Logger]=None):
         """
@@ -111,6 +113,7 @@ class Aspects:
         self.logging_pattern = logging_pattern
         self.retry_logging_interval = retry_logging_interval
         self.allowed_error_codes = allowed_error_codes
+        self.allowed_connection_exceptions = allowed_connection_exceptions
         self.must_connect=must_connect
 
         if logger is None:
@@ -136,6 +139,7 @@ class AspectsCmd(Aspects):
                        logging_pattern: LoggingPattern = DEFAULT_LOGGING_PATTERN,
                        retry_logging_interval: int = DEFAULT_RETRY_LOGGING_INTERVAL,
                        allowed_error_codes: List[int] = DEFAULT_ALLOWED_ERROR_CODES,
+                       allowed_connection_exceptions: List[BaseException] = DEFAULT_ALLOWED_CONNECTION_EXCEPTIONS,
                        logger: Optional[logging.Logger]=None):
         
         Aspects.__init__(self, action_pattern=action_pattern, completion_timeout=completion_timeout,
@@ -143,7 +147,8 @@ class AspectsCmd(Aspects):
                             connection_interval=connection_interval, inactivity_timeout=inactivity_timeout,
                             inactivity_interval=inactivity_interval, monitor_delay=monitor_delay,
                             logging_pattern=logging_pattern, retry_logging_interval=retry_logging_interval,
-                            allowed_error_codes=allowed_error_codes, logger=logger)
+                            allowed_error_codes=allowed_error_codes, allowed_connection_exceptions=allowed_connection_exceptions,
+                            logger=logger)
         
         self.expected_status = expected_status
         self.user = user
