@@ -28,7 +28,7 @@ import traceback
 from mojo.collections.contextpaths import ContextPaths
 from mojo.collections.wellknown import ContextSingleton
 
-
+from mojo.xmods.fspath import get_expanded_path
 from mojo.xmods.xlogging.levels import LogLevel
 
 
@@ -601,7 +601,7 @@ def logging_initialize():
         jobtype = ctx.lookup(ContextPaths.JOB_TYPE, "application")
         logname = logname_template.format(jobtype=jobtype)
 
-        output_directory = ctx.lookup(ContextPaths.OUTPUT_DIRECTORY)
+        output_directory = get_expanded_path(ctx.lookup(ContextPaths.OUTPUT_DIRECTORY))
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
