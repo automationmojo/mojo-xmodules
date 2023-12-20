@@ -18,6 +18,7 @@ from mojo.xmods.injection.resourcelifespan import ResourceLifespan
 from mojo.xmods.injection.resourcescope import ResourceScope
 from mojo.xmods.injection.resourcesource import ResourceSource
 from mojo.xmods.injection.scopesource import ScopeSource
+from mojo.xmods.injection.validatororigin import ValidatorOrigin
 
 from mojo.xmods.injection.injectableref import InjectableRef
 
@@ -197,6 +198,24 @@ class ResourceRegistry:
 
         if source_func not in self._scope_source:
             self._scope_source[source_func] = source
+
+        return
+    
+    def register_validator_origin(self, identifier: str, origin: ValidatorOrigin):
+        """
+            The :method:`register_validator_origin` is used to register an alias as a wellknown parameter
+            so that subscriber functions can consume the parameter as an input parameter.
+        """
+
+        originating_scope = origin.originating_scope
+
+        if self._scope_tree_root.has_descendent_validator(originating_scope, identifier):
+            errmsg = "A wellknown variable identified as '{}' has already been assigned to scope '{}'.".format(identifier, originating_scope)
+            raise SemanticError(errmsg) from None
+
+        # Add the parameter origin to the identifiers_for_scope table for this scope so we
+        # can lookup identifiers by scope
+        self._scope_tree_root.add_descendent_validator_origination(originating_scope, origin)
 
         return
 

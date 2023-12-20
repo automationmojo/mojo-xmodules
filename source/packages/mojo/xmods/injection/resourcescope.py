@@ -19,6 +19,7 @@ from mojo.xmods.injection.coupling.integrationcoupling import IntegrationCouplin
 from mojo.xmods.injection.coupling.scopecoupling import ScopeCoupling
 
 from mojo.xmods.injection.parameterorigin import ParameterOrigin
+from mojo.xmods.injection.validatororigin import ValidatorOrigin
 
 from mojo.xmods.injection.injectableref import InjectableRef
 
@@ -33,6 +34,7 @@ class ResourceScope:
         self._package = package
         self._children: Dict[str, ResourceScope] = {}
         self._parameter_originations = collections.OrderedDict()
+        self._validator_originations = collections.OrderedDict()
         self._is_inj_scope = is_inj_scope
         self._is_relevant = False
         return
@@ -86,6 +88,38 @@ class ResourceScope:
             path_stack = []
 
             self._add_descendent_parameter_origination(parameter_origin, to_walk_list, path_stack, is_inj_scope)
+
+        return
+    
+    def add_descendent_validator_origination(self, assigned_scope: str, validator_origin: ValidatorOrigin):
+        """
+            Adds a descendent parameter origin object into the parameter origin table of the
+            assigned scope path provided.
+
+            :param assigned_scope: The full scope name of the scope to assign the parameter
+                                   origin to.
+            :param validator_origin: The validator origin object that is being inserted into
+                                     the validator origin table of the assigned scope.
+        """
+
+        if self._package is not None:
+            err_msg = "The 'add_descendent' API can only be called on the root package."
+            raise SemanticError(err_msg) from None
+
+        if self._package is None and assigned_scope == "<session>":
+            if validator_origin is not None:
+                identifier = validator_origin.identifier
+                self._validator_originations[identifier] =  validator_origin
+                self._validator_originations.move_to_end(identifier, last=True)
+        else:
+            is_inj_scope = False
+            if assigned_scope.find("#") > -1:
+                is_inj_scope = True
+                assigned_scope = assigned_scope.replace("#", ".")
+            to_walk_list = assigned_scope.split(".")
+            path_stack = []
+
+            self._add_descendent_validator_origination(validator_origin, to_walk_list, path_stack, is_inj_scope)
 
         return
 
@@ -173,6 +207,28 @@ class ResourceScope:
             to_walk_list = scope_name.split(".")
 
             rtnval = self._has_descendent_parameter(to_walk_list, identifier)
+
+        return rtnval
+    
+    def has_descendent_validator(self, scope_name: str, identifier: str) -> bool:
+        """
+            Method used to findout if the specified scope has a validator or not
+            available 
+
+            :param scope_name: The full path of the scope name to lookup.
+            :param identifier: The name of the identifier to search for.
+        """
+
+        rtnval = False
+
+        if self._package is None and scope_name == "<session>":
+            if identifier in self._validator_originations:
+                rtnval = True
+        else:
+            scope_name = scope_name.replace("#", ".")
+            to_walk_list = scope_name.split(".")
+
+            rtnval = self._has_descendent_validator(to_walk_list, identifier)
 
         return rtnval
 
@@ -298,6 +354,37 @@ class ResourceScope:
                 curr_scope._parameter_originations.move_to_end(identifier, last=True)
 
         return
+    
+    def _add_descendent_validator_origination(self, validator_origin: ValidatorOrigin, to_walk_list: List[str], path_stack: List[str], is_inj_scope):
+
+        curr_leaf = to_walk_list.pop(0)
+        curr_scope = None
+
+        if curr_leaf in self._children:
+            curr_scope = self._children[curr_leaf]
+        else:
+            curr_package = curr_leaf
+            if len(path_stack) > 0:
+                curr_package = "{}.{}".format(".".join(path_stack), curr_package)
+
+            set_inj_scope = False
+            if len(to_walk_list) == 0:
+                set_inj_scope = is_inj_scope
+
+            curr_scope = ResourceScope(curr_leaf, curr_package, set_inj_scope)
+            self._children[curr_leaf] = curr_scope
+
+        if len(to_walk_list) > 0:
+            path_stack.append(curr_leaf)
+            curr_scope._add_descendent_validator_origination(validator_origin, to_walk_list, path_stack, is_inj_scope)
+            path_stack.pop()
+        else:
+            if validator_origin is not None:
+                identifier = validator_origin.identifier
+                curr_scope._validator_originations[identifier] = validator_origin
+                curr_scope._validator_originations.move_to_end(identifier, last=True)
+
+        return
 
     def _ensure_parameter_scopes_for_injectable(self, inj_ref: InjectableRef, inj_scope_parts: List[str], path_stack: List[str]):
 
@@ -341,6 +428,22 @@ class ResourceScope:
                 scope = self._children[child_name]
                 desc_to_walk_list = to_walk_list[1:]
                 rtnval = scope._has_descendent_parameter(desc_to_walk_list, identifier)
+
+        return rtnval
+    
+    def _has_descendent_validator(self, to_walk_list: List[str], identifier: str):
+
+        rtnval = False
+
+        if len(to_walk_list) == 0:
+            if identifier in self._validator_originations:
+                rtnval = True
+        else:
+            child_name = to_walk_list[0]
+            if child_name in self._children:
+                scope = self._children[child_name]
+                desc_to_walk_list = to_walk_list[1:]
+                rtnval = scope._has_descendent_validator(desc_to_walk_list, identifier)
 
         return rtnval
 
