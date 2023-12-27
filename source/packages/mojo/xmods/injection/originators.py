@@ -22,33 +22,6 @@ from mojo.xmods.injection.parameterorigin import ParameterOrigin
 
 from mojo.xmods.xinspect import is_typed_from_type
 
-def param(source, *, identifier: Optional[None], constraints: Optional[Dict]=None):
-    def decorator(subscriber: Callable) -> Callable:
-        nonlocal source
-        nonlocal identifier
-        nonlocal constraints
-
-        if identifier is None:
-            identifier = source.__name__
-
-        if identifier == 'constraints':
-            errmsg = "Invalid identifier.  The word 'constraints' is reseved for delivering dynamic constraints."
-            raise SemanticError(errmsg) from None
-
-        life_span = ResourceLifespan.Test
-
-        source_info = resource_registry.lookup_resource_source(source)
-
-        if constraints is not None and 'constraints' not in source_info.source_signature.parameters:
-            raise SemanticError("Attempting to pass constraints to a parameter origin with no 'constraints' parameter.") from None
-
-        assigned_scope = "{}#{}".format(subscriber.__module__, subscriber.__name__)
-
-        param_origin = ParameterOrigin(assigned_scope, identifier, life_span, source_info, constraints)
-        resource_registry.register_parameter_origin(identifier, param_origin)
-
-        return subscriber
-    return decorator
 
 def originate_parameter(source_func, *, identifier: Optional[None], life_span: ResourceLifespan=None, assigned_scope: Optional[str]=None, constraints: Optional[Dict]=None):
 
