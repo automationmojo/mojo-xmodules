@@ -14,7 +14,7 @@ import inspect
 from mojo.errors.exceptions import SemanticError
 from mojo.xmods.injection.coupling.integrationcoupling import IntegrationCoupling
 
-from mojo.xmods.injection.resourceregistry import resource_registry
+from mojo.xmods.injection.injectionregistry import injection_registry
 
 from mojo.xmods.injection.integrationsource import IntegrationSource
 from mojo.xmods.injection.resourcelifespan import ResourceLifespan
@@ -40,7 +40,7 @@ def originate_parameter(source_func, *, identifier: Optional[None], life_span: R
         errmsg = "Invalid identifier.  The word 'constraints' is reseved for delivering dynamic constraints."
         raise SemanticError(errmsg) from None
 
-    source_info = resource_registry.lookup_resource_source(source_func)
+    source_info = injection_registry.lookup_resource_source(source_func)
     if assigned_scope is not None:
         if isinstance(source_info, IntegrationSource):
             errmsg = "The 'assigned_scope' parameter should not be specified unless the source of the resource is of type 'scope' or 'resource'."
@@ -69,7 +69,7 @@ def originate_parameter(source_func, *, identifier: Optional[None], life_span: R
         assigned_scope = "<session>"
 
     param_origin = ParameterOrigin(assigned_scope, identifier, life_span, source_info, constraints)
-    resource_registry.register_parameter_origin(identifier, param_origin)
+    injection_registry.register_parameter_origin(identifier, param_origin)
 
     return
 

@@ -23,7 +23,7 @@ import sys
 
 from mojo.errors.exceptions import SemanticError
 
-from mojo.xmods.injection.resourceregistry import resource_registry
+from mojo.xmods.injection.injectionregistry import injection_registry
 from mojo.xmods.injection.resourcescope import ResourceScope
 
 from mojo.xmods.injection.injectableref import InjectableRef
@@ -99,7 +99,7 @@ class InjectableGroup:
 
     def get_resource_scope(self) -> ResourceScope:
         scope_name = self.scope_name
-        rscope = resource_registry.lookup_resource_scope(scope_name)
+        rscope = injection_registry.lookup_resource_scope(scope_name)
         return rscope
 
     def resolve_metadata(self, parent_metadata: Optional[Dict[str, str]]=None):

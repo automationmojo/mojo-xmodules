@@ -34,6 +34,8 @@ from mojo.xmods.injection.injectionregistry import injection_registry
 from mojo.xmods.injection.integrationsource import IntegrationSource
 from mojo.xmods.injection.resourcesource import ResourceSource
 from mojo.xmods.injection.scopesource import ScopeSource
+from mojo.xmods.injection.coupling.validatorcoupling import ValidatorCoupling
+from mojo.xmods.injection.validatorsource import ValidatorSource
 
 _IntegrationSubscriberType = TypeVar("_IntegrationSubscriberType", bound=Callable[..., object])
 
@@ -166,3 +168,26 @@ def scope(*, query_function: Optional[Callable]=None, constraints: Optional[Dict
         return source_function
     return decorator
 
+def validator(*, constraints: Optional[Dict]=None):
+    def decorator(source_function: Callable) -> Callable:
+        nonlocal constraints
+
+        signature = inspect.signature(source_function)
+        resource_context = signature.return_annotation
+
+        resource_type = None
+
+        if resource_context == inspect._empty:
+            errmsg = f"Validator factories must have an annotated return type. resource_context={resource_context}"
+            raise SemanticError(errmsg) from None
+        elif issubclass(resource_context, ValidatorCoupling):
+            resource_type = resource_context
+        else:
+            errmsg = f"Validator factory functions must have a return type that is subclassed from 'ValidatorBase'. resource_context={resource_context}"
+            raise SemanticError(errmsg) from None
+        
+        sref = ValidatorSource(source_function, resource_type, constraints)
+        injection_registry.register_validator_source(sref)
+        
+        return source_function
+    return decorator

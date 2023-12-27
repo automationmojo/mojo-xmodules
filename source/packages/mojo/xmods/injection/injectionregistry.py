@@ -19,11 +19,12 @@ from mojo.xmods.injection.resourcescope import ResourceScope
 from mojo.xmods.injection.resourcesource import ResourceSource
 from mojo.xmods.injection.scopesource import ScopeSource
 from mojo.xmods.injection.validatororigin import ValidatorOrigin
+from mojo.xmods.injection.validatorsource import ValidatorSource
 
 from mojo.xmods.injection.injectableref import InjectableRef
 
 
-class ResourceRegistry:
+class InjectionRegistry:
     """
         1. During the injectable discovery process, the parameter decorators are executed and the resource
            identifier names and source functions are registered and available for consumption via a query
@@ -60,7 +61,7 @@ class ResourceRegistry:
             Constructs new instances of the ResourceRegistry object.
         """
         if cls._instance is None:
-            cls._instance = super(ResourceRegistry, cls).__new__(cls)
+            cls._instance = super(InjectionRegistry, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
@@ -78,6 +79,7 @@ class ResourceRegistry:
             self._integration_source = {}
             self._resource_source = {}
             self._scope_source = {}
+            self._validator_source = {}
 
             # The unknown parameter table gets populated with the names of subscribe functions
             # that have unknown paramters and the list of parameters names the could not be
@@ -146,6 +148,15 @@ class ResourceRegistry:
             source = self._resource_source[source_func]
 
         return source
+    
+    def lookup_validator_source(self, source_func):
+
+        source = None
+
+        if source_func in self._validator_source:
+            source = self._validator_source[source_func]
+
+        return source
 
     def register_integration_source(self, source: IntegrationSource):
         """
@@ -201,6 +212,18 @@ class ResourceRegistry:
 
         return
     
+    def register_validator_source(self, source: ValidatorSource):
+        """
+        This method is called by the 'validator' decorator in order to register a factory
+            function that generates an 'ValidatorCoupling' object. 
+        """
+        source_func = source.source_function
+
+        if source_func not in self._validator_source:
+            self._validator_source[source_func] = source
+
+        return
+
     def register_validator_origin(self, identifier: str, origin: ValidatorOrigin):
         """
             The :method:`register_validator_origin` is used to register an alias as a wellknown parameter
@@ -262,4 +285,4 @@ class ResourceRegistry:
 
         return
 
-resource_registry = ResourceRegistry()
+injection_registry = InjectionRegistry()
