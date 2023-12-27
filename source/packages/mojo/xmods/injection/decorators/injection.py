@@ -47,7 +47,7 @@ def param(source, *, identifier: Optional[None], constraints: Optional[Dict]=Non
         return subscriber
     return decorator
 
-def validate(source, *, identifier: Optional[None], suffix: str, constraints: Optional[Dict]=None):
+def validate(source, *, suffix: str, identifier: Optional[None]=None, constraints: Optional[Dict]=None):
     def decorator(subscriber: Callable) -> Callable:
         nonlocal source
         nonlocal identifier
