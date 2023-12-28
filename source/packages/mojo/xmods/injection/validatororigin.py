@@ -17,9 +17,10 @@ from mojo.xmods.injection.resourcelifespan import ResourceLifespan
 
 class ValidatorOrigin:
 
-    def __init__(self, originating_scope: str, identifier: str, source: Optional[SourceBase] = None, implied: bool = False, constraints: Optional[Dict] = {}):
+    def __init__(self, originating_scope: str, identifier: str, suffix: str, source: Optional[SourceBase] = None, implied: bool = False, constraints: Optional[Dict] = {}):
         self._originating_scope = originating_scope
         self._identifier = identifier
+        self._suffix = suffix
         self._life_span = ResourceLifespan.Test
         self._source = source
         self._implied = implied
@@ -81,6 +82,10 @@ class ValidatorOrigin:
     @property
     def source_resource_type(self) -> Type:
         return self._source.resource_type
+
+    @property
+    def suffix(self) -> str:
+        return self._suffix
 
     def describe_source(self):
         descstr = self.source_id
