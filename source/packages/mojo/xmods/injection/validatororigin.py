@@ -17,30 +17,14 @@ from mojo.xmods.injection.resourcelifespan import ResourceLifespan
 
 class ValidatorOrigin:
 
-    def __init__(self, originating_scope: str, identifier: str, suffix: str, source: Optional[SourceBase] = None, implied: bool = False, constraints: Optional[Dict] = {}):
+    def __init__(self, originating_scope: str, identifier: str, suffix: str, source: Optional[SourceBase] = None, implied: bool = False):
         self._originating_scope = originating_scope
         self._identifier = identifier
         self._suffix = suffix
         self._life_span = ResourceLifespan.Test
         self._source = source
         self._implied = implied
-        self._constraints = constraints
         return
-
-    @property
-    def constraints(self) -> Union[dict, None]:
-        """
-            Returns the most applicable constraints assoceated with this resource subscription.  If the
-            subscription constraints are set then they will be used.  If the subscription constraints are
-            not set and the source constraints are set, then the source constraints will be returned. If
-            no constraints are applied to the subscription or the source, 'None' will be returned.
-        """
-        cval = None
-        if self._constraints is not None:
-            cval = self._constraints
-        elif self._source.constraints is not None:
-            cval = self._source.constraints
-        return cval
 
     @property
     def identifier(self) -> str:
@@ -89,9 +73,6 @@ class ValidatorOrigin:
 
     def describe_source(self):
         descstr = self.source_id
-        cval = self.constraints
-        if cval is not None:
-            descstr += " constraints={}".format(repr(cval))
         return descstr
 
     def generate_call(self):

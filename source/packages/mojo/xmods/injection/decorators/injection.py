@@ -47,12 +47,11 @@ def param(source, *, identifier: Optional[None], constraints: Optional[Dict]=Non
         return subscriber
     return decorator
 
-def validate(source, *, suffix: str, identifier: Optional[None]=None, constraints: Optional[Dict]=None):
+def validate(source, *, suffix: str, identifier: Optional[None]=None):
     def decorator(subscriber: Callable) -> Callable:
         nonlocal source
         nonlocal identifier
         nonlocal suffix
-        nonlocal constraints
 
         if identifier is None:
             identifier = source.__name__
@@ -63,12 +62,9 @@ def validate(source, *, suffix: str, identifier: Optional[None]=None, constraint
 
         source_info = injection_registry.lookup_validator_source(source)
 
-        if constraints is not None and 'constraints' not in source_info.source_signature.parameters:
-            raise SemanticError("Attempting to pass constraints to a parameter origin with no 'constraints' parameter.") from None
-
         assigned_scope = "{}#{}".format(subscriber.__module__, subscriber.__name__)
 
-        validator_origin = ValidatorOrigin(assigned_scope, identifier, suffix, source_info, constraints)
+        validator_origin = ValidatorOrigin(assigned_scope, identifier, suffix, source_info)
         injection_registry.register_validator_origin(identifier, validator_origin)
 
         return subscriber
