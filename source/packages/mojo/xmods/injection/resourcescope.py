@@ -59,6 +59,10 @@ class ResourceScope:
     def parameter_originations(self) -> Dict[str, ParameterOrigin]:
         return self._parameter_originations
 
+    @property
+    def validator_originations(self) -> Dict[str, ValidatorOrigin]:
+        return self._validator_originations
+
     def add_descendent_parameter_origination(self, assigned_scope: str, parameter_origin: ParameterOrigin):
         """
             Adds a descendent parameter origin object into the parameter origin table of the
