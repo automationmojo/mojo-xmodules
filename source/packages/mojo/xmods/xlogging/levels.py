@@ -26,12 +26,9 @@ class LogLevel(IntEnum):
     WARNING = logging.WARNING
     ERROR = logging.ERROR
     CRITICAL = logging.CRITICAL
-    SECTION = 100
-    RENDER = 200
     QUIET = 1000
 
-logging.addLevelName(LogLevel.SECTION.value, "SECTION")
-logging.addLevelName(LogLevel.RENDER.value, "RENDER")
+
 logging.addLevelName(LogLevel.QUIET.value, "QUIET")
 
 LOG_LEVEL_NAMES = [member.name for member in LogLevel]
