@@ -197,6 +197,7 @@ class GreaterOrEqualRecordFilter(logging.Filter):
 
 logging_initialized = False
 
+last_logfile = None
 
 
 def logging_initialize(reinitialize: bool=False) -> str:
@@ -207,7 +208,10 @@ def logging_initialize(reinitialize: bool=False) -> str:
         ..note: Make sure the context path 'ContextPaths.OUTPUT_DIRECTORY' variable is set before
                 calling 'logging_initialize'
     """
+    logfile = None
+
     global logging_initialized
+    global last_logfile
 
     if reinitialize or not logging_initialized:
 
@@ -230,6 +234,9 @@ def logging_initialize(reinitialize: bool=False) -> str:
 
         # Setup the log files
         logfile = _reinitialize_logging(consolelevel, logfilelevel, output_directory, logname, log_branches)
+        last_logfile = logfile
+    else:
+        logfile = last_logfile
 
     return logfile
 
