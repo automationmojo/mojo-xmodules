@@ -142,9 +142,10 @@ class EnhancedRootLogger(EnhancedLogger):
     def adopt_children(self, other_root: logging.RootLogger):
 
         # Tell all of the root loggers children that we are the new parent
-        children_of_root = [c for c in other_root.getChildren()]
+        children_of_root = [c for c in other_root.manager.loggerDict.values()]
         for child in children_of_root:
-            child.parent = self
+            if child.parent is other_root:
+                child.parent = self
 
         return
 
