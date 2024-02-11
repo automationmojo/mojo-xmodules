@@ -144,7 +144,7 @@ class EnhancedRootLogger(EnhancedLogger):
         # Tell all of the root loggers children that we are the new parent
         children_of_root = [c for c in other_root.manager.loggerDict.values()]
         for child in children_of_root:
-            if child.parent is other_root:
+            if hasattr(child, "parent") and child.parent is other_root:
                 child.parent = self
 
         return
