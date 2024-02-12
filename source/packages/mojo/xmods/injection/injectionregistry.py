@@ -275,7 +275,7 @@ class InjectionRegistry:
             self._scope_tree_root.resolve_parameter_originations_for_injectable(inj_ref, missing_params)
 
             if len(missing_params) > 0:
-                self._unknown_parameters[inj_ref.inj_name] = missing_params
+                self._unknown_parameters[inj_ref.name] = missing_params
 
         # 4. Go through all of the injectable references and for each reference, collect integration and
         #    scope couplings that are referenced so we can build a combined picture of everything that
