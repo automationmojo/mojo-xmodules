@@ -353,7 +353,9 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
             root_logger.error(errmsg)
 
     logger = logging.getLogger()
-    logger.section("Logging Initialized")
+
+    if consolelevel != LogLevel.QUIET:
+        logger.section("Logging Initialized")
 
     return rel_logfilename
 
