@@ -354,7 +354,7 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
 
     logger = logging.getLogger()
 
-    if consolelevel != LogLevel.QUIET:
+    if consolelevel != LogLevel.QUIET.name:
         logger.section("Logging Initialized")
 
     return rel_logfilename
