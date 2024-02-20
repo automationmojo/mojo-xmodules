@@ -53,8 +53,8 @@ def debugger_wellknown_breakpoint_entry(breakpoint_name: str):
 
     ctx = ContextSingleton()
 
-    breakpoints = ctx.lookup(ContextPaths.DEBUG_BREAKPOINTS, None)
-    debugger = ctx.lookup(ContextPaths.DEBUG_DEBUGGER, DEBUGGER.DEBUGPY)
+    breakpoints = ctx.lookup(ContextPaths.DEBUG_BREAKPOINTS, default=None)
+    debugger = ctx.lookup(ContextPaths.DEBUG_DEBUGGER, default=DEBUGGER.DEBUGPY)
 
     if breakpoints is not None:
         if breakpoint_name in breakpoints:
@@ -80,8 +80,8 @@ def debugger_wellknown_breakpoint_code_append(breakpoint_name: str, code_lines: 
 
     ctx = ContextSingleton()
 
-    debugger = ctx.lookup(ContextPaths.DEBUG_BREAKPOINTS, None)
-    breakpoints = ctx.lookup(ContextPaths.DEBUG_DEBUGGER, DEBUGGER.DEBUGPY)
+    breakpoints = ctx.lookup(ContextPaths.DEBUG_BREAKPOINTS, default=None)
+    debugger = ctx.lookup(ContextPaths.DEBUG_DEBUGGER, default=DEBUGGER.DEBUGPY)
 
     if breakpoints is not None:
         if breakpoint_name in breakpoints:
