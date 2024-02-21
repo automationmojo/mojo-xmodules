@@ -10,8 +10,10 @@ __license__ = "MIT"
 
 from typing import Any, Dict, List, Union
 
-from mojo.xmods.injection.constraints import Constraints, FeatureConstraints, ConstraintsRef, ConstraintSource
+from mojo.xmods.injection.constraints import Constraints, FeatureConstraints, ConstraintsRef, ConstraintsOrigin
 
+def create_constraint_key(source: str, identifier: str):
+    return f"{source}:{identifier}"
 
 class ConstraintsCatalog:
     """
@@ -48,33 +50,35 @@ class ConstraintsCatalog:
         return
 
 
-    def add_constraints(self, constraints_ref: ConstraintsRef):
+    def add_constraints(self, origin: ConstraintsOrigin, originating_scope: str, identifier: str, constraints: Union[Constraints, FeatureConstraints, Dict[str, Any]]) -> str:
 
-        source = constraints_ref.source
-        scope = constraints_ref.scope
+        ckey = create_constraint_key(originating_scope, identifier)
 
-        if source == ConstraintSource.SITE_PARAMETER:
-            self._site_constraints[scope] = constraints_ref
-        elif source == ConstraintSource.OVERRIDE_PARAMETER:
-            self._override_constraints[scope] = constraints_ref
+        cref = ConstraintsRef(origin, originating_scope, identifier, constraints)
+
+        if origin == ConstraintsOrigin.SITE_PARAMETER:
+            self._site_constraints[ckey] = cref
+        elif origin == ConstraintsOrigin.OVERRIDE_PARAMETER:
+            self._override_constraints[ckey] = cref
         else:
-            raise ValueError(f"Unkown constraint source='{source}' scope='{scope}'")
+            raise ValueError(f"Unkown constraint origin='{origin}' scope='{originating_scope}' identifier={identifier}")
         
-        return
+        return ckey
     
 
-    def lookup_constraints(self, scope: str) -> Union[Constraints, FeatureConstraints, Dict[str, Any]]:
+    def lookup_constraints(self, constraints_key: str) -> Union[Constraints, FeatureConstraints, Dict[str, Any]]:
         """
             Looks up a constraint by its 'scope' name based on order of priority.  Override constraints take
             priority over factory site constraints.
         """
+
         rtnval = None
 
-        if scope in self._override_constraints:
-            cref = self._override_constraints[scope]
+        if constraints_key in self._override_constraints:
+            cref = self._override_constraints[constraints_key]
             rtnval = cref.constraints
-        elif scope in self._site_constraints:
-            cref = self._site_constraints[scope]
+        elif constraints_key in self._site_constraints:
+            cref = self._site_constraints[constraints_key]
             rtnval = cref.constraints
         
         return rtnval

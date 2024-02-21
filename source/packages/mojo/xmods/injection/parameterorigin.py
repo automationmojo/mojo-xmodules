@@ -12,8 +12,11 @@ from typing import Any, Callable, Dict, Optional, Type, Union
 
 import inspect
 
+from mojo.xmods.injection.constraintscatalog import ConstraintsCatalog
 from mojo.xmods.injection.sourcebase import SourceBase
 from mojo.xmods.injection.resourcelifespan import ResourceLifespan
+
+constraints_catalog = ConstraintsCatalog()
 
 class ParameterOrigin:
 
@@ -23,23 +26,12 @@ class ParameterOrigin:
         self._life_span = life_span
         self._source = source
         self._implied = implied
-        self._constraints = constraints
+        self._constraints_key = constraints_catalog.add_constraints(originating_scope, identifier, constraints)
         return
 
     @property
-    def constraints(self) -> Union[dict, None]:
-        """
-            Returns the most applicable constraints assoceated with this resource subscription.  If the
-            subscription constraints are set then they will be used.  If the subscription constraints are
-            not set and the source constraints are set, then the source constraints will be returned. If
-            no constraints are applied to the subscription or the source, 'None' will be returned.
-        """
-        cval = None
-        if self._constraints is not None:
-            cval = self._constraints
-        elif self._source.constraints is not None:
-            cval = self._source.constraints
-        return cval
+    def constraints_key(self) -> str:
+        return self._constraints_key
 
     @property
     def identifier(self) -> str:

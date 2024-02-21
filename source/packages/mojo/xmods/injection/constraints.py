@@ -14,7 +14,7 @@ from enum import Enum
 from mojo.xmods.xfeature import FeatureMask, FeatureTag
 
 
-class ConstraintSource(str, Enum):
+class ConstraintsOrigin(str, Enum):
     SITE_PARAMETER = "site-parameter"
     OVERRIDE_PARAMETER = "override-parameter"
 
@@ -54,9 +54,10 @@ class FeatureConstraints(FeatureMask):
 
 class ConstraintsRef:
 
-    def __init__(self, source: ConstraintSource, scope: str, constraints: Constraints):
-        self._source = source
-        self._scope = scope
+    def __init__(self, origin: ConstraintsOrigin, originating_scope: str, identifier: str, constraints: Constraints):
+        self._origin = origin
+        self._originating_scope = originating_scope
+        self._identifer = identifier
         self._constraints = constraints
         return
 
@@ -65,12 +66,16 @@ class ConstraintsRef:
         return self._constraints
     
     @property
-    def scope(self):
-        return self._scope
-    
+    def identifier(self) -> str:
+        return self._identifier
+
     @property
-    def source(self):
-        return self._source
+    def origin(self) -> ConstraintsOrigin:
+        return self._origin
+
+    @property
+    def originating_scope(self) -> str:
+        return self._originating_scope
 
 
 def merge_constraints(*args: Union[Constraints, dict]) -> Constraints:
