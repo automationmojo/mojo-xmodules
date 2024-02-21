@@ -11,6 +11,8 @@ from typing import List, Optional
 import io
 import yaml
 
+from mojo.errors.exceptions import SemanticError
+
 from mojo.interfaces.iserializable import ISerializable
 
 
@@ -23,6 +25,10 @@ def serializable_object_to_yaml(obj: ISerializable, line_indent: Optional[str] =
         ..note: This method is especially useful for formatting complex output for display in a log
                 since JSON and other formats are not as log friendly.
     """
+
+    if not hasattr("as_dict", obj):
+        errmsg = "Objects must implement the 'ISerializable' interface."
+        raise SemanticError(errmsg)
 
     obj_as_dict = obj.as_dict()
 
