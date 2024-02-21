@@ -8,7 +8,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Any, Callable, Dict, Optional, Type, Union
+from typing import Any, Callable, Dict, Optional, Type
 
 import inspect
 
@@ -20,13 +20,16 @@ constraints_catalog = ConstraintsCatalog()
 
 class ParameterOrigin:
 
-    def __init__(self, originating_scope: str, identifier: str, life_span: ResourceLifespan, source: Optional[SourceBase] = None, implied: bool = False, constraints: Optional[Dict] = {}):
+    def __init__(self, originating_scope: str, identifier: str, life_span: ResourceLifespan, source: Optional[SourceBase] = None, implied: bool = False, constraints: Optional[Dict] = None):
         self._originating_scope = originating_scope
         self._identifier = identifier
         self._life_span = life_span
         self._source = source
         self._implied = implied
-        self._constraints_key = constraints_catalog.add_constraints(originating_scope, identifier, constraints)
+
+        self._constraints_key = None
+        if constraints is not None:
+            self._constraints_key = constraints_catalog.add_constraints(originating_scope, identifier, constraints)
         return
 
     @property
