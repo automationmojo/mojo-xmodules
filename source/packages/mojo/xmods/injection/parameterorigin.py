@@ -84,9 +84,12 @@ class ParameterOrigin:
             descstr += " constraints={}".format(repr(cval))
         return descstr
 
-    def generate_call(self):
+    def generate_call(self, constraints: Optional[dict] = None):
         call_arg_str = ""
         call_args = [param for param in self.source_signature.parameters]
+        if constraints is None and "constraints" in call_args:
+            call_args.remove("constraints")
+
         if len(call_args) > 0:
             call_arg_str = ", ".join(call_args)
         call_str = "{}({})".format(self._source.source_function.__name__, call_arg_str)
