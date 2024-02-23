@@ -8,7 +8,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 from mojo.errors.exceptions import SemanticError
 
@@ -19,7 +19,7 @@ from mojo.xmods.injection.validatororigin import ValidatorOrigin
 from mojo.xmods.injection.parameterorigin import ParameterOrigin
 
 
-def param(source, *, identifier: Optional[None], constraints: Optional[Dict]=None):
+def param(source, *, identifier: Optional[None], constraints: Optional[Dict[str, Any]]=None):
     def decorator(subscriber: Callable) -> Callable:
         nonlocal source
         nonlocal identifier
@@ -47,7 +47,7 @@ def param(source, *, identifier: Optional[None], constraints: Optional[Dict]=Non
         return subscriber
     return decorator
 
-def validate(source, *, suffix: str, identifier: Optional[None]=None):
+def validate(source, *, suffix: str, identifier: Optional[None]=None, constraints: Optional[Dict[str, Any]]=None):
     def decorator(subscriber: Callable) -> Callable:
         nonlocal source
         nonlocal identifier
@@ -64,7 +64,7 @@ def validate(source, *, suffix: str, identifier: Optional[None]=None):
 
         assigned_scope = "{}#{}".format(subscriber.__module__, subscriber.__name__)
 
-        validator_origin = ValidatorOrigin(assigned_scope, identifier, suffix, source_info)
+        validator_origin = ValidatorOrigin(assigned_scope, identifier, suffix, source_info, constraints)
         injection_registry.register_validator_origin(identifier, validator_origin)
 
         return subscriber

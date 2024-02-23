@@ -12,19 +12,30 @@ from typing import Any, Callable, Dict, Optional, Type, Union
 
 import inspect
 
+from mojo.xmods.injection.constraintscatalog import ConstraintsCatalog
 from mojo.xmods.injection.sourcebase import SourceBase
 from mojo.xmods.injection.resourcelifespan import ResourceLifespan
 
+constraints_catalog = ConstraintsCatalog()
+
 class ValidatorOrigin:
 
-    def __init__(self, originating_scope: str, identifier: str, suffix: str, source: Optional[SourceBase] = None, implied: bool = False):
+    def __init__(self, originating_scope: str, identifier: str, suffix: str, source: Optional[SourceBase] = None, implied: bool = False, constraints: Optional[Dict] = None):
         self._originating_scope = originating_scope
         self._identifier = identifier
         self._suffix = suffix
         self._life_span = ResourceLifespan.Test
         self._source = source
         self._implied = implied
+        
+        self._constraints_key = None
+        if constraints is not None:
+            self._constraints_key = constraints_catalog.add_constraints(originating_scope, identifier, constraints)
         return
+
+    @property
+    def constraints_key(self) -> str:
+        return self._constraints_key
 
     @property
     def identifier(self) -> str:
@@ -75,10 +86,16 @@ class ValidatorOrigin:
         descstr = self.source_id
         return descstr
 
-    def generate_call(self):
+    def generate_call(self, constraints: Optional[dict] = None):
         call_arg_str = ""
+
         call_args = [param for param in self.source_signature.parameters]
+        if constraints is None and "constraints" in call_args:
+            call_args.remove("constraints")
+
         if len(call_args) > 0:
             call_arg_str = ", ".join(call_args)
+
         call_str = "{}({})".format(self._source.source_function.__name__, call_arg_str)
+        
         return call_str
