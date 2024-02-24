@@ -64,7 +64,7 @@ def validate(source, *, suffix: str, identifier: Optional[None]=None, constraint
 
         assigned_scope = "{}#{}".format(subscriber.__module__, subscriber.__name__)
 
-        validator_origin = ValidatorOrigin(assigned_scope, identifier, suffix, source_info, constraints)
+        validator_origin = ValidatorOrigin(assigned_scope, identifier, suffix, source_info, constraints=constraints)
         injection_registry.register_validator_origin(identifier, validator_origin)
 
         return subscriber
