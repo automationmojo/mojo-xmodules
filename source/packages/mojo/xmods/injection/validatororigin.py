@@ -13,6 +13,7 @@ from typing import Any, Callable, Dict, Optional, Type, Union
 import inspect
 
 from mojo.xmods.injection.constraintscatalog import ConstraintsCatalog
+from mojo.xmods.injection.constraints import ConstraintsOrigin
 from mojo.xmods.injection.sourcebase import SourceBase
 from mojo.xmods.injection.resourcelifespan import ResourceLifespan
 
@@ -30,7 +31,7 @@ class ValidatorOrigin:
         
         self._constraints_key = None
         if constraints is not None:
-            self._constraints_key = constraints_catalog.add_constraints(originating_scope, identifier, constraints)
+            self._constraints_key = constraints_catalog.add_constraints(ConstraintsOrigin.SITE_PARAMETER, originating_scope, identifier, constraints)
         return
 
     @property
