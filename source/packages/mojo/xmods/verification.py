@@ -3,7 +3,6 @@ __copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 
 
-from distutils.sysconfig import PREFIX
 from typing import Any, List, Optional, Union, Type
 
 import os
