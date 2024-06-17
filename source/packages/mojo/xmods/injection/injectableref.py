@@ -35,10 +35,13 @@ class InjectableRef:
         being used.
     """
 
-    def __init__(self, injfunc: FunctionType, monikers: List[str]=[], pivots: OrderedDict[str, Any]=collections.OrderedDict()):
+    def __init__(self, injfunc: FunctionType, monikers: Optional[List[str]] = None, pivots: OrderedDict[str, Any]=collections.OrderedDict()):
         """
             Initializes the injectable reference object.
         """
+        if monikers is None:
+            monikers = []
+ 
         self._inj_function = injfunc
         self._monikers = monikers
         self._pivots = pivots

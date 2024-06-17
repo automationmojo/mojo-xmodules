@@ -13,7 +13,7 @@ __copyright__ = "Copyright 2023, Myron W Walker"
 __credits__ = []
 
 
-from typing import Dict, Type
+from typing import Dict, Optional, Type
 
 from types import TracebackType
 
@@ -80,13 +80,13 @@ class ScopeCoupling(BaseCoupling):
         return
 
     @classmethod
-    def attach_to_environment(cls, constraints: Dict={}):
+    def attach_to_environment(cls, constraints: Optional[Dict] = None):
         """
             This API is called so that the ScopeCoupling can process configuration information.  The :class:`ScopeCoupling`
             will verify that it has a valid environment and configuration to run in.
 
             :raises :class:`mojo.errors.exceptions.AKitMissingConfigError`, :class:`mojo.errors.exceptions.ConfigurationError`:
-        """
+        """ß
         return
 
     def scope_enter(self):

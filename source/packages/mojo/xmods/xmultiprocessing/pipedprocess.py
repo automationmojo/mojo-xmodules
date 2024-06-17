@@ -61,8 +61,11 @@ def piped_process_main(entry_point: Callable, stdout_queue: Queue, stderr_queue:
 class PipedProcess(Process):
 
     def __init__(self, group: None = None, target: Optional[Callable]=None, name: Optional[str]=None, args: Iterable[Any] = (),
-                 kwargs: Mapping[str, Any] = {}, *, daemon: Optional[bool]=None) -> None:
+                 kwargs: Optional[Mapping[str, Any]] = None, *, daemon: Optional[bool]=None) -> None:
         
+        if kwargs is None:
+            kwargs = {}
+
         self._stdout_queue = Queue()
         self._stderr_queue = Queue()
 
