@@ -86,7 +86,7 @@ class ScopeCoupling(BaseCoupling):
             will verify that it has a valid environment and configuration to run in.
 
             :raises :class:`mojo.errors.exceptions.AKitMissingConfigError`, :class:`mojo.errors.exceptions.ConfigurationError`:
-        """ß
+        """
         return
 
     def scope_enter(self):
