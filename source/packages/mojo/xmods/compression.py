@@ -1,4 +1,12 @@
 
+"""
+.. module:: compression
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module which contains functions for working with compression modules.
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+"""
+
 import os
 import zipfile
 
